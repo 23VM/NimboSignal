@@ -8,58 +8,98 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <style>
     :root {
-      --bg: #081021;
-      --bg-soft: #0f1930;
-      --card: #13203b;
-      --card-border: #22355c;
-      --text: #f1f5f9;
+      --bg-base: #050914;
+      --ambient-1: rgba(14, 165, 233, 0.22);
+      --ambient-2: rgba(16, 185, 129, 0.16);
+      --ambient-3: rgba(56, 189, 248, 0.12);
+      --glass: rgba(255, 255, 255, 0.055);
+      --glass-strong: rgba(255, 255, 255, 0.085);
+      --glass-dark: rgba(7, 12, 24, 0.62);
+      --border: rgba(255, 255, 255, 0.12);
+      --border-bright: rgba(255, 255, 255, 0.22);
+      --text: #f8fafc;
+      --text-secondary: #cbd5e1;
       --muted: #94a3b8;
+      --accent: #38bdf8;
       --cyan: #22d3ee;
-      --teal: #0e7490;
-      --gold: #f59e0b;
       --green: #10b981;
-      --green-bg: rgba(16, 185, 129, 0.14);
       --amber: #f59e0b;
-      --amber-bg: rgba(245, 158, 11, 0.14);
       --red: #ef4444;
-      --red-bg: rgba(239, 68, 68, 0.15);
       --purple: #a855f7;
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --shadow-glass: 0 24px 48px -12px rgba(0, 0, 0, 0.55), inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
+    }
+
+    body.theme-green {
+      --ambient-1: rgba(16, 185, 129, 0.22);
+      --ambient-2: rgba(14, 165, 233, 0.20);
+      --ambient-3: rgba(34, 211, 238, 0.14);
+    }
+
+    body.theme-amber {
+      --ambient-1: rgba(245, 158, 11, 0.22);
+      --ambient-2: rgba(234, 88, 12, 0.14);
+      --ambient-3: rgba(56, 189, 248, 0.14);
+    }
+
+    body.theme-red {
+      --ambient-1: rgba(239, 68, 68, 0.25);
+      --ambient-2: rgba(168, 85, 247, 0.16);
+      --ambient-3: rgba(14, 116, 144, 0.14);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: radial-gradient(circle at top right, #12264d 0%, var(--bg) 52%);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-base);
       color: var(--text);
       line-height: 1.5;
-      padding-bottom: 84px;
+      min-height: 100vh;
+      padding-bottom: 92px;
+      overflow-x: hidden;
+      position: relative;
+      transition: background-color 0.6s ease;
     }
 
-    a {
-      color: var(--cyan);
-      text-decoration: none;
+    /* Dynamic Apple-style Ambient Mesh Backdrop */
+    .ambient-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 15% 12%, var(--ambient-1) 0%, transparent 45%),
+        radial-gradient(circle at 85% 22%, var(--ambient-2) 0%, transparent 48%),
+        radial-gradient(circle at 50% 88%, var(--ambient-3) 0%, transparent 52%),
+        linear-gradient(180deg, #070d1d 0%, #040711 100%);
+      transition: all 0.8s ease;
     }
 
     .container {
-      max-width: 1120px;
+      max-width: 1140px;
       margin: 0 auto;
-      padding: 0 16px;
+      padding: 0 18px;
     }
 
-    /* Header */
+    /* Frosted Glass Navigation Bar */
     header {
       position: sticky;
       top: 0;
       z-index: 900;
-      background: rgba(8, 16, 33, 0.92);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--card-border);
-      padding: 12px 0;
+      background: rgba(7, 12, 26, 0.72);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+      padding: 13px 0;
     }
 
     .nav-bar {
@@ -67,56 +107,61 @@
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 14px;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .brand-logo {
-      width: 42px;
-      height: 42px;
-      background: #ffffff;
-      border-radius: 11px;
-      padding: 4px;
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(145deg, #ffffff 0%, #e2e8f0 100%);
+      border-radius: 13px;
+      padding: 5px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 14px rgba(34, 211, 238, 0.25);
+      box-shadow: 0 8px 20px rgba(34, 211, 238, 0.25), inset 0 1px 0 #ffffff;
     }
 
     .brand-title h1 {
       font-size: 1.25rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .brand-title span {
       display: block;
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       color: var(--cyan);
-      font-weight: 600;
+      font-weight: 500;
+      letter-spacing: 0.01em;
     }
 
-    /* Demo Plan Switcher */
+    /* iOS Segmented Control for Demo Plans */
     .plan-switcher {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: var(--bg-soft);
-      padding: 5px;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 4px;
       border-radius: 999px;
-      border: 1px solid var(--card-border);
+      border: 1px solid var(--border);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
     }
 
     .plan-switcher-label {
       font-size: 0.72rem;
       color: var(--muted);
-      padding: 0 6px 0 8px;
+      padding: 0 8px 0 10px;
+      font-weight: 500;
       display: none;
     }
 
@@ -129,38 +174,45 @@
     .tier-btn {
       border: none;
       background: transparent;
-      color: var(--muted);
+      color: var(--text-secondary);
       font-size: 0.78rem;
-      font-weight: 700;
-      padding: 6px 12px;
+      font-weight: 600;
+      padding: 7px 14px;
       border-radius: 999px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .tier-btn.active {
-      background: var(--cyan);
-      color: #081021;
-    }
-
-    .tier-btn.active[data-tier="plus"] {
-      background: #38bdf8;
-      color: #081021;
-    }
-
-    .tier-btn.active[data-tier="pro"] {
-      background: linear-gradient(135deg, #22d3ee, #a855f7);
+    .tier-btn:hover {
       color: #ffffff;
     }
 
-    /* Search & Quick Controls */
+    .tier-btn.active {
+      background: #ffffff;
+      color: #050914;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+    }
+
+    .tier-btn.active[data-tier="plus"] {
+      background: linear-gradient(135deg, #38bdf8 0%, #22d3ee 100%);
+      color: #04101d;
+    }
+
+    .tier-btn.active[data-tier="pro"] {
+      background: linear-gradient(135deg, #38bdf8 0%, #a855f7 100%);
+      color: #ffffff;
+    }
+
+    /* Search & Command Bar */
     .hero-controls {
-      margin: 20px 0 18px;
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      margin: 22px 0 20px;
+      background: var(--glass);
+      backdrop-filter: blur(24px) saturate(170%);
+      -webkit-backdrop-filter: blur(24px) saturate(170%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      box-shadow: var(--shadow-glass);
     }
 
     .search-row {
@@ -171,83 +223,106 @@
 
     .search-box {
       position: relative;
-      flex: 1 1 260px;
+      flex: 1 1 280px;
     }
 
     .search-box input {
       width: 100%;
-      background: var(--bg-soft);
-      border: 1px solid var(--card-border);
+      background: rgba(5, 9, 20, 0.65);
+      border: 1px solid var(--border);
       color: #ffffff;
-      padding: 12px 14px;
-      border-radius: 12px;
-      font-size: 0.95rem;
+      padding: 13px 16px;
+      border-radius: 14px;
+      font-size: 0.94rem;
       outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    .search-box input::placeholder {
+      color: #64748b;
     }
 
     .search-box input:focus {
       border-color: var(--cyan);
+      background: rgba(5, 9, 20, 0.85);
+      box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.14);
     }
 
     .search-results {
       position: absolute;
-      top: calc(100% + 6px);
+      top: calc(100% + 8px);
       left: 0;
       right: 0;
-      background: #0f1b33;
-      border: 1px solid var(--cyan);
-      border-radius: 12px;
+      background: rgba(11, 18, 36, 0.94);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--border-bright);
+      border-radius: 16px;
       z-index: 800;
-      max-height: 240px;
+      max-height: 250px;
       overflow-y: auto;
       display: none;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55);
     }
 
     .search-item {
-      padding: 10px 14px;
+      padding: 11px 16px;
       cursor: pointer;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+
+    .search-item:last-child {
+      border-bottom: none;
     }
 
     .search-item:hover {
-      background: rgba(34, 211, 238, 0.14);
+      background: rgba(56, 189, 248, 0.16);
     }
 
     .btn {
       border: none;
-      border-radius: 12px;
-      padding: 11px 16px;
-      font-weight: 700;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-weight: 600;
       font-size: 0.88rem;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
-      transition: transform 0.15s, opacity 0.15s;
+      gap: 8px;
+      transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s, background 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
     }
 
     .btn:active {
-      transform: scale(0.98);
+      transform: scale(0.97);
     }
 
     .btn-primary {
-      background: var(--cyan);
-      color: #081021;
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+      color: #ffffff;
+      box-shadow: 0 6px 18px rgba(2, 132, 199, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
     }
 
     .btn-secondary {
-      background: var(--bg-soft);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--text);
-      border: 1px solid var(--card-border);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.13);
+      border-color: var(--border-bright);
     }
 
     .btn-ecuador {
-      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
       color: #ffffff;
-      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.3);
     }
 
     .quick-cities {
@@ -255,150 +330,200 @@
       flex-wrap: wrap;
       align-items: center;
       gap: 8px;
-      margin-top: 12px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
     }
 
     .quick-cities span {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       color: var(--muted);
+      font-weight: 500;
     }
 
     .chip {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--card-border);
-      color: var(--text);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
       border-radius: 999px;
-      padding: 5px 11px;
+      padding: 5px 12px;
       font-size: 0.78rem;
+      font-weight: 500;
       cursor: pointer;
+      transition: all 0.2s;
     }
 
     .chip:hover {
+      background: rgba(56, 189, 248, 0.15);
       border-color: var(--cyan);
-      color: var(--cyan);
+      color: #ffffff;
     }
 
-    /* Main Grid */
+    /* Bento Grid Layout */
     .main-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 18px;
+      gap: 20px;
     }
 
-    @media (min-width: 900px) {
+    @media (min-width: 920px) {
       .main-grid {
-        grid-template-columns: 1.25fr 1fr;
+        grid-template-columns: 1.28fr 1fr;
       }
     }
 
     .card {
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      border-radius: 18px;
-      padding: 18px;
+      background: var(--glass);
+      backdrop-filter: blur(24px) saturate(170%);
+      -webkit-backdrop-filter: blur(24px) saturate(170%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 22px;
+      box-shadow: var(--shadow-glass);
     }
 
     .card-header {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 14px;
+      gap: 12px;
+      margin-bottom: 16px;
     }
 
     .card-title {
-      font-size: 1rem;
+      font-size: 1.08rem;
       font-weight: 700;
+      letter-spacing: -0.015em;
       color: #ffffff;
     }
 
     .badge {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
-      padding: 4px 10px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 5px 11px;
       border-radius: 999px;
-      background: rgba(34, 211, 238, 0.14);
+      background: rgba(56, 189, 248, 0.15);
       color: var(--cyan);
-      border: 1px solid rgba(34, 211, 238, 0.3);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      white-space: nowrap;
     }
 
-    /* Traffic Light Decision Banner */
+    /* Apple Weather-Inspired Hero Verdict Box */
     .verdict-box {
-      border-radius: 16px;
-      padding: 18px;
-      border: 2px solid var(--green);
-      background: var(--green-bg);
-      margin-bottom: 16px;
-      transition: all 0.25s;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      background: linear-gradient(145deg, rgba(16, 185, 129, 0.18) 0%, rgba(6, 78, 59, 0.22) 100%);
+      margin-bottom: 18px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      transition: all 0.35s ease;
     }
 
     .verdict-box.amber {
-      border-color: var(--amber);
-      background: var(--amber-bg);
+      border-color: rgba(245, 158, 11, 0.5);
+      background: linear-gradient(145deg, rgba(245, 158, 11, 0.20) 0%, rgba(120, 53, 15, 0.24) 100%);
     }
 
     .verdict-box.red {
-      border-color: var(--red);
-      background: var(--red-bg);
+      border-color: rgba(239, 68, 68, 0.55);
+      background: linear-gradient(145deg, rgba(239, 68, 68, 0.22) 0%, rgba(127, 29, 29, 0.26) 100%);
     }
 
     .verdict-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 14px;
       flex-wrap: wrap;
+    }
+
+    .verdict-pill-label {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.72);
+      margin-bottom: 4px;
     }
 
     .verdict-status {
       font-size: 1.35rem;
       font-weight: 800;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
     }
 
-    .verdict-box.green .verdict-status { color: #34d399; }
-    .verdict-box.amber .verdict-status { color: #fbbf24; }
-    .verdict-box.red .verdict-status { color: #f87171; }
+    .verdict-box.green .verdict-status { color: #6ee7b7; }
+    .verdict-box.amber .verdict-status { color: #fcd34d; }
+    .verdict-box.red .verdict-status { color: #fca5a5; }
 
     .temp-pill {
-      font-size: 1.5rem;
-      font-weight: 800;
+      font-size: 2.65rem;
+      font-weight: 300;
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
       color: #ffffff;
+      line-height: 1;
     }
 
     .verdict-desc {
-      margin-top: 8px;
-      font-size: 0.94rem;
-      color: #e2e8f0;
+      margin-top: 10px;
+      font-size: 0.93rem;
+      color: #f1f5f9;
+      line-height: 1.55;
     }
 
     .metrics-row {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-top: 14px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    @media (min-width: 520px) {
+      .metrics-row {
+        grid-template-columns: repeat(4, 1fr);
+      }
     }
 
     .metric-item {
-      background: rgba(8, 16, 33, 0.55);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 9px 8px;
+      background: rgba(5, 9, 20, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 14px;
+      padding: 11px 10px;
       text-align: center;
     }
 
     .metric-item small {
       display: block;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
       color: var(--muted);
+      margin-bottom: 3px;
     }
 
     .metric-item strong {
-      font-size: 0.95rem;
+      font-size: 1rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
       color: #ffffff;
     }
 
-    /* Gear & Clothing List */
+    /* Section Micro-Heading */
+    .sub-heading {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 11px;
+    }
+
+    /* Gear & Clothing Bento Cards */
     .gear-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -412,72 +537,75 @@
     }
 
     .gear-item {
-      background: var(--bg-soft);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 11px 12px;
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 13px 14px;
       display: flex;
       align-items: flex-start;
-      gap: 10px;
-      font-size: 0.86rem;
+      gap: 12px;
+      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .gear-item:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-bright);
+      background: rgba(255, 255, 255, 0.07);
     }
 
     .gear-icon {
-      font-size: 1.25rem;
-      line-height: 1.2;
-    }
-
-    /* Map */
-    #map {
-      width: 100%;
-      height: 270px;
-      border-radius: 14px;
-      border: 1px solid var(--card-border);
-      z-index: 1;
-    }
-
-    .map-caption {
-      margin-top: 10px;
-      font-size: 0.8rem;
-      color: var(--muted);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.25);
       display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 6px;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
     }
 
-    /* Hourly Forecast & Lock Overlay */
+    /* Hourly Forecast & Frosted Paywall */
     .lock-wrapper {
       position: relative;
-      margin-top: 14px;
+      margin-top: 8px;
     }
 
     .hourly-strip {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
     }
 
+    @media (min-width: 520px) {
+      .hourly-strip {
+        grid-template-columns: repeat(6, 1fr);
+      }
+    }
+
     .hour-card {
-      background: var(--bg-soft);
-      border: 1px solid var(--card-border);
-      border-radius: 11px;
-      padding: 8px 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 6px;
       text-align: center;
       font-size: 0.78rem;
+      font-variant-numeric: tabular-nums;
     }
 
     .hour-card strong {
       display: block;
-      font-size: 0.92rem;
-      margin: 3px 0;
+      font-size: 0.95rem;
+      margin: 5px 0;
+      color: #ffffff;
     }
 
     .locked-blur {
-      filter: blur(4px);
+      filter: blur(5px);
       pointer-events: none;
       user-select: none;
-      opacity: 0.55;
+      opacity: 0.5;
     }
 
     .lock-overlay {
@@ -487,39 +615,72 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: rgba(8, 16, 33, 0.72);
-      border-radius: 12px;
-      border: 1px dashed var(--cyan);
-      padding: 12px;
+      background: rgba(5, 9, 20, 0.68);
+      backdrop-filter: blur(6px);
+      border-radius: 16px;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 14px;
       text-align: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .lock-overlay p {
       font-size: 0.82rem;
       font-weight: 600;
-      color: #ffffff;
+      color: #f8fafc;
+      max-width: 340px;
     }
 
-    /* El Niño Ecuador Section */
+    /* Map Widget */
+    #map {
+      width: 100%;
+      height: 290px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-bright);
+      z-index: 1;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    .map-caption {
+      margin-top: 12px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .app-banner-card {
+      margin-top: 16px;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(168, 85, 247, 0.12) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    /* El Niño Ecuador Module */
     .elnino-section {
-      margin-top: 20px;
-      background: linear-gradient(145deg, #17233f 0%, #1d1832 100%);
-      border: 1px solid rgba(245, 158, 11, 0.45);
-      border-radius: 18px;
-      padding: 20px;
+      margin-top: 22px;
+      background: linear-gradient(145deg, rgba(30, 27, 46, 0.72) 0%, rgba(15, 23, 42, 0.82) 100%);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(245, 158, 11, 0.42);
+      border-radius: var(--radius-xl);
+      padding: 22px;
+      box-shadow: var(--shadow-glass);
     }
 
     .elnino-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 16px;
-      margin-top: 14px;
+      gap: 18px;
+      margin-top: 16px;
     }
 
     @media (min-width: 820px) {
       .elnino-grid {
-        grid-template-columns: 1fr 1.2fr;
+        grid-template-columns: 1fr 1.22fr;
       }
     }
 
@@ -531,19 +692,30 @@
     }
 
     .ec-city-btn {
-      background: rgba(8, 16, 33, 0.65);
-      border: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
       color: #ffffff;
-      padding: 9px 10px;
-      border-radius: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
       font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
       text-align: left;
+      transition: all 0.2s;
     }
 
     .ec-city-btn:hover {
+      background: rgba(245, 158, 11, 0.16);
       border-color: var(--amber);
+      transform: translateY(-1px);
+    }
+
+    .flood-risk-card {
+      margin-top: 12px;
+      background: rgba(5, 9, 20, 0.55);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
     }
 
     .bulletin-list {
@@ -553,40 +725,44 @@
     }
 
     .bulletin-card {
-      background: rgba(8, 16, 33, 0.65);
-      border-left: 4px solid var(--amber);
-      border-radius: 10px;
-      padding: 11px 13px;
+      background: rgba(5, 9, 20, 0.52);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-left: 3px solid var(--amber);
+      border-radius: 14px;
+      padding: 12px 14px;
       font-size: 0.85rem;
+      color: #e2e8f0;
     }
 
     .bulletin-meta {
-      font-size: 0.72rem;
-      color: var(--amber);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #fbbf24;
       font-weight: 700;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
     }
 
     .disclaimer-box {
-      margin-top: 14px;
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      border-radius: 10px;
-      padding: 10px 12px;
+      margin-top: 16px;
+      background: rgba(245, 158, 11, 0.10);
+      border: 1px solid rgba(245, 158, 11, 0.30);
+      border-radius: 14px;
+      padding: 11px 14px;
       font-size: 0.78rem;
       color: #fde68a;
     }
 
     /* Plans Section */
     .plans-section {
-      margin-top: 22px;
+      margin-top: 24px;
     }
 
     .plans-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 14px;
-      margin-top: 12px;
+      gap: 16px;
+      margin-top: 14px;
     }
 
     @media (min-width: 780px) {
@@ -596,31 +772,41 @@
     }
 
     .plan-card {
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 18px;
+      background: var(--glass);
+      backdrop-filter: blur(22px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 22px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 14px;
+      gap: 18px;
+      box-shadow: var(--shadow-glass);
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .plan-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-bright);
     }
 
     .plan-card.featured {
-      border-color: var(--cyan);
-      box-shadow: 0 8px 24px rgba(34, 211, 238, 0.14);
+      background: linear-gradient(160deg, rgba(56, 189, 248, 0.14) 0%, rgba(255, 255, 255, 0.05) 100%);
+      border-color: rgba(56, 189, 248, 0.55);
     }
 
     .plan-price {
-      font-size: 1.65rem;
-      font-weight: 800;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
       color: #ffffff;
-      margin: 4px 0;
+      margin: 8px 0 12px;
+      font-variant-numeric: tabular-nums;
     }
 
     .plan-price span {
-      font-size: 0.82rem;
-      font-weight: 500;
+      font-size: 0.84rem;
+      font-weight: 400;
       color: var(--muted);
     }
 
@@ -628,27 +814,29 @@
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 7px;
-      font-size: 0.84rem;
-      color: #cbd5e1;
+      gap: 9px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
     }
 
-    /* Discrete Ethical Bottom Ad Bar (Free tier only, never blocks alerts) */
+    /* Discrete Ethical Bottom Ad Bar */
     .ethical-ad-bar {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
       z-index: 950;
-      background: #0d172c;
-      border-top: 1px solid var(--card-border);
-      padding: 9px 14px;
+      background: rgba(7, 12, 26, 0.88);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      padding: 10px 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      font-size: 0.8rem;
-      color: var(--muted);
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.79rem;
+      color: var(--text-secondary);
     }
 
     .ethical-ad-bar.hidden {
@@ -657,23 +845,25 @@
 
     .ad-tag {
       background: rgba(255, 255, 255, 0.08);
-      color: #cbd5e1;
-      font-size: 0.68rem;
+      color: #e2e8f0;
+      font-size: 0.66rem;
       font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 5px;
+      letter-spacing: 0.06em;
+      padding: 3px 8px;
+      border-radius: 6px;
       text-transform: uppercase;
     }
 
-    /* Modal for Android App / Pilot Info */
+    /* Modal */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.72);
+      background: rgba(2, 6, 16, 0.76);
+      backdrop-filter: blur(10px);
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 18px;
       z-index: 1000;
     }
 
@@ -682,32 +872,71 @@
     }
 
     .modal-box {
-      background: var(--card);
-      border: 1px solid var(--cyan);
-      border-radius: 18px;
+      background: #0e172e;
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-xl);
       max-width: 440px;
       width: 100%;
-      padding: 20px;
+      padding: 24px;
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.65);
     }
 
+    /* Footer & Creator Watermark Evmj23 */
     footer {
-      margin-top: 28px;
-      padding: 18px 0;
-      border-top: 1px solid var(--card-border);
+      margin-top: 34px;
+      padding: 24px 0 18px;
+      border-top: 1px solid var(--border);
       text-align: center;
       font-size: 0.8rem;
       color: var(--muted);
     }
+
+    .watermark-wrap {
+      margin-top: 14px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .creator-watermark {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: #e2e8f0;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .creator-watermark .wm-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #22d3ee, #a855f7);
+      box-shadow: 0 0 8px #22d3ee;
+    }
+
+    .creator-watermark strong {
+      background: linear-gradient(90deg, #38bdf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
   </style>
 </head>
-<body>
+<body class="theme-green">
+  <div class="ambient-canvas"></div>
 
   <!-- Header -->
   <header>
     <div class="container nav-bar">
       <div class="brand">
         <div class="brand-logo" aria-label="Logo NimboSignal">
-          <!-- Logo oficial NimboSignal integrado en SVG -->
           <svg viewBox="0 0 120 100" width="34" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 45C20 26 38 14 60 14C82 14 100 26 108 45" stroke="#0E7490" stroke-width="6.5" stroke-linecap="round"/>
             <path d="M23 45C30 32 43 24 60 24C77 24 90 32 97 45" stroke="#22D3EE" stroke-width="5.5" stroke-linecap="round"/>
@@ -742,12 +971,12 @@
           <div id="searchResults" class="search-results"></div>
         </div>
         <button class="btn btn-primary" onclick="triggerSearch()">Buscar clima</button>
-        <button class="btn btn-secondary" onclick="useGPS()">📍 Mi ubicación GPS</button>
-        <button class="btn btn-ecuador" onclick="focusEcuadorModule()">🇪🇨 Fenómeno de El Niño — Ecuador</button>
+        <button class="btn btn-secondary" onclick="useGPS()">📍 Mi ubicación</button>
+        <button class="btn btn-ecuador" onclick="focusEcuadorModule()">🇪🇨 El Niño — Ecuador</button>
       </div>
 
       <div class="quick-cities">
-        <span>Consultas rápidas:</span>
+        <span>Explorar rápido:</span>
         <button class="chip" onclick="loadLocation('Pasaje, El Oro', 'Ecuador', -3.3256, -79.8069, true)">Pasaje, EC</button>
         <button class="chip" onclick="loadLocation('Guayaquil', 'Ecuador', -2.1894, -79.8891, true)">Guayaquil, EC</button>
         <button class="chip" onclick="loadLocation('Quito', 'Ecuador', -0.1807, -78.4678, true)">Quito, EC</button>
@@ -757,7 +986,7 @@
       </div>
     </section>
 
-    <!-- Main Dashboard -->
+    <!-- Main Bento Grid -->
     <section class="main-grid">
       <!-- Left: Honest Verdict & Gear Guide -->
       <div class="card">
@@ -771,8 +1000,11 @@
 
         <div id="verdictBox" class="verdict-box green">
           <div class="verdict-top">
-            <div class="verdict-status" id="verdictStatus">Cargando pronóstico...</div>
-            <div class="temp-pill" id="tempDisplay">--°C</div>
+            <div>
+              <span class="verdict-pill-label">Veredicto en tiempo real</span>
+              <div class="verdict-status" id="verdictStatus">Cargando pronóstico...</div>
+            </div>
+            <div class="temp-pill" id="tempDisplay">--°</div>
           </div>
           <p class="verdict-desc" id="verdictDesc">Consultando datos meteorológicos en tiempo real desde Open-Meteo...</p>
 
@@ -786,7 +1018,7 @@
               <strong id="uvVal">--</strong>
             </div>
             <div class="metric-item">
-              <small>Ráfagas viento</small>
+              <small>Viento</small>
               <strong id="windVal">-- km/h</strong>
             </div>
             <div class="metric-item">
@@ -796,20 +1028,20 @@
           </div>
         </div>
 
-        <h3 style="font-size: 0.92rem; margin-bottom: 10px; color: #e2e8f0;">🎒 Guía honesta: qué ropa y protección llevar</h3>
+        <div class="sub-heading">🎒 Guía honesta: qué ropa y protección llevar</div>
         <div class="gear-grid" id="gearGrid"></div>
 
-        <!-- Hourly Forecast (Unlocked in Plus & Pro) -->
-        <div style="margin-top: 16px;">
+        <!-- Hourly Forecast -->
+        <div style="margin-top: 20px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <h3 style="font-size: 0.92rem; color: #e2e8f0;">⏱️ Pronóstico próximas horas y alerta eléctrica</h3>
-            <span style="font-size: 0.74rem; color: var(--cyan);" id="hourlyTag">Vista previa</span>
+            <span class="sub-heading" style="margin-bottom:0;">⏱️ Pronóstico próximas horas</span>
+            <span style="font-size: 0.74rem; color: var(--cyan); font-weight:600;" id="hourlyTag">Vista previa</span>
           </div>
           <div class="lock-wrapper">
             <div class="hourly-strip locked-blur" id="hourlyStrip"></div>
             <div class="lock-overlay" id="hourlyLock">
-              <p>🔒 Pronóstico exacto por horas y alerta de tormenta disponible en Plus ($1,99/mes) y Pro ($2,99/mes)</p>
-              <button class="btn btn-primary" style="padding:7px 12px; font-size:0.78rem;" onclick="setTier('plus')">Probar vista Plus ahora</button>
+              <p>🔒 Pronóstico exacto por horas y alerta eléctrica en Plus ($1,99/mes) y Pro ($2,99/mes)</p>
+              <button class="btn btn-primary" style="padding:8px 14px; font-size:0.78rem;" onclick="setTier('plus')">Probar vista Plus</button>
             </div>
           </div>
         </div>
@@ -818,7 +1050,10 @@
       <!-- Right: Interactive Mini-Map & App Access -->
       <div class="card">
         <div class="card-header">
-          <h2 class="card-title">🗺️ Mini Mapa Climático Interactivo</h2>
+          <div>
+            <h2 class="card-title">🗺️ Mini Mapa Climático</h2>
+            <small style="color: var(--muted);">Exploración espacial en vivo</small>
+          </div>
           <span class="badge" id="mapPrecisionBadge">Nivel Provincia</span>
         </div>
 
@@ -829,11 +1064,11 @@
           <span id="lastUpdated">Actualizado: --:--</span>
         </div>
 
-        <div style="margin-top: 14px; background: var(--bg-soft); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+        <div class="app-banner-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
             <div>
-              <strong style="font-size: 0.88rem; display:block;">📲 App Móvil NimboSignal (Android)</strong>
-              <small style="color: var(--muted); font-size: 0.78rem;" id="appTierHint">Incluida en Plan Pro ($2,99/mes) con alertas prioritarias.</small>
+              <strong style="font-size: 0.9rem; display:block; color:#ffffff;">📲 App Móvil NimboSignal (Android)</strong>
+              <small style="color: var(--text-secondary); font-size: 0.78rem;" id="appTierHint">Incluida en Plan Pro ($2,99/mes) con alertas prioritarias.</small>
             </div>
             <button class="btn btn-primary" id="downloadAppBtn" onclick="openAppModal()">Ver App Pro</button>
           </div>
@@ -845,15 +1080,15 @@
     <section id="ecuadorSection" class="elnino-section">
       <div class="card-header" style="margin-bottom: 6px;">
         <div>
-          <h2 class="card-title" style="font-size: 1.12rem;">🇪🇨 Módulo Especial: Fenómeno de El Niño — Ecuador</h2>
-          <p style="font-size: 0.84rem; color: #cbd5e1;">Seguimiento preventivo de lluvias intensas, tormentas eléctricas y resumen de boletines oficiales verificados con NotebookLM y Gemini.</p>
+          <h2 class="card-title" style="font-size: 1.15rem;">🇪🇨 Módulo Especial: Fenómeno de El Niño — Ecuador</h2>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top:2px;">Seguimiento preventivo de lluvias intensas, tormentas eléctricas y resumen de boletines oficiales verificados con NotebookLM y Gemini.</p>
         </div>
-        <span class="badge" style="background: rgba(245, 158, 11, 0.18); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">ENFOQUE ECUADOR</span>
+        <span class="badge" style="background: rgba(245, 158, 11, 0.18); color: #fbbf24; border-color: rgba(245, 158, 11, 0.45);">ENFOQUE ECUADOR</span>
       </div>
 
       <div class="elnino-grid">
         <div>
-          <strong style="font-size: 0.86rem; color: #fde68a;">Selecciona una zona en Ecuador para evaluar riesgo preventivo:</strong>
+          <span class="sub-heading" style="color: #fde68a; display:block;">Selecciona una zona en Ecuador:</span>
           <div class="ecuador-cities">
             <button class="ec-city-btn" onclick="loadLocation('Pasaje, El Oro', 'Ecuador', -3.3256, -79.8069, true)">📍 Pasaje (El Oro)</button>
             <button class="ec-city-btn" onclick="loadLocation('Machala, El Oro', 'Ecuador', -3.2581, -79.9554, true)">📍 Machala (El Oro)</button>
@@ -863,16 +1098,16 @@
             <button class="ec-city-btn" onclick="loadLocation('Quito, Pichincha', 'Ecuador', -0.1807, -78.4678, true)">📍 Quito (Pichincha)</button>
           </div>
 
-          <div id="floodRiskBox" style="margin-top: 12px; background: rgba(8,16,33,0.7); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px;">
-            <strong style="font-size: 0.86rem; color: #ffffff;" id="floodRiskTitle">Riesgo preventivo por lluvia acumulada (24h): Evaluando...</strong>
-            <p style="font-size: 0.81rem; color: #cbd5e1; margin-top: 4px;" id="floodRiskDesc">Calculando precipitación acumulada en la zona seleccionada.</p>
+          <div id="floodRiskBox" class="flood-risk-card">
+            <strong style="font-size: 0.88rem; color: #ffffff;" id="floodRiskTitle">Riesgo preventivo por lluvia acumulada (24h): Evaluando...</strong>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 5px;" id="floodRiskDesc">Calculando precipitación acumulada en la zona seleccionada.</p>
           </div>
         </div>
 
         <div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-            <strong style="font-size: 0.86rem; color: #ffffff;">📰 Boletines y recomendaciones verificadas (NotebookLM)</strong>
-            <span style="font-size: 0.72rem; color: var(--cyan);" id="newsAccessBadge">Vista resumida</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+            <span class="sub-heading" style="color: #ffffff; margin-bottom:0;">📰 Boletines verificados (NotebookLM)</span>
+            <span style="font-size: 0.74rem; color: var(--cyan); font-weight:600;" id="newsAccessBadge">Vista resumida</span>
           </div>
 
           <div class="lock-wrapper" style="margin-top:0;">
@@ -903,7 +1138,7 @@
     <section class="plans-section">
       <div class="card-header">
         <div>
-          <h2 class="card-title">💎 Planes NimboSignal (Publicidad Ética y Acceso Escalonado)</h2>
+          <h2 class="card-title" style="font-size: 1.15rem;">💎 Planes NimboSignal</h2>
           <small style="color: var(--muted);">Tarifas propuestas en fase piloto (supuestos por validar). En el plan gratuito jamás se muestran pop-ups que bloqueen alertas climáticas.</small>
         </div>
       </div>
@@ -918,7 +1153,7 @@
               <li>✅ Semáforo honesto "¿Puedo salir hoy?"</li>
               <li>✅ Guía básica de ropa y protección</li>
               <li>✅ Vista general módulo El Niño Ecuador</li>
-              <li>ℹ️ Banner inferior discreto (cero pop-ups invasivos)</li>
+              <li>ℹ️ Banner inferior discreto (cero pop-ups)</li>
             </ul>
           </div>
           <button class="btn btn-secondary" onclick="setTier('free')">Activar vista Gratuito</button>
@@ -926,7 +1161,7 @@
 
         <div class="plan-card featured">
           <div>
-            <span class="badge">PLAN PLUS • WEB SIN ANUNCIOS</span>
+            <span class="badge">PLAN PLUS • SIN ANUNCIOS</span>
             <div class="plan-price">$1,99 <span>USD / mes</span></div>
             <ul class="plan-features">
               <li>✅ <strong>100% libre de anuncios</strong></li>
@@ -941,7 +1176,7 @@
 
         <div class="plan-card">
           <div>
-            <span class="badge" style="color:#e9d5ff; border-color:rgba(168,85,247,0.45); background:rgba(168,85,247,0.16);">PLAN PRO • WEB + APP</span>
+            <span class="badge" style="color:#e9d5ff; border-color:rgba(168,85,247,0.45); background:rgba(168,85,247,0.18);">PLAN PRO • WEB + APP</span>
             <div class="plan-price">$2,99 <span>USD / mes</span></div>
             <ul class="plan-features">
               <li>✅ Todo lo incluido en el Plan Plus</li>
@@ -951,7 +1186,7 @@
               <li>🎁 14 días de prueba piloto gratuita</li>
             </ul>
           </div>
-          <button class="btn btn-primary" style="background:linear-gradient(135deg,#22d3ee,#a855f7); color:#fff;" onclick="setTier('pro')">Probar vista Pro</button>
+          <button class="btn btn-primary" style="background:linear-gradient(135deg,#38bdf8,#a855f7); color:#fff;" onclick="setTier('pro')">Probar vista Pro</button>
         </div>
       </div>
     </section>
@@ -959,25 +1194,31 @@
 
   <footer>
     <div class="container">
-      <strong>NimboSignal</strong> — Proyecto de Emprendimiento con IA • Desarrollado por Jairo Evander Martínez Ortega (Pasaje, El Oro, Ecuador). Datos meteorológicos abiertos en vivo vía Open-Meteo y cartografía OpenStreetMap.
+      <p><strong>NimboSignal</strong> — Proyecto de Emprendimiento con IA • Pasaje, El Oro, Ecuador. Datos meteorológicos abiertos en vivo vía Open-Meteo y cartografía OpenStreetMap.</p>
+      <div class="watermark-wrap">
+        <div class="creator-watermark" title="Marca de agua del creador">
+          <span class="wm-dot"></span>
+          <span>Diseñado y desarrollado por <strong>Evmj23</strong></span>
+        </div>
+      </div>
     </div>
   </footer>
 
-  <!-- Discrete Bottom Ad Banner (Only shown on Free Tier; never blocks alerts) -->
+  <!-- Discrete Bottom Ad Banner -->
   <div id="ethicalAdBar" class="ethical-ad-bar">
     <span class="ad-tag">Anuncio discreto</span>
     <span>Plan Gratuito apoyado por publicidad no invasiva. ¿Quieres GPS exacto y cero anuncios?</span>
     <button class="chip" style="border-color:var(--cyan); color:var(--cyan);" onclick="setTier('plus')">Ver Plus ($1,99/mes)</button>
   </div>
 
-  <!-- Android App Download / Pilot Modal -->
+  <!-- Android App Modal -->
   <div id="appModal" class="modal-backdrop" onclick="if(event.target===this) closeAppModal()">
     <div class="modal-box">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <h3 style="font-size:1.05rem;">📲 App Móvil NimboSignal (Android)</h3>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="font-size:1.08rem;">📲 App Móvil NimboSignal (Android)</h3>
         <button class="chip" onclick="closeAppModal()">✕</button>
       </div>
-      <p id="modalBodyText" style="font-size:0.88rem; color:#cbd5e1; margin-bottom:14px;"></p>
+      <p id="modalBodyText" style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:18px; line-height:1.55;"></p>
       <div style="display:flex; gap:8px; justify-content:flex-end;">
         <button class="btn btn-secondary" onclick="closeAppModal()">Cerrar</button>
         <button class="btn btn-primary" id="modalActionBtn" onclick="setTier('pro'); closeAppModal();">Activar modo Pro</button>
@@ -1101,8 +1342,8 @@
           const region = item.admin1 ? `, ${item.admin1}` : '';
           const country = item.country || '';
           const isEc = (item.country_code === 'EC');
-          const safeName = `${item.name}${region}`.replace(/'/g, "\\'");
-          const safeCountry = country.replace(/'/g, "\\'");
+          const safeName = `${item.name}${region}`.replace(/'/g, "\'");
+          const safeCountry = country.replace(/'/g, "\'");
           return `<div class="search-item" onclick="selectCity('${safeName}', '${safeCountry}', ${item.latitude}, ${item.longitude}, ${isEc})">
             <strong>${item.name}</strong>${region} — <span style="color:var(--cyan)">${country}</span>
           </div>`;
@@ -1185,7 +1426,7 @@
       const gusts = Math.round(cur.wind_gusts_10m || cur.wind_speed_10m || 0);
       const code = cur.weather_code;
 
-      document.getElementById('tempDisplay').textContent = `${temp}°C`;
+      document.getElementById('tempDisplay').textContent = `${temp}°`;
       document.getElementById('rainVal').textContent = `${rain.toFixed(1)} mm`;
       document.getElementById('uvVal').textContent = `${uv.toFixed(1)}`;
       document.getElementById('windVal').textContent = `${gusts} km/h`;
@@ -1236,6 +1477,7 @@
       }
 
       vBox.classList.add(level);
+      document.body.className = `theme-${level}`;
       vStatus.textContent = statusText;
       vDesc.textContent = reasonText;
 
@@ -1263,8 +1505,8 @@
         <div class="gear-item">
           <div class="gear-icon">${g.icon}</div>
           <div>
-            <strong style="display:block; color:#ffffff;">${g.title}</strong>
-            <span style="color:var(--muted); font-size:0.8rem;">${g.desc}</span>
+            <strong style="display:block; color:#ffffff; font-size:0.88rem;">${g.title}</strong>
+            <span style="color:var(--text-secondary); font-size:0.79rem;">${g.desc}</span>
           </div>
         </div>
       `).join('');
