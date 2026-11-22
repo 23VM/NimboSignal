@@ -1,27 +1,58 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NimboSignal — Veredictos Climáticos Honestos, Colegios, Pasaje y Nimbo AI</title>
+  <title>NimboSignal — Veredictos Climáticos, Colegios, Ríos y Nimbo AI</title>
   <style>
-    :root {
+    :root,
+    [data-theme="dark"] {
       --bg-main: #0b1120;
+      --bg-gradient: radial-gradient(circle at top right, #0f2942 0%, #0b1120 48%);
+      --bg-header: rgba(11, 17, 32, 0.95);
       --bg-surface: #111827;
       --bg-card: #1e293b;
       --bg-card-hover: #263349;
-      --border: rgba(148, 163, 184, 0.18);
+      --bg-sub: rgba(11, 17, 32, 0.74);
+      --bg-chat: rgba(9, 14, 26, 0.72);
+      --border: rgba(148, 163, 184, 0.2);
       --cyan: #06b6d4;
-      --cyan-soft: rgba(6, 182, 212, 0.15);
+      --cyan-soft: rgba(6, 182, 212, 0.16);
       --teal: #10b981;
-      --teal-soft: rgba(16, 185, 129, 0.15);
+      --teal-soft: rgba(16, 185, 129, 0.16);
       --amber: #f59e0b;
-      --amber-soft: rgba(245, 158, 11, 0.15);
+      --amber-soft: rgba(245, 158, 11, 0.16);
       --red: #ef4444;
-      --red-soft: rgba(239, 68, 68, 0.15);
+      --red-soft: rgba(239, 68, 68, 0.16);
       --text-main: #f8fafc;
+      --text-body: #e2e8f0;
       --text-muted: #94a3b8;
+      --chip-text: #bae6fd;
       --radius: 16px;
+    }
+
+    [data-theme="light"] {
+      --bg-main: #f1f5f9;
+      --bg-gradient: radial-gradient(circle at top right, #e0f2fe 0%, #f1f5f9 55%);
+      --bg-header: rgba(255, 255, 255, 0.96);
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8fafc;
+      --bg-sub: #f8fafc;
+      --bg-chat: #f1f5f9;
+      --border: rgba(15, 23, 42, 0.14);
+      --cyan: #0284c7;
+      --cyan-soft: rgba(2, 132, 199, 0.12);
+      --teal: #059669;
+      --teal-soft: rgba(5, 150, 105, 0.12);
+      --amber: #d97706;
+      --amber-soft: rgba(217, 119, 6, 0.12);
+      --red: #dc2626;
+      --red-soft: rgba(220, 38, 38, 0.12);
+      --text-main: #0f172a;
+      --text-body: #1e293b;
+      --text-muted: #475569;
+      --chip-text: #0369a1;
     }
 
     * {
@@ -36,31 +67,32 @@
     }
 
     body {
-      background: radial-gradient(circle at top right, #0f2942 0%, var(--bg-main) 45%);
+      background: var(--bg-gradient);
+      background-color: var(--bg-main);
       color: var(--text-main);
       line-height: 1.6;
       min-height: 100vh;
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
-    /* BARRA SUPERIOR CON CONTADOR DE TOKENS */
     header {
       position: sticky;
       top: 0;
       z-index: 1000;
-      background: rgba(11, 17, 32, 0.94);
+      background: var(--bg-header);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
     }
 
     .topbar {
-      max-width: 1260px;
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 0.75rem 1.25rem;
+      padding: 0.72rem 1.2rem;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 0.75rem;
+      gap: 0.7rem;
     }
 
     .brand {
@@ -75,57 +107,83 @@
       width: 38px;
       height: 38px;
       border-radius: 11px;
-      background: linear-gradient(135deg, var(--cyan), var(--teal));
+      background: linear-gradient(135deg, #06b6d4, #10b981);
       display: grid;
       place-items: center;
       font-weight: 800;
       font-size: 1.15rem;
       color: #06131f;
-      box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+      box-shadow: 0 0 18px rgba(6, 182, 212, 0.3);
     }
 
     .brand-text strong {
-      font-size: 1.15rem;
+      font-size: 1.12rem;
       display: block;
       line-height: 1.1;
     }
 
     .brand-text span {
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       color: var(--cyan);
+      font-weight: 600;
     }
 
     nav {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.35rem;
+      gap: 0.3rem;
     }
 
     nav a {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       font-weight: 600;
-      padding: 0.42rem 0.72rem;
+      padding: 0.4rem 0.68rem;
       border-radius: 10px;
       transition: 0.2s;
     }
 
     nav a:hover {
       color: var(--text-main);
-      background: rgba(255, 255, 255, 0.06);
+      background: var(--cyan-soft);
     }
 
-    /* HUD DE TOKENS ARRIBA */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+
+    .theme-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 0.42rem 0.78rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: 0.2s;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--cyan);
+    }
+
     .token-hud {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      background: linear-gradient(135deg, rgba(6, 182, 212, 0.18), rgba(16, 185, 129, 0.15));
-      border: 1px solid rgba(6, 182, 212, 0.45);
-      padding: 0.45rem 0.85rem;
+      gap: 0.55rem;
+      background: var(--cyan-soft);
+      border: 1px solid rgba(6, 182, 212, 0.42);
+      padding: 0.42rem 0.82rem;
       border-radius: 999px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
     }
 
     .token-hud strong {
@@ -133,9 +191,9 @@
     }
 
     .token-bar-mini {
-      width: 60px;
+      width: 56px;
       height: 7px;
-      background: rgba(15, 23, 42, 0.9);
+      background: rgba(148, 163, 184, 0.28);
       border-radius: 999px;
       overflow: hidden;
     }
@@ -143,14 +201,14 @@
     .token-bar-fill {
       height: 100%;
       width: 100%;
-      background: linear-gradient(90deg, var(--teal), var(--cyan));
+      background: linear-gradient(90deg, #10b981, #06b6d4);
       transition: width 0.35s ease;
     }
 
     .container {
-      max-width: 1260px;
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 1.75rem 1.25rem 4rem;
+      padding: 1.7rem 1.2rem 4rem;
     }
 
     section {
@@ -164,11 +222,11 @@
       justify-content: space-between;
       align-items: flex-end;
       gap: 1rem;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.2rem;
     }
 
     .section-head h2 {
-      font-size: 1.55rem;
+      font-size: 1.52rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -179,16 +237,15 @@
       font-size: 0.92rem;
     }
 
-    /* HERO VEREDICTO CLIMÁTICO */
     .hero {
-      background: linear-gradient(145deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.96));
+      background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 22px;
-      padding: 1.75rem;
+      padding: 1.7rem;
       display: grid;
       grid-template-columns: 1.4fr 1fr;
       gap: 1.5rem;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.14);
     }
 
     @media (max-width: 900px) {
@@ -200,10 +257,10 @@
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      padding: 0.3rem 0.75rem;
+      gap: 0.35rem;
+      padding: 0.28rem 0.72rem;
       border-radius: 999px;
-      font-size: 0.78rem;
+      font-size: 0.77rem;
       font-weight: 700;
     }
 
@@ -213,14 +270,17 @@
     .badge-red { background: var(--red-soft); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.35); }
 
     .hero h1 {
-      font-size: 1.9rem;
-      margin: 0.75rem 0 0.5rem;
+      font-size: 1.85rem;
+      margin: 0.7rem 0 0.45rem;
       line-height: 1.25;
     }
 
     .verdict-box {
-      background: rgba(11, 17, 32, 0.72);
+      background: var(--bg-sub);
       border-left: 4px solid var(--amber);
+      border-top: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
       padding: 1rem 1.15rem;
       border-radius: 12px;
       margin: 1rem 0;
@@ -229,7 +289,7 @@
     .verdict-box strong {
       color: var(--amber);
       display: block;
-      font-size: 1.05rem;
+      font-size: 1.04rem;
       margin-bottom: 0.25rem;
     }
 
@@ -244,8 +304,8 @@
       border: none;
       cursor: pointer;
       font-weight: 600;
-      font-size: 0.85rem;
-      padding: 0.55rem 0.95rem;
+      font-size: 0.84rem;
+      padding: 0.55rem 0.92rem;
       border-radius: 10px;
       transition: 0.2s;
       display: inline-flex;
@@ -254,17 +314,17 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--cyan), var(--teal));
+      background: linear-gradient(135deg, #06b6d4, #10b981);
       color: #06131f;
     }
 
     .btn-primary:hover {
-      filter: brightness(1.08);
+      filter: brightness(1.07);
       transform: translateY(-1px);
     }
 
     .btn-outline {
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--bg-sub);
       color: var(--text-main);
       border: 1px solid var(--border);
     }
@@ -276,10 +336,10 @@
     }
 
     .metrics-panel {
-      background: rgba(11, 17, 32, 0.75);
+      background: var(--bg-sub);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 1.25rem;
+      padding: 1.2rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -306,21 +366,21 @@
     }
 
     .metric-item strong {
-      font-size: 1.25rem;
+      font-size: 1.22rem;
       color: var(--text-main);
     }
 
     /* SECCIÓN GUÍA Y AYUDA: NIMBO AI */
     .nimbo-ai-wrapper {
-      background: linear-gradient(160deg, #131f38 0%, #0f172a 100%);
+      background: var(--bg-card);
       border: 1px solid rgba(6, 182, 212, 0.45);
       border-radius: 22px;
       overflow: hidden;
-      box-shadow: 0 18px 40px rgba(6, 182, 212, 0.12);
+      box-shadow: 0 14px 34px rgba(6, 182, 212, 0.1);
     }
 
     .nimbo-ai-header {
-      background: rgba(6, 182, 212, 0.1);
+      background: var(--cyan-soft);
       border-bottom: 1px solid var(--border);
       padding: 1rem 1.35rem;
       display: flex;
@@ -340,27 +400,27 @@
       width: 42px;
       height: 42px;
       border-radius: 12px;
-      background: linear-gradient(135deg, var(--cyan), #3b82f6);
+      background: linear-gradient(135deg, #06b6d4, #3b82f6);
       display: grid;
       place-items: center;
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       color: #06131f;
       font-weight: 800;
     }
 
     .chat-box {
-      height: 360px;
+      height: 380px;
       overflow-y: auto;
       padding: 1.25rem;
       display: flex;
       flex-direction: column;
       gap: 0.9rem;
-      background: rgba(9, 14, 26, 0.65);
+      background: var(--bg-chat);
     }
 
     .msg {
-      max-width: 82%;
-      padding: 0.85rem 1.05rem;
+      max-width: 84%;
+      padding: 0.88rem 1.05rem;
       border-radius: 15px;
       font-size: 0.92rem;
       line-height: 1.5;
@@ -369,13 +429,14 @@
     .msg-ai {
       align-self: flex-start;
       background: var(--bg-card);
+      color: var(--text-main);
       border: 1px solid var(--border);
       border-bottom-left-radius: 4px;
     }
 
     .msg-user {
       align-self: flex-end;
-      background: linear-gradient(135deg, var(--cyan), #0284c7);
+      background: linear-gradient(135deg, #06b6d4, #0284c7);
       color: #04121d;
       font-weight: 600;
       border-bottom-right-radius: 4px;
@@ -387,23 +448,23 @@
       flex-wrap: wrap;
       gap: 0.45rem;
       border-top: 1px solid var(--border);
-      background: rgba(15, 23, 42, 0.7);
+      background: var(--bg-sub);
     }
 
     .chip-btn {
-      background: rgba(6, 182, 212, 0.12);
-      border: 1px solid rgba(6, 182, 212, 0.3);
-      color: #bae6fd;
-      padding: 0.35rem 0.7rem;
+      background: var(--cyan-soft);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      color: var(--chip-text);
+      padding: 0.36rem 0.72rem;
       border-radius: 999px;
       font-size: 0.78rem;
+      font-weight: 600;
       cursor: pointer;
       transition: 0.2s;
     }
 
     .chip-btn:hover {
-      background: rgba(6, 182, 212, 0.25);
-      color: #fff;
+      background: rgba(6, 182, 212, 0.26);
     }
 
     .chat-input-area {
@@ -416,7 +477,7 @@
 
     .chat-input-area input, .search-bar {
       flex: 1;
-      background: #0b1120;
+      background: var(--bg-sub);
       border: 1px solid var(--border);
       color: var(--text-main);
       padding: 0.75rem 1rem;
@@ -429,7 +490,6 @@
       border-color: var(--cyan);
     }
 
-    /* GRIDS Y TARJETAS */
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
@@ -452,11 +512,12 @@
       flex-direction: column;
       justify-content: space-between;
       gap: 0.85rem;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
     }
 
     .card:hover {
       background: var(--bg-card-hover);
-      border-color: rgba(6, 182, 212, 0.4);
+      border-color: rgba(6, 182, 212, 0.45);
       transform: translateY(-2px);
     }
 
@@ -479,10 +540,11 @@
 
     .card-meta {
       font-size: 0.83rem;
-      background: rgba(11, 17, 32, 0.58);
-      padding: 0.7rem 0.85rem;
+      background: var(--bg-sub);
+      color: var(--text-body);
+      padding: 0.72rem 0.85rem;
       border-radius: 10px;
-      border: 1px solid rgba(148, 163, 184, 0.1);
+      border: 1px solid var(--border);
     }
 
     .filter-row {
@@ -507,7 +569,7 @@
 
     .enso-card.active-level {
       border: 2px solid var(--amber);
-      box-shadow: 0 0 25px rgba(245, 158, 11, 0.15);
+      box-shadow: 0 0 22px rgba(245, 158, 11, 0.14);
     }
 
     .price {
@@ -529,7 +591,7 @@
       flex-direction: column;
       gap: 0.45rem;
       font-size: 0.86rem;
-      color: #cbd5e1;
+      color: var(--text-body);
     }
 
     footer {
@@ -538,13 +600,12 @@
       text-align: center;
       color: var(--text-muted);
       font-size: 0.85rem;
-      background: rgba(11, 17, 32, 0.9);
+      background: var(--bg-surface);
     }
   </style>
 </head>
 <body>
 
-  <!-- BARRA SUPERIOR FIJA CON CUENTA DE TOKENS -->
   <header>
     <div class="topbar">
       <a href="#inicio" class="brand">
@@ -560,18 +621,23 @@
         <a href="#nimbo-ai">🤖 Guía Nimbo AI</a>
         <a href="#colegios">🏫 Colegios</a>
         <a href="#pasaje">🚌 Pasaje y Rutas</a>
-        <a href="#turismo">🌴 Turismo</a>
+        <a href="#turismo">🌴 Ríos y Turismo</a>
         <a href="#elnino">🌊 El Niño</a>
         <a href="#planes">💎 Planes</a>
       </nav>
 
-      <!-- CONTADOR DE TOKENS ARRIBA -->
-      <div class="token-hud" title="Tienes 10 tokens gratuitos diarios para consultar a Nimbo AI">
-        <span>⚡ Tokens Nimbo AI:</span>
-        <strong id="topTokensLeft">10/10</strong>
-        <span style="color: var(--text-muted);">| Gastados: <b id="topTokensUsed" style="color:#f8fafc;">0</b>/10</span>
-        <div class="token-bar-mini">
-          <div class="token-bar-fill" id="topTokenBar"></div>
+      <div class="header-actions">
+        <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Cambiar entre tema claro y oscuro">
+          ☀️ Claro
+        </button>
+
+        <div class="token-hud" title="Tienes 10 tokens gratuitos diarios para consultar a Nimbo AI">
+          <span>⚡ Tokens:</span>
+          <strong id="topTokensLeft">10/10</strong>
+          <span style="color: var(--text-muted);">| Usados: <b id="topTokensUsed" style="color:var(--text-main);">0</b>/10</span>
+          <div class="token-bar-mini">
+            <div class="token-bar-fill" id="topTokenBar"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -579,18 +645,18 @@
 
   <main class="container">
 
-    <!-- 1. TABLERO PRINCIPAL: VEREDICTO CLIMÁTICO HONESTO -->
+    <!-- 1. TABLERO PRINCIPAL -->
     <section id="inicio" class="hero">
       <div>
         <span class="badge badge-cyan">📡 Radar Hiperlocal & Transparencia Radical</span>
         <h1 id="heroCityTitle">Veredicto Climático: Pasaje, El Oro</h1>
         <p style="color: var(--text-muted); font-size: 0.94rem;">
-          Sin porcentajes confusos ni alarmismo. Diagnóstico directo en menos de 5 segundos para estudiantes, motociclistas, familias y comercios locales.
+          Sin porcentajes confusos ni alarmismo. Diagnóstico directo en menos de 5 segundos para estudiantes, motociclistas, turistas y familias.
         </p>
 
         <div class="verdict-box">
           <strong id="verdictHeadline">Cargando veredicto honesto en tiempo real...</strong>
-          <span id="verdictDetail" style="font-size: 0.9rem; color: #e2e8f0;">
+          <span id="verdictDetail" style="font-size: 0.9rem; color: var(--text-body);">
             Conectando con estación meteorológica satelital Open-Meteo...
           </span>
         </div>
@@ -628,22 +694,22 @@
             <strong id="metricRisk" style="color: var(--teal);">Bajo</strong>
           </div>
         </div>
-        <p style="font-size: 0.8rem; color: var(--text-muted);">
-          💡 ¿Quieres saber cómo está un colegio específico o cualquier lugar del mundo? Pregúntale abajo a <strong>Nimbo AI</strong>.
+        <p style="font-size: 0.82rem; color: var(--text-muted);">
+          💡 Consulta abajo a <strong>Nimbo AI</strong> por cualquier colegio (Carmen Mora, Juan Pablo II, Ochoa León...), río (La Cocha, Jubones, Casacay, Dos Bocas, Palenque) o ciudad del mundo.
         </p>
       </div>
     </section>
 
-    <!-- 2. SECCIÓN INNOVADORA: GUÍA Y AYUDA INTELIGENTE — NIMBO AI (10 TOKENS/DÍA) -->
+    <!-- 2. SECCIÓN GUÍA Y AYUDA: NIMBO AI -->
     <section id="nimbo-ai">
       <div class="section-head">
         <div>
           <h2>🤖 Guía y Ayuda — Nimbo AI</h2>
-          <p>Pregunta cómo está cualquier colegio de Pasaje, Ecuador o cualquier parte del mundo en tiempo real.</p>
+          <p>Pregunta por cualquier colegio de Pasaje, todos los ríos y balnearios (La Cocha, Jubones, Casacay, Dos Bocas, Palenque) o cualquier lugar del mundo.</p>
         </div>
         <div style="display:flex; align-items:center; gap:0.6rem;">
           <span class="badge badge-cyan" id="chatTokenBadge">10 tokens disponibles hoy</span>
-          <button class="btn btn-outline" style="font-size:0.75rem; padding:0.35rem 0.65rem;" onclick="resetDemoTokens()" title="Botón de demostración para reiniciar los 10 tokens diarios">↻ Demo</button>
+          <button class="btn btn-outline" style="font-size:0.75rem; padding:0.35rem 0.65rem;" onclick="resetDemoTokens()">↻ Demo</button>
         </div>
       </div>
 
@@ -652,7 +718,7 @@
           <div class="nimbo-ai-title">
             <div class="ai-avatar">AI</div>
             <div>
-              <strong style="display:block; font-size:1rem;">Nimbo AI • Guía Escolar, Vial y Climática Mundial</strong>
+              <strong style="display:block; font-size:1rem;">Nimbo AI • Guía Escolar, Ríos, Vial y Climática Mundial</strong>
               <span style="font-size:0.8rem; color: var(--teal);">● Activo • 10 tokens gratuitos diarios (1 consulta = 1 token)</span>
             </div>
           </div>
@@ -664,24 +730,25 @@
         <div class="chat-box" id="chatBox">
           <div class="msg msg-ai">
             👋 ¡Hola! Soy <strong>Nimbo AI</strong>, tu sección de guía y ayuda inteligente.<br><br>
-            Cuentas con <strong>10 tokens gratuitos cada día</strong> (puedes ver tu saldo y tokens gastados en la barra superior). Pregúntame cómo está cualquier <strong>colegio</strong>, <strong>sector de Pasaje</strong>, <strong>pasaje/ruta</strong> o <strong>ciudad de cualquier parte del mundo</strong>.<br><br>
-            <em>Prueba preguntando: "¿Cómo está el colegio Carmen Mora de Encalada?" o "¿Cómo está el colegio San Patricio en Madrid?"</em>
+            Cuentas con <strong>10 tokens gratuitos cada día</strong> (puedes ver tu saldo arriba). Pregúntame cómo está cualquier <strong>colegio</strong> (Carmen Mora, Juan Pablo II, Ochoa León...), cualquier <strong>río o balneario</strong> (La Cocha, Río Jubones, Casacay, Dos Bocas, Río Palenque) o cualquier <strong>ciudad del mundo</strong>.
           </div>
         </div>
 
         <div class="quick-prompts">
-          <button class="chip-btn" onclick="quickAsk('¿Cómo está el colegio Carmen Mora de Encalada?')">🏫 Colegio Carmen Mora de Encalada</button>
-          <button class="chip-btn" onclick="quickAsk('¿Cómo está el colegio Ochoa León?')">🏫 Colegio Ochoa León</button>
-          <button class="chip-btn" onclick="quickAsk('¿Cómo están los pasajes y la vía Pasaje - Machala?')">🚌 Pasajes y vía Pasaje - Machala</button>
-          <button class="chip-btn" onclick="quickAsk('¿Cómo está el colegio San Patricio en Madrid?')">🌍 Colegio en Madrid, España</button>
-          <button class="chip-btn" onclick="quickAsk('¿Cómo está Tokio, Japón?')">🌍 Clima en Tokio</button>
+          <button class="chip-btn" onclick="quickAsk('¿Cómo está el colegio Carmen Mora de Encalada?')">🏫 Carmen Mora</button>
+          <button class="chip-btn" onclick="quickAsk('¿Cómo está el colegio Juan Pablo II?')">🏫 Juan Pablo II</button>
+          <button class="chip-btn" onclick="quickAsk('¿Cómo está el Balneario La Cocha, Pasaje?')">🏞️ Río / Balneario La Cocha</button>
+          <button class="chip-btn" onclick="quickAsk('¿Cómo está el Río Jubones y Casacay?')">🌊 Río Jubones / Casacay</button>
+          <button class="chip-btn" onclick="quickAsk('¿Cómo está Dos Bocas y Río Buenavista?')">🌿 Dos Bocas / Buenavista</button>
+          <button class="chip-btn" onclick="quickAsk('¿Cómo están los pasajes y la vía Pasaje - Machala?')">🚌 Pasajes Machala</button>
+          <button class="chip-btn" onclick="quickAsk('¿Cómo está el clima en Madrid, España?')">🌍 Madrid</button>
         </div>
 
         <form class="chat-input-area" onsubmit="handleChatSubmit(event)">
           <input
             type="text"
             id="aiInput"
-            placeholder="Pregunta aquí: Ej. ¿Cómo está el colegio tal? o ¿Cómo está París?"
+            placeholder="Pregunta aquí: Ej. ¿Cómo está La Cocha?, ¿Cómo está el Juan Pablo II? o ¿Cómo está Tokio?"
             autocomplete="off"
             required
           />
@@ -704,7 +771,7 @@
           type="text"
           id="schoolSearch"
           class="search-bar"
-          placeholder="🔍 Buscar colegio por nombre o sector (ej. Carmen Mora, Ochoa León, Buenavista, Casacay, La Peaña, Machala)..."
+          placeholder="🔍 Buscar colegio por nombre o sector (ej. Carmen Mora, Juan Pablo II, Ochoa León, Buenavista, Casacay)..."
           oninput="renderSchools()"
         />
         <button class="btn btn-outline active" onclick="setSchoolFilter('todos', this)">Todos</button>
@@ -715,7 +782,7 @@
       <div class="grid-3" id="schoolsGrid"></div>
     </section>
 
-    <!-- 4. SECCIÓN DE PASAJE: SECTORES CRÍTICOS, RÍO JUBONES Y PASAJES / RUTAS -->
+    <!-- 4. SECCIÓN DE PASAJE: SECTORES CRÍTICOS, RÍO JUBONES Y PASAJES -->
     <section id="pasaje">
       <div class="section-head">
         <div>
@@ -757,32 +824,50 @@
       </div>
     </section>
 
-    <!-- 5. SECCIÓN DE TURISMO Y BALNEARIOS -->
+    <!-- 5. SECCIÓN DE RÍOS, BALNEARIOS Y TURISMO -->
     <section id="turismo">
       <div class="section-head">
         <div>
-          <h2>🌴 Turismo y Balnearios (Pasaje y El Oro)</h2>
-          <p>Recomendaciones honestas para visitas a ríos, balnearios y zonas altas de la provincia.</p>
+          <h2>🌴 Ríos, Balnearios y Turismo (Pasaje y El Oro)</h2>
+          <p>Recomendaciones honestas de caudal, agua y clima para visitas a ríos, balnearios y zonas altas.</p>
         </div>
       </div>
 
       <div class="grid-3">
         <div class="card">
           <div class="card-top">
-            <h3>🏞️ Balneario La Cocha y Casacay</h3>
+            <h3>🏞️ Balneario La Cocha (Pasaje)</h3>
             <span class="badge badge-teal">Apto en la mañana</span>
           </div>
-          <p>Excelente horario entre 08:00 y 13:30. Si se observa nubosidad oscura hacia la montaña, retirarse de la orilla por precaución.</p>
-          <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el clima en Casacay y La Cocha, Pasaje?')">Consultar en Nimbo AI</button>
+          <p>Horario ideal: <strong>08:00 a 13:30</strong>. Aguas claras por la mañana; si se observa nubosidad oscura hacia la montaña, retirarse de la orilla por precaución.</p>
+          <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el Balneario La Cocha, Pasaje?')">🤖 Consultar La Cocha en Nimbo AI</button>
         </div>
 
         <div class="card">
           <div class="card-top">
-            <h3>🌊 Dos Bocas y Buenavista</h3>
+            <h3>🌊 Río Jubones y Casacay</h3>
+            <span class="badge badge-amber">Vigilancia Tarde</span>
+          </div>
+          <p>Ideal para gastronomía y recreación matutina. Vigilar el color del agua ante lluvias en la cuenca alta (Uzhcurrumi / Girón).</p>
+          <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el Río Jubones y Casacay?')">🤖 Consultar Río Jubones en Nimbo AI</button>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <h3>🌿 Dos Bocas y Río Buenavista</h3>
             <span class="badge badge-teal">Favorable</span>
           </div>
           <p>Clima cálido húmedo ideal para recreación familiar. Llevar hidratación, protector solar y poncho ligero para el regreso.</p>
-          <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el clima en Buenavista, Pasaje?')">Consultar en Nimbo AI</button>
+          <button class="btn btn-outline" onclick="quickAsk('¿Cómo está Dos Bocas y Río Buenavista?')">🤖 Consultar Dos Bocas en Nimbo AI</button>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <h3>💧 Río Palenque y El Bosque</h3>
+            <span class="badge badge-teal">Aguas Claras</span>
+          </div>
+          <p>Corriente moderada y entorno natural fresco. Recomendado acudir antes de las 14:00 para evitar lluvias dispersas de la tarde.</p>
+          <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el Río Palenque en Pasaje?')">🤖 Consultar Río Palenque en Nimbo AI</button>
         </div>
 
         <div class="card">
@@ -790,13 +875,22 @@
             <h3>⛰️ Zaruma y Parte Alta de El Oro</h3>
             <span class="badge badge-amber">Neblina vespertina</span>
           </div>
-          <p>Temperatura fresca con llovizna y neblina en carretera después de las 15:00. Conducir con luces bajas.</p>
-          <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el clima en Zaruma, El Oro?')">Consultar en Nimbo AI</button>
+          <p>Temperatura fresca (17°C–22°C) con llovizna y neblina en carretera después de las 15:00. Conducir con luces bajas.</p>
+          <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el clima en Zaruma, El Oro?')">🤖 Consultar Zaruma en Nimbo AI</button>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <h3>🏖️ Isla Jambelí, Bajoalto y Puerto Bolívar</h3>
+            <span class="badge badge-cyan">Brisa Marina</span>
+          </div>
+          <p>Buen oleaje en horas de la mañana. Revisar horarios de marea antes de cruzar en lancha desde Puerto Bolívar o Bajoalto.</p>
+          <button class="btn btn-outline" onclick="quickAsk('¿Cómo está Isla Jambelí, Bajoalto y Puerto Bolívar?')">🤖 Consultar Costa El Oro en Nimbo AI</button>
         </div>
       </div>
     </section>
 
-    <!-- 6. SEMÁFORO PREVENTIVO FENÓMENO DE EL NIÑO (ENSO) -->
+    <!-- 6. SEMÁFORO PREVENTIVO FENÓMENO DE EL NIÑO -->
     <section id="elnino">
       <div class="section-head">
         <div>
@@ -846,7 +940,7 @@
             <div class="price">$0,00 <span>/ mes</span></div>
             <ul class="plan-list">
               <li>✔ Veredicto climático honesto diario (Pasaje)</li>
-              <li>✔ Directorio completo de colegios y pasajes</li>
+              <li>✔ Directorio de colegios, ríos y pasajes</li>
               <li>✔ <strong>10 tokens diarios gratuitos</strong> en Nimbo AI</li>
               <li>✔ Semáforo preventivo Fenómeno de El Niño</li>
             </ul>
@@ -895,7 +989,27 @@
 
   <script>
     // ==========================================
-    // 1. DIRECTORIO DE COLEGIOS (PASAJE Y EL ORO)
+    // 0. CAMBIO DE TEMA CLARO / OSCURO
+    // ==========================================
+    const THEME_KEY = 'nimbosignal_theme_v1';
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) {
+        btn.textContent = theme === 'light' ? '🌙 Oscuro' : '☀️ Claro';
+      }
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      localStorage.setItem(THEME_KEY, next);
+      applyTheme(next);
+    }
+
+    // ==========================================
+    // 1. DIRECTORIO DE COLEGIOS (INCLUYE JUAN PABLO II)
     // ==========================================
     const SCHOOLS_DB = [
       {
@@ -906,7 +1020,19 @@
         lon: -79.8069,
         status: 'Jornada Normal',
         badgeClass: 'badge-teal',
+        keywords: ['carmen mora'],
         access: 'Vías asfaltadas transitables. Precaución habitual en horarios de entrada y salida (12:30 y 18:00).'
+      },
+      {
+        name: 'Unidad Educativa Particular "Juan Pablo II"',
+        canton: 'Pasaje',
+        sector: 'Zona Urbana, Pasaje',
+        lat: -3.3242,
+        lon: -79.8082,
+        status: 'Jornada Normal',
+        badgeClass: 'badge-teal',
+        keywords: ['juan pablo'],
+        access: 'Acceso urbano pavimentado en buen estado; llevar paraguas o poncho ligero si hay pronóstico de lluvia vespertina.'
       },
       {
         name: 'Unidad Educativa "Dr. José Ochoa León"',
@@ -916,6 +1042,7 @@
         lon: -79.8045,
         status: 'Jornada Normal',
         badgeClass: 'badge-teal',
+        keywords: ['ochoa'],
         access: 'Acceso despejado. Llevar paraguas ligero si estudias en la jornada vespertina.'
       },
       {
@@ -926,6 +1053,7 @@
         lon: -79.8210,
         status: 'Precaución Tarde',
         badgeClass: 'badge-amber',
+        keywords: ['agropecuario'],
         access: 'Áreas abiertas y prácticas agrícolas; revisar pronóstico antes de actividades de campo.'
       },
       {
@@ -936,6 +1064,7 @@
         lon: -79.8092,
         status: 'Jornada Normal',
         badgeClass: 'badge-teal',
+        keywords: ['jorge icaza'],
         access: 'Calles aledañas sin acumulación de agua; tránsito fluido.'
       },
       {
@@ -946,6 +1075,7 @@
         lon: -79.8055,
         status: 'Jornada Normal',
         badgeClass: 'badge-teal',
+        keywords: ['manuel gonz'],
         access: 'Operativa con normalidad. Precaución para estudiantes que se movilizan en moto.'
       },
       {
@@ -956,6 +1086,7 @@
         lon: -79.8078,
         status: 'Jornada Normal',
         badgeClass: 'badge-teal',
+        keywords: ['san jos'],
         access: 'Acceso rápido y seguro en zona céntrica de Pasaje.'
       },
       {
@@ -966,6 +1097,7 @@
         lon: -79.8120,
         status: 'Precaución Vías Bajas',
         badgeClass: 'badge-amber',
+        keywords: ['aurelio prieto'],
         access: 'Sector bajo: en lluvias fuertes, evitar calles secundarias con drenaje lento.'
       },
       {
@@ -976,6 +1108,7 @@
         lon: -79.8390,
         status: 'Jornada Normal',
         badgeClass: 'badge-teal',
+        keywords: ['colegio buenavista', 'escuela buenavista', 'unidad educativa buenavista'],
         access: 'Vía Pasaje–Buenavista habilitada al 100%. Humedad alta al amanecer.'
       },
       {
@@ -986,6 +1119,7 @@
         lon: -79.7365,
         status: 'Vigilancia Fluvial',
         badgeClass: 'badge-amber',
+        keywords: ['colegio casacay', 'escuela casacay', 'unidad educativa casacay'],
         access: 'Monitoreo preventivo por cercanía al río Jubones; clases normales.'
       },
       {
@@ -996,6 +1130,7 @@
         lon: -79.8520,
         status: 'Jornada Normal',
         badgeClass: 'badge-teal',
+        keywords: ['peaña'],
         access: 'Vía rural transitable; precaución por charcos si llueve en la tarde.'
       },
       {
@@ -1006,6 +1141,7 @@
         lon: -79.9554,
         status: 'Jornada Normal',
         badgeClass: 'badge-teal',
+        keywords: ['kléber', 'kleber'],
         access: 'Ruta Pasaje–Machala operativa. Lloviznas aisladas posibles al atardecer.'
       },
       {
@@ -1016,7 +1152,84 @@
         lon: -79.9595,
         status: 'Jornada Normal',
         badgeClass: 'badge-teal',
+        keywords: ['zoila ugarte'],
         access: 'Acceso urbano normal; clima cálido con nubosidad variable.'
+      }
+    ];
+
+    // ==========================================
+    // 2. BASE DE CONOCIMIENTO DE TODOS LOS RÍOS Y BALNEARIOS
+    // ==========================================
+    const RIVERS_TOURISM_DB = [
+      {
+        name: 'Balneario La Cocha (Río / Quebrada La Cocha, Pasaje)',
+        location: 'Parroquia Casacay / Vía a La Cocha, Pasaje',
+        lat: -3.3415,
+        lon: -79.7820,
+        keywords: ['la cocha', 'cocha'],
+        riverStatus: 'Caudal moderado y aguas cristalinas en horario matutino.',
+        safeHours: '08:00 a 13:30 (horario recomendado para bañistas).',
+        safetyTip: 'Si observas nubes oscuras hacia la montaña o el agua empieza a enturbiarse, sal de la orilla de inmediato por posible crecida.'
+      },
+      {
+        name: 'Río Jubones y Balneario Casacay',
+        location: 'Parroquia Casacay, Pasaje (Cuenca Río Jubones)',
+        lat: -3.3189,
+        lon: -79.7365,
+        keywords: ['jubones', 'casacay', 'rio jubones', 'río jubones'],
+        riverStatus: 'Caudal estable bajo monitoreo preventivo continuo.',
+        safeHours: '08:30 a 14:00 en zonas habilitadas con poca corriente.',
+        safetyTip: 'El río Jubones depende de las lluvias en la parte alta (Uzhcurrumi / Azuay); evita cruzar zonas profundas si llueve en la sierra.'
+      },
+      {
+        name: 'Balneario Dos Bocas y Río Buenavista',
+        location: 'Parroquia Buenavista, Pasaje',
+        lat: -3.3562,
+        lon: -79.8390,
+        keywords: ['dos bocas', 'buenavista', 'rio buenavista', 'río buenavista'],
+        riverStatus: 'Aguas tranquilas aptas para recreación familiar.',
+        safeHours: '09:00 a 15:30.',
+        safetyTip: 'Lleva hidratación, bloqueador solar y protector impermeable para el regreso en moto o bus.'
+      },
+      {
+        name: 'Río Palenque y Sector El Bosque',
+        location: 'Sector El Bosque / Palenque, Pasaje',
+        lat: -3.3490,
+        lon: -79.7940,
+        keywords: ['palenque', 'el bosque'],
+        riverStatus: 'Corriente suave y agua fresca en la mañana.',
+        safeHours: '08:30 a 14:00.',
+        safetyTip: 'Evita permanecer en piedras resbaladizas si comienza a lloviznar en la tarde.'
+      },
+      {
+        name: 'Río Chaguana y Cañaquemada',
+        location: 'Sector Cañaquemada / Chaguana, Pasaje',
+        lat: -3.3680,
+        lon: -79.8450,
+        keywords: ['chaguana', 'cañaquemada', 'canaquemada'],
+        riverStatus: 'Nivel normal; vigilancia ante lluvias locales.',
+        safeHours: '08:30 a 14:30.',
+        safetyTip: 'Vía rural transitable; precaución en moto si la calzada está húmeda.'
+      },
+      {
+        name: 'Zaruma y Parte Alta de El Oro',
+        location: 'Cantón Zaruma, Parte Alta de El Oro',
+        lat: -3.6913,
+        lon: -79.6117,
+        keywords: ['zaruma', 'parte alta'],
+        riverStatus: 'Zona montañosa con quebradas rápidas; neblina frecuente en la tarde.',
+        safeHours: '08:00 a 14:30 para recorridos turísticos.',
+        safetyTip: 'Después de las 15:00 suele bajar neblina densa en la carretera; conduce con luces bajas.'
+      },
+      {
+        name: 'Isla Jambelí, Playa Bajoalto y Puerto Bolívar',
+        location: 'Perfil Costero de El Oro (Machala / El Guabo)',
+        lat: -3.2350,
+        lon: -79.9980,
+        keywords: ['jambel', 'bajoalto', 'puerto bol', 'machala y puerto'],
+        riverStatus: 'Estero y mar con brisa costera moderada.',
+        safeHours: '08:30 a 15:00 (verificar tabla de mareas).',
+        safetyTip: 'Usa chaleco salvavidas en el cruce en lancha desde Puerto Bolívar o Bajoalto y lleva protección solar.'
       }
     ];
 
@@ -1080,7 +1293,7 @@
     }
 
     // ==========================================
-    // 2. SISTEMA DE 10 TOKENS DIARIOS PARA NIMBO AI
+    // 3. SISTEMA DE 10 TOKENS DIARIOS PARA NIMBO AI
     // ==========================================
     const DAILY_TOKEN_LIMIT = 10;
     const STORAGE_KEY = 'nimbosignal_tokens_v2';
@@ -1125,7 +1338,7 @@
         input.placeholder = 'Has gastado tus 10 tokens gratuitos de hoy. Se renuevan mañana.';
         btn.textContent = '0 tokens hoy';
       } else {
-        input.placeholder = 'Pregunta aquí: Ej. ¿Cómo está el colegio tal? o ¿Cómo está París?';
+        input.placeholder = 'Pregunta aquí: Ej. ¿Cómo está La Cocha?, ¿Cómo está el Juan Pablo II? o ¿Cómo está Tokio?';
         btn.textContent = 'Consultar (-1 token)';
       }
     }
@@ -1136,15 +1349,15 @@
     }
 
     // ==========================================
-    // 3. MOTOR CLIMÁTICO EN VIVO + NIMBO AI MUNDIAL
+    // 4. MOTOR CLIMÁTICO EN VIVO + NIMBO AI INTELIGENTE
     // ==========================================
     function interpretWeatherCode(code) {
-      if (code === 0) return { label: 'Cielo despejado', verdict: 'Tiempo estable y seco', risk: 'Bajo', advice: 'Excelente visibilidad para clases, caminatas y traslados en moto.' };
-      if (code <= 3) return { label: 'Parcialmente nublado', verdict: 'Clima tranquilo sin lluvias fuertes', risk: 'Bajo', advice: 'Condiciones normales para jornada escolar, buses y motocicletas.' };
+      if (code === 0) return { label: 'Cielo despejado', verdict: 'Tiempo estable y seco', risk: 'Bajo', advice: 'Excelente visibilidad para clases, ríos, caminatas y traslados en moto.' };
+      if (code <= 3) return { label: 'Parcialmente nublado', verdict: 'Clima tranquilo sin lluvias fuertes', risk: 'Bajo', advice: 'Condiciones normales para jornada escolar, turismo y carreteras.' };
       if (code <= 48) return { label: 'Neblina o bruma', verdict: 'Precaución por visibilidad reducida', risk: 'Moderado', advice: 'Encender luces bajas en moto/auto y conducir con prudencia.' };
-      if (code <= 67) return { label: 'Lluvia ligera a moderada', verdict: 'Lleva paraguas o impermeable', risk: 'Moderado', advice: 'Calzada húmeda; salir 10 minutos antes hacia el colegio o trabajo.' };
-      if (code <= 82) return { label: 'Chubascos / Lluvia fuerte', verdict: 'Lluvia intensa probable — Toma precauciones', risk: 'Alto', advice: 'Evita calles bajas con acumulación de agua y protege mochilas/equipos.' };
-      return { label: 'Tormenta eléctrica', verdict: 'Alerta por tormenta — Resguárdate', risk: 'Alto', advice: 'Evita zonas abiertas o árboles altos y espera a que baje la intensidad.' };
+      if (code <= 67) return { label: 'Lluvia ligera a moderada', verdict: 'Lleva paraguas o impermeable', risk: 'Moderado', advice: 'Calzada húmeda; precaución en orillas de ríos y vías.' };
+      if (code <= 82) return { label: 'Chubascos / Lluvia fuerte', verdict: 'Lluvia intensa probable — Toma precauciones', risk: 'Alto', advice: 'Evita calles bajas con acumulación de agua y retírate de ríos.' };
+      return { label: 'Tormenta eléctrica', verdict: 'Alerta por tormenta — Resguárdate', risk: 'Alto', advice: 'Evita zonas abiertas, ríos o árboles altos hasta que pase.' };
     }
 
     async function loadCityWeather(cityName, lat, lon, btnEl) {
@@ -1209,12 +1422,13 @@
       processNimboAIQuery(text);
     }
 
-    function extractLocationFromQuestion(q) {
+    function cleanLocationQuery(q) {
       return q
         .replace(/¿|\?|!|¡/g, '')
-        .replace(/^(hola|nimbo ai|nimbo|dime|consulta|por favor|cómo está|como esta|cómo están|como estan|qué tal está|que tal esta|clima en|el clima en|estado del|estado de la|estado de)\s+/gi, '')
-        .replace(/^(cómo está|como esta|cómo están|como estan)\s+/gi, '')
-        .trim() || 'Pasaje, Ecuador';
+        .replace(/^(hola|nimbo ai|nimbo|dime|consulta|por favor)[,\s]*/gi, '')
+        .replace(/^(cómo está|como esta|cómo están|como estan|qué tal está|que tal esta)\s+/gi, '')
+        .replace(/^(el clima en|la temperatura en|clima en|el tiempo en|estado del|estado de la|estado de|el colegio|la escuela|la unidad educativa)\s+/gi, '')
+        .trim();
     }
 
     async function processNimboAIQuery(question) {
@@ -1223,37 +1437,23 @@
         appendMessage('user', question);
         appendMessage(
           'ai',
-          '⚠️ <strong>Has alcanzado el límite de 10 tokens diarios gratuitos.</strong><br>Saldo actual: <strong>0/10 disponibles</strong> (10/10 gastados). Tus 10 tokens se renovarán automáticamente mañana, o puedes activar el <strong>Plan Plus ($1,99/mes)</strong>.'
+          '⚠️ <strong>Has alcanzado el límite de 10 tokens diarios gratuitos.</strong><br>Saldo actual: <strong>0/10 disponibles</strong> (10/10 gastados). Tus 10 tokens se renovarán automáticamente mañana.'
         );
         return;
       }
 
-      // Descontar 1 token y actualizar arriba
       state.used += 1;
       saveTokenState(state);
       const remaining = DAILY_TOKEN_LIMIT - state.used;
+      const tokenFooter = `<span style="font-size:0.78rem; color:var(--cyan);">⚡ Token gastado: 1 • Disponibles hoy: ${remaining}/10 (Gastados: ${state.used}/10).</span>`;
 
       appendMessage('user', question);
       const qLower = question.toLowerCase();
 
-      // 1. Coincidencia con colegios locales de Pasaje / El Oro
-      const matchedSchool = SCHOOLS_DB.find(s => {
-        const simpleName = s.name.toLowerCase().replace(/"/g, '');
-        return (
-          (qLower.includes('carmen mora') && simpleName.includes('carmen mora')) ||
-          (qLower.includes('ochoa') && simpleName.includes('ochoa')) ||
-          (qLower.includes('agropecuario') && simpleName.includes('agropecuario')) ||
-          (qLower.includes('jorge icaza') && simpleName.includes('jorge icaza')) ||
-          (qLower.includes('manuel gonz') && simpleName.includes('manuel gonz')) ||
-          (qLower.includes('san jos') && simpleName.includes('san jos')) ||
-          (qLower.includes('aurelio prieto') && simpleName.includes('aurelio prieto')) ||
-          (qLower.includes('buenavista') && simpleName.includes('buenavista')) ||
-          (qLower.includes('casacay') && simpleName.includes('casacay')) ||
-          (qLower.includes('peaña') && simpleName.includes('peaña')) ||
-          ((qLower.includes('kléber') || qLower.includes('kleber')) && simpleName.includes('kléber')) ||
-          (qLower.includes('zoila ugarte') && simpleName.includes('zoila ugarte'))
-        );
-      });
+      // 1. Verificar si pregunta explícitamente por un colegio
+      const matchedSchool = SCHOOLS_DB.find(s =>
+        s.keywords.some(kw => qLower.includes(kw))
+      );
 
       try {
         if (matchedSchool) {
@@ -1273,13 +1473,78 @@
             • <strong>Probabilidad de lluvia próximas horas:</strong> ${rainProb}%.<br>
             • <strong>Estado de Jornada y Vías:</strong> ${matchedSchool.status} — ${matchedSchool.access}<br>
             • <strong>Guía Práctica:</strong> ${info.advice}<br><br>
-            <span style="font-size:0.78rem; color:var(--cyan);">⚡ Token gastado: 1 • Disponibles hoy: ${remaining}/10 (Gastados: ${state.used}/10).</span>`
+            ${tokenFooter}`
           );
           return;
         }
 
-        // 2. Consulta global (cualquier colegio o ciudad del mundo)
-        const target = extractLocationFromQuestion(question);
+        // 2. Verificar si pregunta por Ríos, Balnearios o Turismo
+        const matchedRiver = RIVERS_TOURISM_DB.find(r =>
+          r.keywords.some(kw => qLower.includes(kw))
+        );
+
+        if (matchedRiver) {
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${matchedRiver.lat}&longitude=${matchedRiver.lon}&current=temperature_2m,weather_code,wind_speed_10m&hourly=precipitation_probability&forecast_days=1&timezone=auto`;
+          const res = await fetch(url);
+          const data = await res.json();
+          const temp = Math.round(data.current.temperature_2m);
+          const wind = Math.round(data.current.wind_speed_10m);
+          const rainProb = Math.max(...data.hourly.precipitation_probability.slice(0, 6));
+          const info = interpretWeatherCode(data.current.weather_code);
+
+          appendMessage(
+            'ai',
+            `🏞️ <strong>Reporte de Río y Turismo: ${matchedRiver.name}</strong><br>
+            📍 <em>${matchedRiver.location}</em><br><br>
+            • <strong>Clima en Vivo:</strong> ${info.label} con <strong>${temp}°C</strong>, viento ${wind} km/h y <strong>${rainProb}%</strong> prob. de lluvia.<br>
+            • <strong>Estado del Río / Agua:</strong> ${matchedRiver.riverStatus}<br>
+            • <strong>Horario Seguro Recomendado:</strong> ${matchedRiver.safeHours}<br>
+            • <strong>Alerta Preventiva:</strong> ${matchedRiver.safetyTip}<br><br>
+            ${tokenFooter}`
+          );
+          return;
+        }
+
+        // 3. Verificar si pregunta por todos los ríos en general
+        if (/(todos los r[ií]os|qu[eé] r[ií]os|los r[ií]os|balnearios)/i.test(qLower)) {
+          appendMessage(
+            'ai',
+            `🌊 <strong>Estado General de los Ríos y Balnearios Monitoreados:</strong><br><br>
+            • <strong>Balneario La Cocha:</strong> Caudal moderado, aguas claras de 08:00 a 13:30.<br>
+            • <strong>Río Jubones / Casacay:</strong> Caudal estable con vigilancia en cuenca alta.<br>
+            • <strong>Dos Bocas / Río Buenavista:</strong> Aguas tranquilas aptas para familia.<br>
+            • <strong>Río Palenque / El Bosque:</strong> Corriente suave en horario matutino.<br>
+            • <strong>Río Chaguana / Cañaquemada:</strong> Nivel normal.<br><br>
+            <em>Pregúntame por cualquiera por su nombre (ej. "¿Cómo está La Cocha?") para ver su temperatura y lluvia en vivo.</em><br><br>
+            ${tokenFooter}`
+          );
+          return;
+        }
+
+        // 4. Verificar si pregunta por Pasajes, Vías o Sectores de Pasaje
+        if (/(pasajes|carretera|vía|via|terminal|sectores de pasaje|loma de franco)/i.test(qLower)) {
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=-3.3256&longitude=-79.8069&current=temperature_2m,weather_code,wind_speed_10m&hourly=precipitation_probability&forecast_days=1&timezone=auto`;
+          const res = await fetch(url);
+          const data = await res.json();
+          const temp = Math.round(data.current.temperature_2m);
+          const rainProb = Math.max(...data.hourly.precipitation_probability.slice(0, 6));
+          const info = interpretWeatherCode(data.current.weather_code);
+
+          appendMessage(
+            'ai',
+            `🚌 <strong>Reporte Vial, Pasajes y Sectores de Pasaje</strong><br><br>
+            • <strong>Clima Base en Pasaje:</strong> ${info.label} (<strong>${temp}°C</strong>, lluvia ${rainProb}%).<br>
+            • <strong>Pasaje – Machala:</strong> Operativa 100% (frecuencias normales cada 5–10 min).<br>
+            • <strong>Pasaje – Santa Rosa / Huaquillas:</strong> Tránsito fluido.<br>
+            • <strong>Pasaje – Cuenca:</strong> Habilitada; precaución por neblina en zona alta.<br>
+            • <strong>Sectores (Centro, Loma de Franco, La Peaña):</strong> ${rainProb > 55 ? 'Precaución en calles bajas por lluvia probable.' : 'Sin novedades de inundación.'}<br><br>
+            ${tokenFooter}`
+          );
+          return;
+        }
+
+        // 5. Consulta Mundial (cualquier colegio o ciudad del mundo)
+        const target = cleanLocationQuery(question) || 'Pasaje, Ecuador';
         let searchPlace = target;
         const enMatch = target.match(/\ben\s+([a-záéíóúñü\s,]+)$/i);
         const isSchoolQuery = /colegio|escuela|unidad educativa|instituto|universidad|liceo/i.test(question);
@@ -1300,7 +1565,7 @@
             'ai',
             `🔎 Busqué "<strong>${target}</strong>" en la red mundial, pero no encontré coordenadas exactas.<br>
             💡 <strong>Sugerencia:</strong> Indica también la ciudad o país (por ejemplo: <em>"¿Cómo está el colegio San Marcos en Lima, Perú?"</em>).<br><br>
-            <span style="font-size:0.78rem; color:var(--cyan);">⚡ Token gastado: 1 • Disponibles hoy: ${remaining}/10 (Gastados: ${state.used}/10).</span>`
+            ${tokenFooter}`
           );
           return;
         }
@@ -1328,18 +1593,18 @@
           • <strong>Veredicto Honesto:</strong> ${info.verdict} (Probabilidad de lluvia: <strong>${rainProb}%</strong>).<br>
           • <strong>Nivel de Riesgo Vial / Escolar:</strong> ${info.risk}.<br>
           • <strong>Guía Práctica:</strong> ${info.advice}<br><br>
-          <span style="font-size:0.78rem; color:var(--cyan);">⚡ Token gastado: 1 • Disponibles hoy: ${remaining}/10 (Gastados: ${state.used}/10).</span>`
+          ${tokenFooter}`
         );
       } catch (err) {
         appendMessage(
           'ai',
           `📡 Sin conexión satelital en este instante, pero en <strong>Pasaje y El Oro</strong> se mantiene vigilancia normal (27°C, nubosidad parcial).<br><br>
-          <span style="font-size:0.78rem; color:var(--cyan);">⚡ Token gastado: 1 • Disponibles hoy: ${remaining}/10 (Gastados: ${state.used}/10).</span>`
+          ${tokenFooter}`
         );
       }
     }
 
-    // Inicializar
+    applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
     updateTokenUI();
     renderSchools();
     loadCityWeather('Pasaje, Ecuador', -3.3256, -79.8069);
