@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NimboSignal — Veredictos Climáticos, Colegios, Ríos y Nimbo AI</title>
+  <title>NimboSignal — Clima Ecuador & Global, Colegios, Ríos y Nimbo AI</title>
   <style>
     :root,
     [data-theme="dark"] {
       --bg-main: #0b1120;
-      --bg-gradient: radial-gradient(circle at top right, #0f2942 0%, #0b1120 48%);
-      --bg-header: rgba(11, 17, 32, 0.95);
+      --bg-gradient: radial-gradient(circle at top right, #0f2942 0%, #0b1120 55%);
+      --bg-header: rgba(11, 17, 32, 0.96);
       --bg-surface: #111827;
       --bg-card: #1e293b;
       --bg-card-hover: #263349;
-      --bg-sub: rgba(11, 17, 32, 0.74);
-      --bg-chat: rgba(9, 14, 26, 0.72);
-      --border: rgba(148, 163, 184, 0.2);
+      --bg-sub: rgba(11, 17, 32, 0.78);
+      --bg-chat: rgba(9, 14, 26, 0.76);
+      --border: rgba(148, 163, 184, 0.22);
       --cyan: #06b6d4;
       --cyan-soft: rgba(6, 182, 212, 0.16);
       --teal: #10b981;
@@ -33,8 +33,8 @@
 
     [data-theme="light"] {
       --bg-main: #f1f5f9;
-      --bg-gradient: radial-gradient(circle at top right, #e0f2fe 0%, #f1f5f9 55%);
-      --bg-header: rgba(255, 255, 255, 0.96);
+      --bg-gradient: radial-gradient(circle at top right, #e0f2fe 0%, #f1f5f9 60%);
+      --bg-header: rgba(255, 255, 255, 0.97);
       --bg-surface: #ffffff;
       --bg-card: #ffffff;
       --bg-card-hover: #f8fafc;
@@ -62,19 +62,79 @@
       font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
-
     body {
       background: var(--bg-gradient);
       background-color: var(--bg-main);
       color: var(--text-main);
-      line-height: 1.6;
+      line-height: 1.55;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
       transition: background-color 0.25s ease, color 0.25s ease;
     }
 
+    /* MODAL BIENVENIDA: GLOBAL O ECUADOR */
+    .welcome-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      background: rgba(6, 10, 20, 0.88);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.2rem;
+    }
+
+    .welcome-overlay.hidden {
+      display: none;
+    }
+
+    .welcome-box {
+      background: var(--bg-surface);
+      border: 1px solid rgba(6, 182, 212, 0.45);
+      border-radius: 24px;
+      padding: 1.8rem;
+      max-width: 560px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.3rem;
+    }
+
+    @media (max-width: 520px) {
+      .mode-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mode-choice {
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      padding: 1.3rem 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .mode-choice:hover {
+      border-color: var(--cyan);
+      background: var(--cyan-soft);
+      transform: translateY(-2px);
+    }
+
+    /* BARRA SUPERIOR */
     header {
       position: sticky;
       top: 0;
@@ -85,74 +145,110 @@
     }
 
     .topbar {
-      max-width: 1280px;
+      max-width: 1320px;
       margin: 0 auto;
-      padding: 0.72rem 1.2rem;
+      padding: 0.68rem 1.2rem;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 0.7rem;
+      gap: 0.65rem;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 0.65rem;
-      text-decoration: none;
+      gap: 0.6rem;
+      cursor: pointer;
       color: var(--text-main);
     }
 
     .brand-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 11px;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       background: linear-gradient(135deg, #06b6d4, #10b981);
       display: grid;
       place-items: center;
       font-weight: 800;
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       color: #06131f;
-      box-shadow: 0 0 18px rgba(6, 182, 212, 0.3);
     }
 
     .brand-text strong {
-      font-size: 1.12rem;
+      font-size: 1.08rem;
       display: block;
       line-height: 1.1;
     }
 
     .brand-text span {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       color: var(--cyan);
       font-weight: 600;
     }
 
-    nav {
+    /* SWITCH ECUADOR / GLOBAL */
+    .region-switch {
+      display: inline-flex;
+      background: var(--bg-sub);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.2rem;
+      gap: 0.2rem;
+    }
+
+    .region-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 0.34rem 0.78rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .region-btn.active {
+      background: linear-gradient(135deg, #06b6d4, #10b981);
+      color: #06131f;
+    }
+
+    /* BOTONES DE NAVEGACIÓN POR SECCIÓN */
+    nav.section-nav {
       display: flex;
       flex-wrap: wrap;
       gap: 0.3rem;
     }
 
-    nav a {
+    .nav-btn {
+      background: transparent;
+      border: 1px solid transparent;
       color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 0.83rem;
       font-weight: 600;
-      padding: 0.4rem 0.68rem;
+      padding: 0.42rem 0.72rem;
       border-radius: 10px;
+      cursor: pointer;
       transition: 0.2s;
     }
 
-    nav a:hover {
+    .nav-btn:hover {
       color: var(--text-main);
       background: var(--cyan-soft);
+    }
+
+    .nav-btn.active {
+      background: var(--cyan-soft);
+      border-color: rgba(6, 182, 212, 0.45);
+      color: var(--cyan);
+      font-weight: 700;
     }
 
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 0.55rem;
+      gap: 0.5rem;
       flex-wrap: wrap;
     }
 
@@ -160,60 +256,50 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       color: var(--text-main);
-      padding: 0.42rem 0.78rem;
+      padding: 0.38rem 0.72rem;
       border-radius: 999px;
-      font-size: 0.8rem;
+      font-size: 0.79rem;
       font-weight: 700;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      transition: 0.2s;
-    }
-
-    .theme-btn:hover {
-      border-color: var(--cyan);
     }
 
     .token-hud {
       display: flex;
       align-items: center;
-      gap: 0.55rem;
+      gap: 0.45rem;
       background: var(--cyan-soft);
       border: 1px solid rgba(6, 182, 212, 0.42);
-      padding: 0.42rem 0.82rem;
+      padding: 0.38rem 0.75rem;
       border-radius: 999px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
     }
 
     .token-hud strong {
       color: var(--cyan);
     }
 
-    .token-bar-mini {
-      width: 56px;
-      height: 7px;
-      background: rgba(148, 163, 184, 0.28);
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .token-bar-fill {
-      height: 100%;
-      width: 100%;
-      background: linear-gradient(90deg, #10b981, #06b6d4);
-      transition: width 0.35s ease;
-    }
-
-    .container {
+    /* CONTENEDOR PRINCIPAL DE SECCIÓN ÚNICA */
+    main.container {
       max-width: 1280px;
+      width: 100%;
       margin: 0 auto;
-      padding: 1.7rem 1.2rem 4rem;
+      padding: 1.5rem 1.2rem 2.2rem;
+      flex: 1;
     }
 
-    section {
-      margin-bottom: 3rem;
-      scroll-margin-top: 85px;
+    /* REGLA CLAVE: SOLO SE MUESTRA LA SECCIÓN ACTIVA */
+    .view-section {
+      display: none;
+    }
+
+    .view-section.active {
+      display: block;
+      animation: fadeSection 0.22s ease;
+    }
+
+    @keyframes fadeSection {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .section-head {
@@ -223,10 +309,12 @@
       align-items: flex-end;
       gap: 1rem;
       margin-bottom: 1.2rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
     }
 
     .section-head h2 {
-      font-size: 1.52rem;
+      font-size: 1.48rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -234,18 +322,19 @@
 
     .section-head p {
       color: var(--text-muted);
-      font-size: 0.92rem;
+      font-size: 0.9rem;
     }
 
+    /* COMPONENTES GENERALES */
     .hero {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 22px;
-      padding: 1.7rem;
+      padding: 1.65rem;
       display: grid;
       grid-template-columns: 1.4fr 1fr;
       gap: 1.5rem;
-      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.14);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
     }
 
     @media (max-width: 900px) {
@@ -258,9 +347,9 @@
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.28rem 0.72rem;
+      padding: 0.26rem 0.7rem;
       border-radius: 999px;
-      font-size: 0.77rem;
+      font-size: 0.76rem;
       font-weight: 700;
     }
 
@@ -268,12 +357,6 @@
     .badge-teal { background: var(--teal-soft); color: var(--teal); border: 1px solid rgba(16, 185, 129, 0.35); }
     .badge-amber { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.35); }
     .badge-red { background: var(--red-soft); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.35); }
-
-    .hero h1 {
-      font-size: 1.85rem;
-      margin: 0.7rem 0 0.45rem;
-      line-height: 1.25;
-    }
 
     .verdict-box {
       background: var(--bg-sub);
@@ -293,11 +376,12 @@
       margin-bottom: 0.25rem;
     }
 
-    .city-controls {
+    .city-controls, .filter-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 0.9rem;
+      gap: 0.55rem;
+      margin-top: 0.85rem;
+      margin-bottom: 1rem;
     }
 
     .btn {
@@ -305,7 +389,7 @@
       cursor: pointer;
       font-weight: 600;
       font-size: 0.84rem;
-      padding: 0.55rem 0.92rem;
+      padding: 0.55rem 0.95rem;
       border-radius: 10px;
       transition: 0.2s;
       display: inline-flex;
@@ -320,7 +404,6 @@
 
     .btn-primary:hover {
       filter: brightness(1.07);
-      transform: translateY(-1px);
     }
 
     .btn-outline {
@@ -367,132 +450,11 @@
 
     .metric-item strong {
       font-size: 1.22rem;
-      color: var(--text-main);
-    }
-
-    /* SECCIÓN GUÍA Y AYUDA: NIMBO AI */
-    .nimbo-ai-wrapper {
-      background: var(--bg-card);
-      border: 1px solid rgba(6, 182, 212, 0.45);
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: 0 14px 34px rgba(6, 182, 212, 0.1);
-    }
-
-    .nimbo-ai-header {
-      background: var(--cyan-soft);
-      border-bottom: 1px solid var(--border);
-      padding: 1rem 1.35rem;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .nimbo-ai-title {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .ai-avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #06b6d4, #3b82f6);
-      display: grid;
-      place-items: center;
-      font-size: 1.15rem;
-      color: #06131f;
-      font-weight: 800;
-    }
-
-    .chat-box {
-      height: 380px;
-      overflow-y: auto;
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.9rem;
-      background: var(--bg-chat);
-    }
-
-    .msg {
-      max-width: 84%;
-      padding: 0.88rem 1.05rem;
-      border-radius: 15px;
-      font-size: 0.92rem;
-      line-height: 1.5;
-    }
-
-    .msg-ai {
-      align-self: flex-start;
-      background: var(--bg-card);
-      color: var(--text-main);
-      border: 1px solid var(--border);
-      border-bottom-left-radius: 4px;
-    }
-
-    .msg-user {
-      align-self: flex-end;
-      background: linear-gradient(135deg, #06b6d4, #0284c7);
-      color: #04121d;
-      font-weight: 600;
-      border-bottom-right-radius: 4px;
-    }
-
-    .quick-prompts {
-      padding: 0.75rem 1.25rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-      border-top: 1px solid var(--border);
-      background: var(--bg-sub);
-    }
-
-    .chip-btn {
-      background: var(--cyan-soft);
-      border: 1px solid rgba(6, 182, 212, 0.35);
-      color: var(--chip-text);
-      padding: 0.36rem 0.72rem;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .chip-btn:hover {
-      background: rgba(6, 182, 212, 0.26);
-    }
-
-    .chat-input-area {
-      display: flex;
-      gap: 0.6rem;
-      padding: 1rem 1.25rem;
-      background: var(--bg-surface);
-      border-top: 1px solid var(--border);
-    }
-
-    .chat-input-area input, .search-bar {
-      flex: 1;
-      background: var(--bg-sub);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 0.75rem 1rem;
-      border-radius: 12px;
-      font-size: 0.92rem;
-      outline: none;
-    }
-
-    .chat-input-area input:focus, .search-bar:focus {
-      border-color: var(--cyan);
     }
 
     .grid-3 {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(305px, 1fr));
       gap: 1.15rem;
     }
 
@@ -507,18 +469,16 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 1.25rem;
-      transition: 0.2s;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 0.85rem;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+      gap: 0.8rem;
+      transition: 0.2s;
     }
 
     .card:hover {
       background: var(--bg-card-hover);
       border-color: rgba(6, 182, 212, 0.45);
-      transform: translateY(-2px);
     }
 
     .card-top {
@@ -526,16 +486,6 @@
       justify-content: space-between;
       align-items: flex-start;
       gap: 0.6rem;
-    }
-
-    .card h3 {
-      font-size: 1.05rem;
-      color: var(--text-main);
-    }
-
-    .card p {
-      font-size: 0.88rem;
-      color: var(--text-muted);
     }
 
     .card-meta {
@@ -547,40 +497,108 @@
       border: 1px solid var(--border);
     }
 
-    .filter-row {
+    .search-bar, .chat-input-area input, .code-input {
+      flex: 1;
+      background: var(--bg-sub);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .search-bar:focus, .chat-input-area input:focus, .code-input:focus {
+      border-color: var(--cyan);
+    }
+
+    /* NIMBO AI CHATBOX */
+    .nimbo-ai-wrapper {
+      background: var(--bg-card);
+      border: 1px solid rgba(6, 182, 212, 0.45);
+      border-radius: 22px;
+      overflow: hidden;
+    }
+
+    .nimbo-ai-header {
+      background: var(--cyan-soft);
+      border-bottom: 1px solid var(--border);
+      padding: 0.95rem 1.3rem;
       display: flex;
       flex-wrap: wrap;
-      gap: 0.65rem;
-      margin-bottom: 1.15rem;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
     }
 
-    .enso-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 0.9rem;
+    .chat-box {
+      height: 365px;
+      overflow-y: auto;
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      background: var(--bg-chat);
     }
 
-    .enso-card {
-      padding: 1rem;
-      border-radius: 14px;
-      border: 1px solid var(--border);
+    .msg {
+      max-width: 84%;
+      padding: 0.85rem 1.05rem;
+      border-radius: 15px;
+      font-size: 0.92rem;
+    }
+
+    .msg-ai {
+      align-self: flex-start;
       background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border);
     }
 
-    .enso-card.active-level {
-      border: 2px solid var(--amber);
-      box-shadow: 0 0 22px rgba(245, 158, 11, 0.14);
+    .msg-user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #06b6d4, #0284c7);
+      color: #04121d;
+      font-weight: 600;
+    }
+
+    .quick-prompts {
+      padding: 0.7rem 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      border-top: 1px solid var(--border);
+      background: var(--bg-sub);
+    }
+
+    .chip-btn {
+      background: var(--cyan-soft);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      color: var(--chip-text);
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chat-input-area {
+      display: flex;
+      gap: 0.6rem;
+      padding: 0.95rem 1.2rem;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
     }
 
     .price {
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: 800;
       color: var(--cyan);
-      margin: 0.35rem 0;
+      margin: 0.3rem 0;
     }
 
     .price span {
-      font-size: 0.85rem;
+      font-size: 0.86rem;
       color: var(--text-muted);
       font-weight: 500;
     }
@@ -589,55 +607,83 @@
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 0.45rem;
-      font-size: 0.86rem;
+      gap: 0.48rem;
+      font-size: 0.88rem;
       color: var(--text-body);
     }
 
     footer {
       border-top: 1px solid var(--border);
-      padding: 1.75rem 1.25rem;
+      padding: 1.1rem 1.2rem;
       text-align: center;
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       background: var(--bg-surface);
     }
   </style>
 </head>
 <body>
 
+  <!-- PANTALLA INICIAL DE SELECCIÓN: ECUADOR O GLOBAL -->
+  <div class="welcome-overlay" id="welcomeOverlay">
+    <div class="welcome-box">
+      <span class="badge badge-cyan">📡 NimboSignal • Plataforma Climática</span>
+      <h2 style="font-size:1.6rem; margin-top:0.6rem;">¿Qué clima deseas explorar ahora?</h2>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-top:0.35rem;">
+        Elige tu modo de inicio. Podrás cambiar entre <strong>Ecuador</strong> y <strong>Global</strong> en cualquier momento desde la barra superior.
+      </p>
+
+      <div class="mode-grid">
+        <button class="mode-choice" onclick="chooseStartMode('ecuador')">
+          <span style="font-size:2.3rem;">🇪🇨</span>
+          <strong style="font-size:1.08rem;">Ecuador (Pasaje & El Oro)</strong>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Veredicto local, colegios, ríos (La Cocha, Jubones) y rutas.</span>
+        </button>
+
+        <button class="mode-choice" onclick="chooseStartMode('global')">
+          <span style="font-size:2.3rem;">🌍</span>
+          <strong style="font-size:1.08rem;">Global (Todo el Mundo)</strong>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Clima en vivo de todos los países y ciudades del planeta.</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BARRA SUPERIOR -->
   <header>
     <div class="topbar">
-      <a href="#inicio" class="brand">
+      <div class="brand" onclick="openWelcomeChooser()" title="Cambiar modo de inicio">
         <div class="brand-icon">NS</div>
         <div class="brand-text">
           <strong>NimboSignal</strong>
-          <span>Pasaje • El Oro • Red Mundial</span>
+          <span>Ecuador • Global</span>
         </div>
-      </a>
+      </div>
 
-      <nav>
-        <a href="#inicio">Veredicto</a>
-        <a href="#nimbo-ai">🤖 Guía Nimbo AI</a>
-        <a href="#colegios">🏫 Colegios</a>
-        <a href="#pasaje">🚌 Pasaje y Rutas</a>
-        <a href="#turismo">🌴 Ríos y Turismo</a>
-        <a href="#elnino">🌊 El Niño</a>
-        <a href="#planes">💎 Planes</a>
+      <!-- SELECTOR RÁPIDO ECUADOR / GLOBAL -->
+      <div class="region-switch">
+        <button class="region-btn active" id="regEcuadorBtn" onclick="switchRegionMode('ecuador')">🇪🇨 Ecuador</button>
+        <button class="region-btn" id="regGlobalBtn" onclick="switchRegionMode('global')">🌍 Global</button>
+      </div>
+
+      <!-- NAVEGACIÓN POR SECCIONES (SOLO MUESTRA UNA SECCIÓN A LA VEZ) -->
+      <nav class="section-nav">
+        <button class="nav-btn active" data-target="sec-veredicto" onclick="showSection('sec-veredicto')">🌤️ Veredicto</button>
+        <button class="nav-btn" data-target="sec-global" onclick="showSection('sec-global')">🌍 Global</button>
+        <button class="nav-btn" data-target="sec-ai" onclick="showSection('sec-ai')">🤖 Nimbo AI</button>
+        <button class="nav-btn" data-target="sec-colegios" onclick="showSection('sec-colegios')">🏫 Colegios</button>
+        <button class="nav-btn" data-target="sec-pasaje" onclick="showSection('sec-pasaje')">🚌 Pasaje</button>
+        <button class="nav-btn" data-target="sec-rios" onclick="showSection('sec-rios')">🌴 Ríos</button>
+        <button class="nav-btn" data-target="sec-elnino" onclick="showSection('sec-elnino')">🌊 El Niño</button>
+        <button class="nav-btn" data-target="sec-planes" onclick="showSection('sec-planes')">💎 Planes</button>
       </nav>
 
       <div class="header-actions">
-        <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Cambiar entre tema claro y oscuro">
-          ☀️ Claro
-        </button>
-
-        <div class="token-hud" title="Tienes 10 tokens gratuitos diarios para consultar a Nimbo AI">
-          <span>⚡ Tokens:</span>
-          <strong id="topTokensLeft">10/10</strong>
-          <span style="color: var(--text-muted);">| Usados: <b id="topTokensUsed" style="color:var(--text-main);">0</b>/10</span>
-          <div class="token-bar-mini">
-            <div class="token-bar-fill" id="topTokenBar"></div>
-          </div>
+        <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()">☀️ Claro</button>
+        <div class="token-hud" id="topTokenHud">
+          <span>⚡</span>
+          <strong id="topTokensLeft">5/5</strong>
+          <span style="color:var(--text-muted);" id="topPlanLabel">Normal</span>
         </div>
       </div>
     </div>
@@ -645,124 +691,175 @@
 
   <main class="container">
 
-    <!-- 1. TABLERO PRINCIPAL -->
-    <section id="inicio" class="hero">
-      <div>
-        <span class="badge badge-cyan">📡 Radar Hiperlocal & Transparencia Radical</span>
-        <h1 id="heroCityTitle">Veredicto Climático: Pasaje, El Oro</h1>
-        <p style="color: var(--text-muted); font-size: 0.94rem;">
-          Sin porcentajes confusos ni alarmismo. Diagnóstico directo en menos de 5 segundos para estudiantes, motociclistas, turistas y familias.
-        </p>
-
-        <div class="verdict-box">
-          <strong id="verdictHeadline">Cargando veredicto honesto en tiempo real...</strong>
-          <span id="verdictDetail" style="font-size: 0.9rem; color: var(--text-body);">
-            Conectando con estación meteorológica satelital Open-Meteo...
-          </span>
+    <!-- SECCIÓN 1: VEREDICTO ECUADOR -->
+    <section id="sec-veredicto" class="view-section active">
+      <div class="section-head">
+        <div>
+          <h2>🌤️ Veredicto Climático — Ecuador</h2>
+          <p>Diagnóstico honesto en tiempo real para Pasaje, El Oro y principales ciudades del país.</p>
         </div>
-
-        <div class="city-controls">
-          <button class="btn btn-outline active" onclick="loadCityWeather('Pasaje, Ecuador', -3.3256, -79.8069, this)">📍 Pasaje</button>
-          <button class="btn btn-outline" onclick="loadCityWeather('Machala, Ecuador', -3.2581, -79.9554, this)">📍 Machala</button>
-          <button class="btn btn-outline" onclick="loadCityWeather('Santa Rosa, Ecuador', -3.4488, -79.9595, this)">📍 Santa Rosa</button>
-          <button class="btn btn-outline" onclick="loadCityWeather('El Guabo, Ecuador', -3.2435, -79.8304, this)">📍 El Guabo</button>
-          <button class="btn btn-outline" onclick="loadCityWeather('Quito, Ecuador', -0.1807, -78.4678, this)">📍 Quito</button>
-          <button class="btn btn-outline" onclick="loadCityWeather('Guayaquil, Ecuador', -2.1894, -79.8891, this)">📍 Guayaquil</button>
-        </div>
+        <button class="btn btn-outline" onclick="showSection('sec-global')">🌍 Ir a Climas Globales →</button>
       </div>
 
-      <div class="metrics-panel">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-weight:700; font-size:0.95rem;">Condiciones Actuales</span>
-          <span class="badge badge-teal" id="confidenceBadge">Certeza: Alta (92%)</span>
+      <div class="hero">
+        <div>
+          <span class="badge badge-cyan">📡 Radar Hiperlocal Ecuador</span>
+          <h1 id="heroCityTitle" style="font-size:1.75rem; margin:0.65rem 0 0.4rem;">Veredicto Climático: Pasaje, El Oro</h1>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">
+            Diagnóstico directo en menos de 5 segundos para estudiantes, motociclistas, turistas y familias.
+          </p>
+
+          <div class="verdict-box">
+            <strong id="verdictHeadline">Cargando veredicto honesto en tiempo real...</strong>
+            <span id="verdictDetail" style="font-size: 0.9rem; color: var(--text-body);">
+              Conectando con estación meteorológica satelital...
+            </span>
+          </div>
+
+          <div class="city-controls">
+            <button class="btn btn-outline active" onclick="loadCityWeather('Pasaje, Ecuador', -3.3256, -79.8069, this)">📍 Pasaje</button>
+            <button class="btn btn-outline" onclick="loadCityWeather('Machala, Ecuador', -3.2581, -79.9554, this)">📍 Machala</button>
+            <button class="btn btn-outline" onclick="loadCityWeather('Santa Rosa, Ecuador', -3.4488, -79.9595, this)">📍 Santa Rosa</button>
+            <button class="btn btn-outline" onclick="loadCityWeather('El Guabo, Ecuador', -3.2435, -79.8304, this)">📍 El Guabo</button>
+            <button class="btn btn-outline" onclick="loadCityWeather('Quito, Ecuador', -0.1807, -78.4678, this)">📍 Quito</button>
+            <button class="btn btn-outline" onclick="loadCityWeather('Guayaquil, Ecuador', -2.1894, -79.8891, this)">📍 Guayaquil</button>
+            <button class="btn btn-outline" onclick="loadCityWeather('Cuenca, Ecuador', -2.9001, -79.0059, this)">📍 Cuenca</button>
+          </div>
         </div>
-        <div class="metrics-grid">
-          <div class="metric-item">
-            <span>Temperatura</span>
-            <strong id="metricTemp">-- °C</strong>
+
+        <div class="metrics-panel">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:700; font-size:0.95rem;">Condiciones Actuales</span>
+            <span class="badge badge-teal">Certeza: Alta (92%)</span>
           </div>
-          <div class="metric-item">
-            <span>Prob. Lluvia (próx. horas)</span>
-            <strong id="metricRain">-- %</strong>
+          <div class="metrics-grid">
+            <div class="metric-item">
+              <span>Temperatura</span>
+              <strong id="metricTemp">-- °C</strong>
+            </div>
+            <div class="metric-item">
+              <span>Prob. Lluvia (próx. horas)</span>
+              <strong id="metricRain">-- %</strong>
+            </div>
+            <div class="metric-item">
+              <span>Viento</span>
+              <strong id="metricWind">-- km/h</strong>
+            </div>
+            <div class="metric-item">
+              <span>Riesgo Vial / Escolar</span>
+              <strong id="metricRisk" style="color: var(--teal);">Bajo</strong>
+            </div>
           </div>
-          <div class="metric-item">
-            <span>Viento</span>
-            <strong id="metricWind">-- km/h</strong>
-          </div>
-          <div class="metric-item">
-            <span>Riesgo Vial / Escolar</span>
-            <strong id="metricRisk" style="color: var(--teal);">Bajo</strong>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="showSection('sec-ai')">🤖 Consultar Nimbo AI</button>
+            <button class="btn btn-outline" onclick="showSection('sec-rios')">🏞️ Ver Ríos (La Cocha)</button>
           </div>
         </div>
-        <p style="font-size: 0.82rem; color: var(--text-muted);">
-          💡 Consulta abajo a <strong>Nimbo AI</strong> por cualquier colegio (Carmen Mora, Juan Pablo II, Ochoa León...), río (La Cocha, Jubones, Casacay, Dos Bocas, Palenque) o ciudad del mundo.
-        </p>
       </div>
     </section>
 
-    <!-- 2. SECCIÓN GUÍA Y AYUDA: NIMBO AI -->
-    <section id="nimbo-ai">
+    <!-- SECCIÓN 2: GLOBAL (TODOS LOS PAÍSES Y CIUDADES DEL MUNDO) -->
+    <section id="sec-global" class="view-section">
       <div class="section-head">
         <div>
-          <h2>🤖 Guía y Ayuda — Nimbo AI</h2>
-          <p>Pregunta por cualquier colegio de Pasaje, todos los ríos y balnearios (La Cocha, Jubones, Casacay, Dos Bocas, Palenque) o cualquier lugar del mundo.</p>
+          <h2>🌍 Clima Global — Todos los Países y Ciudades del Mundo</h2>
+          <p>Busca cualquier país, capital o ciudad del planeta en tiempo real o selecciona un continente.</p>
         </div>
-        <div style="display:flex; align-items:center; gap:0.6rem;">
-          <span class="badge badge-cyan" id="chatTokenBadge">10 tokens disponibles hoy</span>
-          <button class="btn btn-outline" style="font-size:0.75rem; padding:0.35rem 0.65rem;" onclick="resetDemoTokens()">↻ Demo</button>
+        <button class="btn btn-outline" onclick="showSection('sec-veredicto')">🇪🇨 Volver a Ecuador</button>
+      </div>
+
+      <!-- BUSCADOR GLOBAL EN VIVO -->
+      <div class="card" style="margin-bottom:1.25rem; border-color: rgba(6, 182, 212, 0.45);">
+        <form style="display:flex; flex-wrap:wrap; gap:0.65rem;" onsubmit="searchGlobalPlace(event)">
+          <input
+            type="text"
+            id="globalSearchInput"
+            class="search-bar"
+            placeholder="🔎 Escribe cualquier país o ciudad del mundo (ej. Japón, París, Nueva York, Bogotá, Madrid, Sídney, El Cairo)..."
+            required
+          />
+          <button type="submit" class="btn btn-primary">🌍 Buscar Clima Mundial</button>
+        </form>
+
+        <div id="globalLiveResult" class="verdict-box" style="margin-bottom:0;">
+          <strong id="globalResultTitle">🌐 Selecciona o busca cualquier ciudad o país del mundo</strong>
+          <span id="globalResultBody" style="font-size:0.9rem; color:var(--text-body);">
+            Obtén temperatura actual, viento, probabilidad de lluvia y recomendación práctica al instante.
+          </span>
+        </div>
+      </div>
+
+      <!-- FILTRO POR CONTINENTES -->
+      <div class="filter-row">
+        <button class="btn btn-outline active" onclick="filterGlobalContinent('todos', this)">🌐 Todos los Continentes</button>
+        <button class="btn btn-outline" onclick="filterGlobalContinent('América', this)">🌎 América</button>
+        <button class="btn btn-outline" onclick="filterGlobalContinent('Europa', this)">🇪🇺 Europa</button>
+        <button class="btn btn-outline" onclick="filterGlobalContinent('Asia', this)">🌏 Asia</button>
+        <button class="btn btn-outline" onclick="filterGlobalContinent('Oceanía y África', this)">🌍 Oceanía y África</button>
+      </div>
+
+      <div class="grid-3" id="globalCitiesGrid"></div>
+    </section>
+
+    <!-- SECCIÓN 3: NIMBO AI -->
+    <section id="sec-ai" class="view-section">
+      <div class="section-head">
+        <div>
+          <h2>🤖 Nimbo AI — Asistente Inteligente</h2>
+          <p id="aiPlanSubtitle">Plan Normal: 5 tokens gratuitos diarios • Actualiza a Pro Premium para IA Ilimitada.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.55rem;">
+          <span class="badge badge-cyan" id="chatTokenBadge">5/5 tokens disponibles hoy</span>
+          <button class="btn btn-outline" style="font-size:0.78rem; padding:0.38rem 0.7rem;" onclick="showSection('sec-planes')">💎 IA Ilimitada</button>
         </div>
       </div>
 
       <div class="nimbo-ai-wrapper">
         <div class="nimbo-ai-header">
-          <div class="nimbo-ai-title">
-            <div class="ai-avatar">AI</div>
-            <div>
-              <strong style="display:block; font-size:1rem;">Nimbo AI • Guía Escolar, Ríos, Vial y Climática Mundial</strong>
-              <span style="font-size:0.8rem; color: var(--teal);">● Activo • 10 tokens gratuitos diarios (1 consulta = 1 token)</span>
-            </div>
+          <div>
+            <strong style="display:block; font-size:1rem;">Nimbo AI • Colegios, Ríos (La Cocha, Jubones), Rutas y Mundo</strong>
+            <span style="font-size:0.8rem; color: var(--teal);" id="aiStatusLine">● Activo • Plan Normal (5 consultas/día)</span>
           </div>
           <div style="font-size:0.82rem; color: var(--text-muted);">
-            Gastados hoy: <strong id="chatUsedCount" style="color: var(--amber);">0</strong> / 10
+            Usados hoy: <strong id="chatUsedCount" style="color: var(--amber);">0</strong> / <span id="chatMaxCount">5</span>
           </div>
         </div>
 
         <div class="chat-box" id="chatBox">
           <div class="msg msg-ai">
-            👋 ¡Hola! Soy <strong>Nimbo AI</strong>, tu sección de guía y ayuda inteligente.<br><br>
-            Cuentas con <strong>10 tokens gratuitos cada día</strong> (puedes ver tu saldo arriba). Pregúntame cómo está cualquier <strong>colegio</strong> (Carmen Mora, Juan Pablo II, Ochoa León...), cualquier <strong>río o balneario</strong> (La Cocha, Río Jubones, Casacay, Dos Bocas, Río Palenque) o cualquier <strong>ciudad del mundo</strong>.
+            👋 ¡Hola! Soy <strong>Nimbo AI</strong>.<br><br>
+            Pregúntame cómo está cualquier <strong>río o balneario</strong> (Balneario La Cocha, Río Jubones, Casacay, Dos Bocas, Río Palenque), cualquier <strong>colegio</strong> (Carmen Mora, Juan Pablo II, Ochoa León) o cualquier <strong>país o ciudad del mundo</strong>.
           </div>
         </div>
 
         <div class="quick-prompts">
-          <button class="chip-btn" onclick="quickAsk('¿Cómo está el colegio Carmen Mora de Encalada?')">🏫 Carmen Mora</button>
+          <button class="chip-btn" onclick="quickAsk('¿Cómo está el Balneario La Cocha, Pasaje?')">🏞️ La Cocha</button>
+          <button class="chip-btn" onclick="quickAsk('¿Cómo está el Río Jubones y Casacay?')">🌊 Río Jubones</button>
+          <button class="chip-btn" onclick="quickAsk('¿Cómo está Dos Bocas y Río Buenavista?')">🌿 Dos Bocas</button>
           <button class="chip-btn" onclick="quickAsk('¿Cómo está el colegio Juan Pablo II?')">🏫 Juan Pablo II</button>
-          <button class="chip-btn" onclick="quickAsk('¿Cómo está el Balneario La Cocha, Pasaje?')">🏞️ Río / Balneario La Cocha</button>
-          <button class="chip-btn" onclick="quickAsk('¿Cómo está el Río Jubones y Casacay?')">🌊 Río Jubones / Casacay</button>
-          <button class="chip-btn" onclick="quickAsk('¿Cómo está Dos Bocas y Río Buenavista?')">🌿 Dos Bocas / Buenavista</button>
-          <button class="chip-btn" onclick="quickAsk('¿Cómo están los pasajes y la vía Pasaje - Machala?')">🚌 Pasajes Machala</button>
-          <button class="chip-btn" onclick="quickAsk('¿Cómo está el clima en Madrid, España?')">🌍 Madrid</button>
+          <button class="chip-btn" onclick="quickAsk('¿Cómo está el colegio Carmen Mora de Encalada?')">🏫 Carmen Mora</button>
+          <button class="chip-btn" onclick="quickAsk('¿Cómo está el clima en Tokio, Japón?')">🌍 Tokio</button>
         </div>
 
         <form class="chat-input-area" onsubmit="handleChatSubmit(event)">
           <input
             type="text"
             id="aiInput"
-            placeholder="Pregunta aquí: Ej. ¿Cómo está La Cocha?, ¿Cómo está el Juan Pablo II? o ¿Cómo está Tokio?"
+            placeholder="Pregunta aquí: Ej. ¿Cómo está La Cocha?, ¿Juan Pablo II? o ¿París?"
             autocomplete="off"
             required
           />
-          <button type="submit" class="btn btn-primary" id="aiSendBtn">Consultar (-1 token)</button>
+          <button type="submit" class="btn btn-primary" id="aiSendBtn">Consultar</button>
         </form>
       </div>
     </section>
 
-    <!-- 3. SECCIÓN DE COLEGIOS E INSTITUCIONES EDUCATIVAS -->
-    <section id="colegios">
+    <!-- SECCIÓN 4: COLEGIOS -->
+    <section id="sec-colegios" class="view-section">
       <div class="section-head">
         <div>
           <h2>🏫 Colegios e Instituciones Educativas</h2>
-          <p>Estado de jornada escolar, condiciones de vías de acceso y alertas preventivas en Pasaje y El Oro.</p>
+          <p>Estado de jornada escolar y condiciones de vías de acceso en Pasaje y El Oro.</p>
         </div>
       </div>
 
@@ -771,7 +868,7 @@
           type="text"
           id="schoolSearch"
           class="search-bar"
-          placeholder="🔍 Buscar colegio por nombre o sector (ej. Carmen Mora, Juan Pablo II, Ochoa León, Buenavista, Casacay)..."
+          placeholder="🔍 Buscar colegio (ej. Carmen Mora, Juan Pablo II, Ochoa León, Buenavista, Casacay)..."
           oninput="renderSchools()"
         />
         <button class="btn btn-outline active" onclick="setSchoolFilter('todos', this)">Todos</button>
@@ -782,12 +879,12 @@
       <div class="grid-3" id="schoolsGrid"></div>
     </section>
 
-    <!-- 4. SECCIÓN DE PASAJE: SECTORES CRÍTICOS, RÍO JUBONES Y PASAJES -->
-    <section id="pasaje">
+    <!-- SECCIÓN 5: PASAJE Y RUTAS -->
+    <section id="sec-pasaje" class="view-section">
       <div class="section-head">
         <div>
-          <h2>🚌 Pasaje: Sectores Críticos, Río Jubones y Pasajes / Transporte</h2>
-          <p>Monitoreo hiperlocal de parroquias de Pasaje, nivel fluvial y estado de pasajes y carreteras.</p>
+          <h2>🚌 Pasaje: Sectores Críticos y Pasajes / Rutas</h2>
+          <p>Monitoreo hiperlocal por barrios de Pasaje y estado de terminales y carreteras.</p>
         </div>
       </div>
 
@@ -797,9 +894,8 @@
             <h3>📍 Sectores y Parroquias de Pasaje</h3>
             <span class="badge badge-teal">Vigilancia Hiperlocal</span>
           </div>
-          <p>Diagnóstico por zonas urbanas y rurales del cantón Pasaje ante lluvias o crecidas:</p>
           <div class="card-meta" style="display:flex; flex-direction:column; gap:0.55rem;">
-            <div><strong>• Centro Urbano y Av. Rocafuerte:</strong> Drenaje estable; precaución en horas de entrada y salida escolar.</div>
+            <div><strong>• Centro Urbano y Av. Rocafuerte:</strong> Drenaje estable; precaución en horarios de entrada y salida escolar.</div>
             <div><strong>• Loma de Franco y La Peaña:</strong> Zonas bajas; evitar circular por calles con acumulación de agua en aguaceros fuertes.</div>
             <div><strong>• Buenavista y Cañaquemada:</strong> Humedad elevada en la mañana y lluvias dispersas vespertinas.</div>
             <div><strong>• Casacay y Uzhcurrumi (Cuenca Río Jubones):</strong> Vigilancia preventiva de lluvias en la parte alta; caudal estable.</div>
@@ -812,24 +908,23 @@
             <h3>🎫 Pasajes, Terminales y Rutas Intercantonales</h3>
             <span class="badge badge-amber">Movilidad y Transporte</span>
           </div>
-          <p>Estado de vías, frecuencias de buses intercantonales y seguridad para motociclistas:</p>
           <div class="card-meta" style="display:flex; flex-direction:column; gap:0.55rem;">
             <div><strong>• Pasaje – Machala (Vía principal):</strong> Operativa 100% (frecuencia cada 5–10 min). Calzada húmeda en tardes lluviosas.</div>
             <div><strong>• Pasaje – Santa Rosa / Huaquillas:</strong> Tránsito fluido; precaución por viento lateral en tramos abiertos.</div>
             <div><strong>• Pasaje – Cuenca (Vía Girón – Pasaje):</strong> Habilitada; posible neblina densa entre Uzhcurrumi y Lentag.</div>
-            <div><strong>• Transporte Urbano y Motocicletas en Pasaje:</strong> Llevar poncho impermeable ligero y funda protectora para mochila.</div>
+            <div><strong>• Motocicletas en Pasaje:</strong> Llevar poncho impermeable ligero y funda protectora para mochila.</div>
           </div>
           <button class="btn btn-outline" onclick="quickAsk('¿Cómo están los pasajes y carreteras desde Pasaje hoy?')">🤖 Consultar pasajes en Nimbo AI</button>
         </div>
       </div>
     </section>
 
-    <!-- 5. SECCIÓN DE RÍOS, BALNEARIOS Y TURISMO -->
-    <section id="turismo">
+    <!-- SECCIÓN 6: RÍOS, BALNEARIOS Y TURISMO -->
+    <section id="sec-rios" class="view-section">
       <div class="section-head">
         <div>
           <h2>🌴 Ríos, Balnearios y Turismo (Pasaje y El Oro)</h2>
-          <p>Recomendaciones honestas de caudal, agua y clima para visitas a ríos, balnearios y zonas altas.</p>
+          <p>Recomendaciones honestas de caudal, agua y clima para visitas a ríos y balnearios.</p>
         </div>
       </div>
 
@@ -890,8 +985,8 @@
       </div>
     </section>
 
-    <!-- 6. SEMÁFORO PREVENTIVO FENÓMENO DE EL NIÑO -->
-    <section id="elnino">
+    <!-- SECCIÓN 7: FENÓMENO DE EL NIÑO -->
+    <section id="sec-elnino" class="view-section">
       <div class="section-head">
         <div>
           <h2>🌊 Semáforo Preventivo — Fenómeno de El Niño (ENSO)</h2>
@@ -899,83 +994,94 @@
         </div>
       </div>
 
-      <div class="enso-grid">
-        <div class="enso-card">
+      <div class="grid-2">
+        <div class="card">
           <span class="badge badge-teal">🟢 Verde: Normalidad</span>
-          <h3 style="margin-top:0.6rem;">Condición Estable</h3>
+          <h3>Condición Estable</h3>
           <p>Precipitaciones dentro del rango normal. Mantener limpieza de desagües y canaletas.</p>
         </div>
-        <div class="enso-card active-level">
+        <div class="card" style="border: 2px solid var(--amber);">
           <span class="badge badge-amber">🟡 Amarillo: Vigilancia (Actual)</span>
-          <h3 style="margin-top:0.6rem;">Monitoreo Costero Activo</h3>
+          <h3>Monitoreo Costero Activo</h3>
           <p>Lluvias vespertinas aisladas en Pasaje y El Oro. Tener impermeable y mochila de emergencia listos.</p>
         </div>
-        <div class="enso-card">
+        <div class="card">
           <span class="badge badge-amber" style="background:rgba(249,115,22,0.18); color:#fb923c;">🟠 Naranja: Preparación</span>
-          <h3 style="margin-top:0.6rem;">Lluvias Recurrentes</h3>
+          <h3>Lluvias Recurrentes</h3>
           <p>Resguardar mercadería en planta baja, proteger motocicletas bajo techo y evitar zonas inundables.</p>
         </div>
-        <div class="enso-card">
+        <div class="card">
           <span class="badge badge-red">🔴 Rojo: Alerta Activa</span>
-          <h3 style="margin-top:0.6rem;">Emergencia Pluvial</h3>
+          <h3>Emergencia Pluvial</h3>
           <p>Seguir rutas de evacuación oficiales, desconectar equipos eléctricos en zonas bajas y atender boletines INAMHI.</p>
         </div>
       </div>
     </section>
 
-    <!-- 7. PLANES FREEMIUM -->
-    <section id="planes">
+    <!-- SECCIÓN 8: SOLO 2 PLANES (NORMAL GRATIS vs PRO PREMIUM) + ACTIVACIÓN -->
+    <section id="sec-planes" class="view-section">
       <div class="section-head">
         <div>
-          <h2>💎 Planes NimboSignal (Acceso Comunitario)</h2>
-          <p>Servicio esencial gratuito para estudiantes y familias, con opciones ampliadas para comercios.</p>
+          <h2>💎 Planes NimboSignal — Normal vs. Pro Premium</h2>
+          <p>Elige entre la versión gratuita completa o desbloquea la IA ilimitada y la App Móvil oficial.</p>
         </div>
       </div>
 
-      <div class="grid-3">
+      <div class="grid-2">
+        <!-- PLAN 1: NORMAL (GRATIS) -->
         <div class="card">
           <div>
-            <span class="badge badge-teal">Comunitario</span>
-            <h3 style="margin-top:0.5rem;">Plan Gratuito</h3>
-            <div class="price">$0,00 <span>/ mes</span></div>
+            <span class="badge badge-teal">Plan 1 • Gratuito</span>
+            <h3 style="font-size:1.35rem; margin-top:0.5rem;">Plan Normal</h3>
+            <div class="price">$0,00 <span>/ siempre gratis</span></div>
+            <p style="margin-bottom:0.85rem;">Ideal para consultar el clima diario sin costo alguno:</p>
             <ul class="plan-list">
-              <li>✔ Veredicto climático honesto diario (Pasaje)</li>
-              <li>✔ Directorio de colegios, ríos y pasajes</li>
-              <li>✔ <strong>10 tokens diarios gratuitos</strong> en Nimbo AI</li>
-              <li>✔ Semáforo preventivo Fenómeno de El Niño</li>
+              <li>✔ Veredicto climático honesto de <strong>Ecuador y Global</strong></li>
+              <li>✔ Acceso completo a <strong>Colegios, Ríos, Pasaje y El Niño</strong></li>
+              <li>✔ Incluye <strong>Nimbo AI con 5 tokens gratuitos diarios</strong></li>
+              <li>✖ No incluye código de desbloqueo para la App Móvil Android</li>
             </ul>
           </div>
-          <button class="btn btn-outline" onclick="alert('Plan Gratuito activo con 10 tokens diarios en Nimbo AI.')">Plan Activo</button>
+          <button class="btn btn-outline" id="btnNormalStatus" style="justify-content:center;">✔ Plan Normal Activo</button>
         </div>
 
-        <div class="card" style="border-color: var(--cyan);">
+        <!-- PLAN 2: PRO PREMIUM -->
+        <div class="card" style="border: 2px solid var(--cyan);">
           <div>
-            <span class="badge badge-cyan">Recomendado</span>
-            <h3 style="margin-top:0.5rem;">Plan Plus</h3>
-            <div class="price">$1,99 <span>/ mes</span></div>
-            <ul class="plan-list">
-              <li>✔ Alertas hiperlocales en tiempo real por sectores</li>
-              <li>✔ Pronóstico por franjas horarias (48–72 h)</li>
-              <li>✔ Guías completas de protección personal y hogar</li>
-              <li>✔ 100% libre de anuncios</li>
-            </ul>
-          </div>
-          <button class="btn btn-primary" onclick="alert('Prueba gratuita de 7 días activada para Plan Plus ($1,99/mes).')">Probar 7 días gratis</button>
-        </div>
-
-        <div class="card">
-          <div>
-            <span class="badge badge-amber">Comercios y Familias</span>
-            <h3 style="margin-top:0.5rem;">Plan Pro</h3>
+            <span class="badge badge-cyan">Plan 2 • Todo Incluido</span>
+            <h3 style="font-size:1.35rem; margin-top:0.5rem;">Plan Pro Premium</h3>
             <div class="price">$2,99 <span>/ mes</span></div>
+            <p style="margin-bottom:0.85rem;">Desbloquea todo el poder de NimboSignal en Web y Teléfono:</p>
             <ul class="plan-list">
-              <li>✔ Cobertura total toda la provincia de El Oro</li>
-              <li>✔ Monitoreo continuo ENSO + reporte de riesgo</li>
-              <li>✔ Checklist avanzado para locales y cultivos</li>
-              <li>✔ Soporte prioritario y alertas tempranas</li>
+              <li>✔ <strong>Nimbo AI 100% Ilimitada</strong> (sin límite de 5 tokens)</li>
+              <li>✔ <strong>Acceso completo a la página Pro Premium</strong></li>
+              <li>✔ <strong>Te entrega el Código Oficial para activar la App Android</strong></li>
+              <li>✔ Alertas prioritarias por sectores y cero anuncios</li>
             </ul>
           </div>
-          <button class="btn btn-outline" onclick="alert('Solicitud registrada para Plan Pro ($2,99/mes).')">Elegir Plan Pro</button>
+
+          <div style="display:flex; flex-direction:column; gap:0.6rem;">
+            <button class="btn btn-primary" style="justify-content:center;" onclick="purchaseProPremiumWeb()">
+              🚀 Adquirir Pro Premium y Generar Código de App
+            </button>
+
+            <div id="webGeneratedBox" style="display:none; background:var(--teal-soft); border:1px dashed var(--teal); padding:0.8rem; border-radius:12px; text-align:center;">
+              <span style="font-size:0.8rem; display:block;">🎉 ¡Pro Premium Activado! Tu código para Web y App Móvil es:</span>
+              <strong id="webGeneratedCode" style="font-size:1.2rem; letter-spacing:1px; color:var(--cyan);"></strong>
+            </div>
+
+            <!-- ACTIVAR CÓDIGO EXISTENTE O CÓDIGO MAESTRO -->
+            <div style="border-top:1px solid var(--border); padding-top:0.75rem; margin-top:0.25rem;">
+              <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:0.4rem;">
+                🔑 ¿Ya compraste Pro Premium o tienes tu Código Maestro? Ingrésalo aquí:
+              </span>
+              <div style="display:flex; gap:0.5rem;">
+                <input type="text" id="webCodeInput" class="code-input" placeholder="Ej. NS-PRO-XXXX-YY" style="text-transform:uppercase;" />
+                <button class="btn btn-outline" onclick="activateWebCode()">Activar</button>
+              </div>
+              <span id="webCodeMsg" style="font-size:0.78rem; display:block; margin-top:0.35rem;"></span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -983,22 +1089,19 @@
   </main>
 
   <footer>
-    <strong>NimboSignal</strong> — Plataforma Web y App Preventiva de Alertas Meteorológicas y Monitoreo El Niño<br />
-    Desarrollado por <strong>Jairo Evander Martínez Ortega</strong> • Unidad Educativa "Carmen Mora de Encalada" (2do BT Informática "B") • Pasaje, El Oro, Ecuador.
+    <strong>NimboSignal</strong> • Desarrollado por <strong>Jairo Evander Martínez Ortega</strong> • Unidad Educativa "Carmen Mora de Encalada" (2do BT Informática "B") • Pasaje, El Oro, Ecuador.
   </footer>
 
   <script>
     // ==========================================
-    // 0. CAMBIO DE TEMA CLARO / OSCURO
+    // 0. TEMA CLARO / OSCURO
     // ==========================================
     const THEME_KEY = 'nimbosignal_theme_v1';
 
     function applyTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       const btn = document.getElementById('themeToggleBtn');
-      if (btn) {
-        btn.textContent = theme === 'light' ? '🌙 Oscuro' : '☀️ Claro';
-      }
+      if (btn) btn.textContent = theme === 'light' ? '🌙 Oscuro' : '☀️ Claro';
     }
 
     function toggleTheme() {
@@ -1009,7 +1112,250 @@
     }
 
     // ==========================================
-    // 1. DIRECTORIO DE COLEGIOS (INCLUYE JUAN PABLO II)
+    // 1. NAVEGACIÓN ESTRICTA POR SECCIONES Y MODO ECUADOR/GLOBAL
+    // ==========================================
+    function showSection(sectionId) {
+      document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+      const target = document.getElementById(sectionId);
+      if (target) target.classList.add('active');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-target') === sectionId);
+      });
+
+      // Sincronizar botón superior Ecuador / Global
+      const isGlobal = sectionId === 'sec-global';
+      document.getElementById('regEcuadorBtn').classList.toggle('active', !isGlobal);
+      document.getElementById('regGlobalBtn').classList.toggle('active', isGlobal);
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchRegionMode(mode) {
+      if (mode === 'global') {
+        showSection('sec-global');
+      } else {
+        showSection('sec-veredicto');
+      }
+    }
+
+    function chooseStartMode(mode) {
+      document.getElementById('welcomeOverlay').classList.add('hidden');
+      switchRegionMode(mode);
+    }
+
+    function openWelcomeChooser() {
+      document.getElementById('welcomeOverlay').classList.remove('hidden');
+    }
+
+    // ==========================================
+    // 2. SISTEMA DE 2 PLANES (NORMAL 5 TOKENS vs PRO PREMIUM ILIMITADO)
+    // ==========================================
+    const NORMAL_DAILY_LIMIT = 5;
+    const TOKEN_STORAGE_KEY = 'nimbosignal_tokens_v3';
+    const WEB_PRO_KEY = 'nimbosignal_license_v1';
+    const MASTER_CODE = 'JAIRO-MASTER-23';
+
+    function computeChecksum(digits4) {
+      const d = digits4.split('').map(Number);
+      const sum = d[0] * 3 + d[1] * 7 + d[2] * 5 + d[3] * 9;
+      return String((sum % 89) + 10);
+    }
+
+    function isValidProCode(code) {
+      if (code === MASTER_CODE) return 'MASTER';
+      const match = code.match(/^NS-PRO-(\d{4})-(\d{2})$/);
+      if (!match) return null;
+      if (computeChecksum(match[1]) !== match[2]) return null;
+      return 'PRO';
+    }
+
+    function getWebLicense() {
+      try {
+        return JSON.parse(localStorage.getItem(WEB_PRO_KEY));
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function isProActive() {
+      const lic = getWebLicense();
+      return lic && lic.active && (lic.tier === 'PRO' || lic.tier === 'MASTER');
+    }
+
+    function getTokenState() {
+      const today = new Date().toISOString().slice(0, 10);
+      try {
+        const saved = JSON.parse(localStorage.getItem(TOKEN_STORAGE_KEY));
+        if (saved && saved.date === today && typeof saved.used === 'number') return saved;
+      } catch (e) {}
+      const fresh = { date: today, used: 0 };
+      localStorage.setItem(TOKEN_STORAGE_KEY, JSON.stringify(fresh));
+      return fresh;
+    }
+
+    function updatePlanAndTokenUI() {
+      const pro = isProActive();
+      const lic = getWebLicense();
+      const state = getTokenState();
+
+      if (pro) {
+        const isMaster = lic && lic.tier === 'MASTER';
+        document.getElementById('topTokensLeft').textContent = '∞/∞';
+        document.getElementById('topPlanLabel').textContent = isMaster ? '👑 Maestro' : 'Pro Premium';
+        document.getElementById('chatTokenBadge').textContent = isMaster ? '👑 Modo Maestro • IA Ilimitada' : '💎 Pro Premium • IA Ilimitada';
+        document.getElementById('aiPlanSubtitle').textContent = 'Tienes Nimbo AI Ilimitada activa y acceso completo a la App Móvil.';
+        document.getElementById('aiStatusLine').textContent = '● Activo • Nimbo AI Ilimitada';
+        document.getElementById('chatUsedCount').textContent = state.used;
+        document.getElementById('chatMaxCount').textContent = '∞';
+        document.getElementById('btnNormalStatus').textContent = 'Plan Normal (Gratuito)';
+      } else {
+        const left = Math.max(0, NORMAL_DAILY_LIMIT - state.used);
+        document.getElementById('topTokensLeft').textContent = `${left}/${NORMAL_DAILY_LIMIT}`;
+        document.getElementById('topPlanLabel').textContent = 'Normal';
+        document.getElementById('chatTokenBadge').textContent = `${left}/${NORMAL_DAILY_LIMIT} tokens disponibles hoy`;
+        document.getElementById('aiPlanSubtitle').textContent = 'Plan Normal: 5 tokens gratuitos diarios • Actualiza a Pro Premium para IA Ilimitada.';
+        document.getElementById('aiStatusLine').textContent = '● Activo • Plan Normal (5 tokens/día)';
+        document.getElementById('chatUsedCount').textContent = state.used;
+        document.getElementById('chatMaxCount').textContent = NORMAL_DAILY_LIMIT;
+        document.getElementById('btnNormalStatus').textContent = '✔ Plan Normal Activo';
+      }
+    }
+
+    function purchaseProPremiumWeb() {
+      const random4 = String(Math.floor(1000 + Math.random() * 9000));
+      const check = computeChecksum(random4);
+      const code = `NS-PRO-${random4}-${check}`;
+
+      localStorage.setItem(WEB_PRO_KEY, JSON.stringify({
+        active: true,
+        tier: 'PRO',
+        code: code,
+        activatedAt: new Date().toISOString()
+      }));
+
+      document.getElementById('webGeneratedCode').textContent = code;
+      document.getElementById('webGeneratedBox').style.display = 'block';
+      updatePlanAndTokenUI();
+    }
+
+    function activateWebCode() {
+      const raw = document.getElementById('webCodeInput').value.trim().toUpperCase();
+      const msgEl = document.getElementById('webCodeMsg');
+      const tier = isValidProCode(raw);
+
+      if (!tier) {
+        msgEl.style.color = 'var(--red)';
+        msgEl.textContent = '❌ Código inválido. Adquiere Pro Premium arriba para generar un código válido.';
+        return;
+      }
+
+      localStorage.setItem(WEB_PRO_KEY, JSON.stringify({
+        active: true,
+        tier: tier,
+        code: tier === 'MASTER' ? 'MASTER-KEY' : raw,
+        activatedAt: new Date().toISOString()
+      }));
+
+      msgEl.style.color = 'var(--teal)';
+      msgEl.textContent = tier === 'MASTER'
+        ? '👑 ¡Código Maestro aceptado! Pro Premium + IA Ilimitada activados.'
+        : '✅ ¡Plan Pro Premium activado! Ya tienes IA Ilimitada.';
+      updatePlanAndTokenUI();
+    }
+
+    // ==========================================
+    // 3. SECCIÓN GLOBAL: PAÍSES Y CIUDADES DEL MUNDO
+    // ==========================================
+    const GLOBAL_CITIES = [
+      { city: 'Nueva York', country: 'Estados Unidos', continent: 'América', lat: 40.7128, lon: -74.0060 },
+      { city: 'Ciudad de México', country: 'México', continent: 'América', lat: 19.4326, lon: -99.1332 },
+      { city: 'Bogotá', country: 'Colombia', continent: 'América', lat: 4.7110, lon: -74.0721 },
+      { city: 'Lima', country: 'Perú', continent: 'América', lat: -12.0464, lon: -77.0428 },
+      { city: 'Buenos Aires', country: 'Argentina', continent: 'América', lat: -34.6037, lon: -58.3816 },
+      { city: 'Madrid', country: 'España', continent: 'Europa', lat: 40.4168, lon: -3.7038 },
+      { city: 'París', country: 'Francia', continent: 'Europa', lat: 48.8566, lon: 2.3522 },
+      { city: 'Londres', country: 'Reino Unido', continent: 'Europa', lat: 51.5074, lon: -0.1278 },
+      { city: 'Roma', country: 'Italia', continent: 'Europa', lat: 41.9028, lon: 12.4964 },
+      { city: 'Tokio', country: 'Japón', continent: 'Asia', lat: 35.6762, lon: 139.6503 },
+      { city: 'Seúl', country: 'Corea del Sur', continent: 'Asia', lat: 37.5665, lon: 126.9780 },
+      { city: 'Dubái', country: 'Emiratos Árabes', continent: 'Asia', lat: 25.2048, lon: 55.2708 },
+      { city: 'Sídney', country: 'Australia', continent: 'Oceanía y África', lat: -33.8688, lon: 151.2093 },
+      { city: 'El Cairo', country: 'Egipto', continent: 'Oceanía y África', lat: 30.0444, lon: 31.2357 }
+    ];
+
+    let currentContinent = 'todos';
+
+    function filterGlobalContinent(continent, btn) {
+      currentContinent = continent;
+      document.querySelectorAll('#sec-global .filter-row .btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderGlobalGrid();
+    }
+
+    function renderGlobalGrid() {
+      const grid = document.getElementById('globalCitiesGrid');
+      const filtered = GLOBAL_CITIES
+        .map((c, idx) => ({ ...c, idx }))
+        .filter(c => currentContinent === 'todos' || c.continent === currentContinent);
+
+      grid.innerHTML = filtered.map(c => `
+        <div class="card">
+          <div>
+            <div class="card-top">
+              <h3>${c.city}, ${c.country}</h3>
+              <span class="badge badge-cyan">${c.continent}</span>
+            </div>
+            <p style="margin-top:0.35rem;">Consulta clima satelital en vivo y pronóstico horario.</p>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="fetchGlobalByCoords('${c.city}, ${c.country}', ${c.lat}, ${c.lon})">🌡️ Ver Clima</button>
+            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el clima en ${c.city}, ${c.country}?')">🤖 Nimbo AI</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function fetchGlobalByCoords(label, lat, lon) {
+      document.getElementById('globalResultTitle').textContent = `⏳ Consultando satélite en ${label}...`;
+      try {
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m&hourly=precipitation_probability&forecast_days=1&timezone=auto`);
+        const data = await res.json();
+        const temp = Math.round(data.current.temperature_2m);
+        const wind = Math.round(data.current.wind_speed_10m);
+        const rain = Math.max(...data.hourly.precipitation_probability.slice(0, 6));
+        const info = interpretWeatherCode(data.current.weather_code);
+
+        document.getElementById('globalResultTitle').textContent = `🌍 ${label}: ${info.verdict} (${temp}°C)`;
+        document.getElementById('globalResultBody').textContent = `${info.label} • Viento: ${wind} km/h • Prob. de lluvia: ${rain}%. ${info.advice}`;
+      } catch (e) {
+        document.getElementById('globalResultTitle').textContent = `🌍 ${label}: Error temporal de conexión`;
+      }
+    }
+
+    async function searchGlobalPlace(e) {
+      e.preventDefault();
+      const q = document.getElementById('globalSearchInput').value.trim();
+      if (!q) return;
+      document.getElementById('globalResultTitle').textContent = `🔎 Buscando "${q}" en el mapa mundial...`;
+      try {
+        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1&language=es&format=json`);
+        const geo = await geoRes.json();
+        if (!geo.results || !geo.results.length) {
+          document.getElementById('globalResultTitle').textContent = `❌ No se encontró "${q}"`;
+          document.getElementById('globalResultBody').textContent = 'Prueba con el nombre de una ciudad o país (ej. "Tokio", "Canadá", "Bogotá", "Barcelona").';
+          return;
+        }
+        const p = geo.results[0];
+        const label = `${p.name}${p.admin1 ? ', ' + p.admin1 : ''}${p.country ? ', ' + p.country : ''}`;
+        await fetchGlobalByCoords(label, p.latitude, p.longitude);
+      } catch (err) {
+        document.getElementById('globalResultTitle').textContent = '📡 Sin conexión satelital en este momento.';
+      }
+    }
+
+    // ==========================================
+    // 4. DIRECTORIO DE COLEGIOS (CON JUAN PABLO II)
     // ==========================================
     const SCHOOLS_DB = [
       {
@@ -1021,7 +1367,7 @@
         status: 'Jornada Normal',
         badgeClass: 'badge-teal',
         keywords: ['carmen mora'],
-        access: 'Vías asfaltadas transitables. Precaución habitual en horarios de entrada y salida (12:30 y 18:00).'
+        access: 'Vías asfaltadas transitables. Precaución habitual en horarios de entrada y salida.'
       },
       {
         name: 'Unidad Educativa Particular "Juan Pablo II"',
@@ -1032,7 +1378,7 @@
         status: 'Jornada Normal',
         badgeClass: 'badge-teal',
         keywords: ['juan pablo'],
-        access: 'Acceso urbano pavimentado en buen estado; llevar paraguas o poncho ligero si hay pronóstico de lluvia vespertina.'
+        access: 'Acceso urbano pavimentado en buen estado; llevar paraguas o poncho ligero si hay pronóstico de lluvia.'
       },
       {
         name: 'Unidad Educativa "Dr. José Ochoa León"',
@@ -1157,8 +1503,67 @@
       }
     ];
 
+    let currentSchoolFilter = 'todos';
+
+    function setSchoolFilter(filter, btn) {
+      currentSchoolFilter = filter;
+      document.querySelectorAll('#sec-colegios .filter-row .btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderSchools();
+    }
+
+    function askSchoolByIndex(idx) {
+      const s = SCHOOLS_DB[idx];
+      if (!s) return;
+      quickAsk(`¿Cómo está el ${s.name.replace(/"/g, '')}?`);
+    }
+
+    function renderSchools() {
+      const query = document.getElementById('schoolSearch').value.toLowerCase().trim();
+      const grid = document.getElementById('schoolsGrid');
+
+      const filtered = SCHOOLS_DB
+        .map((s, idx) => ({ ...s, originalIdx: idx }))
+        .filter(s => {
+          const matchesFilter = currentSchoolFilter === 'todos' || s.canton === currentSchoolFilter;
+          const matchesQuery =
+            s.name.toLowerCase().includes(query) ||
+            s.sector.toLowerCase().includes(query) ||
+            s.canton.toLowerCase().includes(query);
+          return matchesFilter && matchesQuery;
+        });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="card" style="grid-column: 1 / -1; text-align:center;">
+            <h3>No aparece ese colegio en el listado rápido</h3>
+            <p>¡Pregúntale directo a <strong>Nimbo AI</strong> por cualquier colegio o ciudad del mundo!</p>
+            <div>
+              <button class="btn btn-primary" onclick="quickAsk('¿Cómo está el colegio ${query.replace(/'/g, '') || 'en mi ciudad'}?')">🤖 Preguntar a Nimbo AI</button>
+            </div>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(s => `
+        <div class="card">
+          <div>
+            <div class="card-top">
+              <h3>${s.name}</h3>
+              <span class="badge ${s.badgeClass}">${s.status}</span>
+            </div>
+            <p style="margin-top:0.35rem;">📍 ${s.sector}</p>
+          </div>
+          <div class="card-meta">${s.access}</div>
+          <button class="btn btn-outline" onclick="askSchoolByIndex(${s.originalIdx})">
+            🤖 Consultar clima en Nimbo AI
+          </button>
+        </div>
+      `).join('');
+    }
+
     // ==========================================
-    // 2. BASE DE CONOCIMIENTO DE TODOS LOS RÍOS Y BALNEARIOS
+    // 5. BASE DE CONOCIMIENTO DE TODOS LOS RÍOS Y BALNEARIOS
     // ==========================================
     const RIVERS_TOURISM_DB = [
       {
@@ -1233,123 +1638,8 @@
       }
     ];
 
-    let currentSchoolFilter = 'todos';
-
-    function setSchoolFilter(filter, btn) {
-      currentSchoolFilter = filter;
-      document.querySelectorAll('#colegios .filter-row .btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      renderSchools();
-    }
-
-    function askSchoolByIndex(idx) {
-      const s = SCHOOLS_DB[idx];
-      if (!s) return;
-      quickAsk(`¿Cómo está el ${s.name.replace(/"/g, '')}?`);
-    }
-
-    function renderSchools() {
-      const query = document.getElementById('schoolSearch').value.toLowerCase().trim();
-      const grid = document.getElementById('schoolsGrid');
-
-      const filtered = SCHOOLS_DB
-        .map((s, idx) => ({ ...s, originalIdx: idx }))
-        .filter(s => {
-          const matchesFilter = currentSchoolFilter === 'todos' || s.canton === currentSchoolFilter;
-          const matchesQuery =
-            s.name.toLowerCase().includes(query) ||
-            s.sector.toLowerCase().includes(query) ||
-            s.canton.toLowerCase().includes(query);
-          return matchesFilter && matchesQuery;
-        });
-
-      if (filtered.length === 0) {
-        grid.innerHTML = `
-          <div class="card" style="grid-column: 1 / -1; text-align:center;">
-            <h3>No aparece ese colegio en el listado rápido</h3>
-            <p>¡Pregúntale directo a <strong>Nimbo AI</strong> por cualquier colegio o ciudad del mundo!</p>
-            <div>
-              <button class="btn btn-primary" onclick="quickAsk('¿Cómo está el colegio ${query.replace(/'/g, '') || 'en mi ciudad'}?')">🤖 Preguntar a Nimbo AI</button>
-            </div>
-          </div>`;
-        return;
-      }
-
-      grid.innerHTML = filtered.map(s => `
-        <div class="card">
-          <div>
-            <div class="card-top">
-              <h3>${s.name}</h3>
-              <span class="badge ${s.badgeClass}">${s.status}</span>
-            </div>
-            <p style="margin-top:0.35rem;">📍 ${s.sector}</p>
-          </div>
-          <div class="card-meta">${s.access}</div>
-          <button class="btn btn-outline" onclick="askSchoolByIndex(${s.originalIdx})">
-            🤖 Consultar clima en Nimbo AI
-          </button>
-        </div>
-      `).join('');
-    }
-
     // ==========================================
-    // 3. SISTEMA DE 10 TOKENS DIARIOS PARA NIMBO AI
-    // ==========================================
-    const DAILY_TOKEN_LIMIT = 10;
-    const STORAGE_KEY = 'nimbosignal_tokens_v2';
-
-    function getTodayString() {
-      return new Date().toISOString().slice(0, 10);
-    }
-
-    function getTokenState() {
-      const today = getTodayString();
-      try {
-        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        if (saved && saved.date === today && typeof saved.used === 'number') {
-          return saved;
-        }
-      } catch (e) {}
-      const fresh = { date: today, used: 0 };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh));
-      return fresh;
-    }
-
-    function saveTokenState(state) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      updateTokenUI();
-    }
-
-    function updateTokenUI() {
-      const state = getTokenState();
-      const left = Math.max(0, DAILY_TOKEN_LIMIT - state.used);
-      const pct = (left / DAILY_TOKEN_LIMIT) * 100;
-
-      document.getElementById('topTokensLeft').textContent = `${left}/${DAILY_TOKEN_LIMIT}`;
-      document.getElementById('topTokensUsed').textContent = state.used;
-      document.getElementById('topTokenBar').style.width = `${pct}%`;
-
-      document.getElementById('chatTokenBadge').textContent = `${left} tokens disponibles hoy`;
-      document.getElementById('chatUsedCount').textContent = state.used;
-
-      const input = document.getElementById('aiInput');
-      const btn = document.getElementById('aiSendBtn');
-      if (left <= 0) {
-        input.placeholder = 'Has gastado tus 10 tokens gratuitos de hoy. Se renuevan mañana.';
-        btn.textContent = '0 tokens hoy';
-      } else {
-        input.placeholder = 'Pregunta aquí: Ej. ¿Cómo está La Cocha?, ¿Cómo está el Juan Pablo II? o ¿Cómo está Tokio?';
-        btn.textContent = 'Consultar (-1 token)';
-      }
-    }
-
-    function resetDemoTokens() {
-      saveTokenState({ date: getTodayString(), used: 0 });
-      appendMessage('ai', '🔄 <strong>Modo Demo:</strong> Se han restaurado tus <strong>10 tokens diarios</strong> de Nimbo AI (Gastados: 0/10).');
-    }
-
-    // ==========================================
-    // 4. MOTOR CLIMÁTICO EN VIVO + NIMBO AI INTELIGENTE
+    // 6. MOTOR CLIMÁTICO Y NIMBO AI
     // ==========================================
     function interpretWeatherCode(code) {
       if (code === 0) return { label: 'Cielo despejado', verdict: 'Tiempo estable y seco', risk: 'Bajo', advice: 'Excelente visibilidad para clases, ríos, caminatas y traslados en moto.' };
@@ -1373,12 +1663,11 @@
 
         const temp = Math.round(data.current.temperature_2m);
         const wind = Math.round(data.current.wind_speed_10m);
-        const code = data.current.weather_code;
         const rainProb = data.hourly && data.hourly.precipitation_probability
           ? Math.max(...data.hourly.precipitation_probability.slice(0, 8))
           : 25;
 
-        const info = interpretWeatherCode(code);
+        const info = interpretWeatherCode(data.current.weather_code);
         document.getElementById('metricTemp').textContent = `${temp} °C`;
         document.getElementById('metricRain').textContent = `${rainProb} %`;
         document.getElementById('metricWind').textContent = `${wind} km/h`;
@@ -1388,7 +1677,6 @@
 
         document.getElementById('verdictHeadline').textContent = `${info.verdict} (${info.label}, ${temp}°C)`;
         document.getElementById('verdictDetail').textContent = `${info.advice} Probabilidad máxima de lluvia en próximas horas: ${rainProb}%.`;
-        document.getElementById('confidenceBadge').textContent = 'Certeza: Alta (92%)';
       } catch (err) {
         document.getElementById('metricTemp').textContent = '27 °C';
         document.getElementById('metricRain').textContent = '30 %';
@@ -1408,8 +1696,7 @@
     }
 
     function quickAsk(text) {
-      document.getElementById('nimbo-ai').scrollIntoView({ behavior: 'smooth' });
-      document.getElementById('aiInput').value = text;
+      showSection('sec-ai');
       processNimboAIQuery(text);
     }
 
@@ -1432,28 +1719,32 @@
     }
 
     async function processNimboAIQuery(question) {
+      const pro = isProActive();
       const state = getTokenState();
-      if (state.used >= DAILY_TOKEN_LIMIT) {
+
+      if (!pro && state.used >= NORMAL_DAILY_LIMIT) {
         appendMessage('user', question);
         appendMessage(
           'ai',
-          '⚠️ <strong>Has alcanzado el límite de 10 tokens diarios gratuitos.</strong><br>Saldo actual: <strong>0/10 disponibles</strong> (10/10 gastados). Tus 10 tokens se renovarán automáticamente mañana.'
+          '⚠️ <strong>Has usado tus 5 tokens diarios gratuitos del Plan Normal.</strong><br>Activa el <strong>Plan Pro Premium</strong> en la sección 💎 Planes para tener <strong>Nimbo AI Ilimitada</strong>.'
         );
         return;
       }
 
       state.used += 1;
-      saveTokenState(state);
-      const remaining = DAILY_TOKEN_LIMIT - state.used;
-      const tokenFooter = `<span style="font-size:0.78rem; color:var(--cyan);">⚡ Token gastado: 1 • Disponibles hoy: ${remaining}/10 (Gastados: ${state.used}/10).</span>`;
+      localStorage.setItem(TOKEN_STORAGE_KEY, JSON.stringify(state));
+      updatePlanAndTokenUI();
+
+      const remaining = Math.max(0, NORMAL_DAILY_LIMIT - state.used);
+      const tokenFooter = pro
+        ? `<span style="font-size:0.78rem; color:var(--cyan);">💎 Pro Premium • IA Ilimitada (Consultas hoy: ${state.used})</span>`
+        : `<span style="font-size:0.78rem; color:var(--cyan);">⚡ Plan Normal: quedan ${remaining}/${NORMAL_DAILY_LIMIT} tokens hoy.</span>`;
 
       appendMessage('user', question);
       const qLower = question.toLowerCase();
 
-      // 1. Verificar si pregunta explícitamente por un colegio
-      const matchedSchool = SCHOOLS_DB.find(s =>
-        s.keywords.some(kw => qLower.includes(kw))
-      );
+      // 1. Colegios (incluye Juan Pablo II)
+      const matchedSchool = SCHOOLS_DB.find(s => s.keywords.some(kw => qLower.includes(kw)));
 
       try {
         if (matchedSchool) {
@@ -1467,21 +1758,18 @@
 
           appendMessage(
             'ai',
-            `🏫 <strong>Reporte Escolar Nimbo AI: ${matchedSchool.name}</strong><br>
+            `🏫 <strong>Reporte Escolar: ${matchedSchool.name}</strong><br>
             📍 <em>${matchedSchool.sector}</em><br><br>
             • <strong>Veredicto Climático:</strong> ${info.verdict} (${info.label}, <strong>${temp}°C</strong>, viento ${wind} km/h).<br>
-            • <strong>Probabilidad de lluvia próximas horas:</strong> ${rainProb}%.<br>
-            • <strong>Estado de Jornada y Vías:</strong> ${matchedSchool.status} — ${matchedSchool.access}<br>
-            • <strong>Guía Práctica:</strong> ${info.advice}<br><br>
+            • <strong>Probabilidad de lluvia:</strong> ${rainProb}%.<br>
+            • <strong>Estado de Jornada:</strong> ${matchedSchool.status} — ${matchedSchool.access}<br><br>
             ${tokenFooter}`
           );
           return;
         }
 
-        // 2. Verificar si pregunta por Ríos, Balnearios o Turismo
-        const matchedRiver = RIVERS_TOURISM_DB.find(r =>
-          r.keywords.some(kw => qLower.includes(kw))
-        );
+        // 2. Ríos y Balnearios (La Cocha, Jubones, Casacay, Dos Bocas, Palenque, Chaguana, Zaruma, Jambelí)
+        const matchedRiver = RIVERS_TOURISM_DB.find(r => r.keywords.some(kw => qLower.includes(kw)));
 
         if (matchedRiver) {
           const url = `https://api.open-meteo.com/v1/forecast?latitude=${matchedRiver.lat}&longitude=${matchedRiver.lon}&current=temperature_2m,weather_code,wind_speed_10m&hourly=precipitation_probability&forecast_days=1&timezone=auto`;
@@ -1498,32 +1786,31 @@
             📍 <em>${matchedRiver.location}</em><br><br>
             • <strong>Clima en Vivo:</strong> ${info.label} con <strong>${temp}°C</strong>, viento ${wind} km/h y <strong>${rainProb}%</strong> prob. de lluvia.<br>
             • <strong>Estado del Río / Agua:</strong> ${matchedRiver.riverStatus}<br>
-            • <strong>Horario Seguro Recomendado:</strong> ${matchedRiver.safeHours}<br>
+            • <strong>Horario Seguro:</strong> ${matchedRiver.safeHours}<br>
             • <strong>Alerta Preventiva:</strong> ${matchedRiver.safetyTip}<br><br>
             ${tokenFooter}`
           );
           return;
         }
 
-        // 3. Verificar si pregunta por todos los ríos en general
+        // 3. Todos los ríos en general
         if (/(todos los r[ií]os|qu[eé] r[ií]os|los r[ií]os|balnearios)/i.test(qLower)) {
           appendMessage(
             'ai',
-            `🌊 <strong>Estado General de los Ríos y Balnearios Monitoreados:</strong><br><br>
-            • <strong>Balneario La Cocha:</strong> Caudal moderado, aguas claras de 08:00 a 13:30.<br>
+            `🌊 <strong>Ríos y Balnearios Monitoreados en Pasaje y El Oro:</strong><br><br>
+            • <strong>Balneario La Cocha:</strong> Caudal moderado, aguas claras (08:00 a 13:30).<br>
             • <strong>Río Jubones / Casacay:</strong> Caudal estable con vigilancia en cuenca alta.<br>
             • <strong>Dos Bocas / Río Buenavista:</strong> Aguas tranquilas aptas para familia.<br>
-            • <strong>Río Palenque / El Bosque:</strong> Corriente suave en horario matutino.<br>
+            • <strong>Río Palenque / El Bosque:</strong> Corriente suave en la mañana.<br>
             • <strong>Río Chaguana / Cañaquemada:</strong> Nivel normal.<br><br>
-            <em>Pregúntame por cualquiera por su nombre (ej. "¿Cómo está La Cocha?") para ver su temperatura y lluvia en vivo.</em><br><br>
             ${tokenFooter}`
           );
           return;
         }
 
-        // 4. Verificar si pregunta por Pasajes, Vías o Sectores de Pasaje
+        // 4. Pasajes y rutas
         if (/(pasajes|carretera|vía|via|terminal|sectores de pasaje|loma de franco)/i.test(qLower)) {
-          const url = `https://api.open-meteo.com/v1/forecast?latitude=-3.3256&longitude=-79.8069&current=temperature_2m,weather_code,wind_speed_10m&hourly=precipitation_probability&forecast_days=1&timezone=auto`;
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=-3.3256&longitude=-79.8069&current=temperature_2m,weather_code&hourly=precipitation_probability&forecast_days=1&timezone=auto`;
           const res = await fetch(url);
           const data = await res.json();
           const temp = Math.round(data.current.temperature_2m);
@@ -1532,80 +1819,59 @@
 
           appendMessage(
             'ai',
-            `🚌 <strong>Reporte Vial, Pasajes y Sectores de Pasaje</strong><br><br>
-            • <strong>Clima Base en Pasaje:</strong> ${info.label} (<strong>${temp}°C</strong>, lluvia ${rainProb}%).<br>
-            • <strong>Pasaje – Machala:</strong> Operativa 100% (frecuencias normales cada 5–10 min).<br>
+            `🚌 <strong>Reporte Vial y Pasajes desde Pasaje</strong><br><br>
+            • <strong>Clima en Pasaje:</strong> ${info.label} (<strong>${temp}°C</strong>, lluvia ${rainProb}%).<br>
+            • <strong>Pasaje – Machala:</strong> Operativa 100% (frecuencia cada 5–10 min).<br>
             • <strong>Pasaje – Santa Rosa / Huaquillas:</strong> Tránsito fluido.<br>
-            • <strong>Pasaje – Cuenca:</strong> Habilitada; precaución por neblina en zona alta.<br>
-            • <strong>Sectores (Centro, Loma de Franco, La Peaña):</strong> ${rainProb > 55 ? 'Precaución en calles bajas por lluvia probable.' : 'Sin novedades de inundación.'}<br><br>
+            • <strong>Pasaje – Cuenca:</strong> Habilitada; precaución por neblina en zona alta.<br><br>
             ${tokenFooter}`
           );
           return;
         }
 
-        // 5. Consulta Mundial (cualquier colegio o ciudad del mundo)
+        // 5. Consulta Mundial
         const target = cleanLocationQuery(question) || 'Pasaje, Ecuador';
-        let searchPlace = target;
         const enMatch = target.match(/\ben\s+([a-záéíóúñü\s,]+)$/i);
-        const isSchoolQuery = /colegio|escuela|unidad educativa|instituto|universidad|liceo/i.test(question);
+        const isSchoolQuery = /colegio|escuela|unidad educativa|instituto/i.test(question);
+        const searchPlace = enMatch ? enMatch[1].trim() : (isSchoolQuery ? 'Pasaje, Ecuador' : target);
 
-        if (enMatch) {
-          searchPlace = enMatch[1].trim();
-        } else if (isSchoolQuery) {
-          searchPlace = 'Pasaje, Ecuador';
-        }
-
-        const geoRes = await fetch(
-          `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchPlace)}&count=1&language=es&format=json`
-        );
+        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchPlace)}&count=1&language=es&format=json`);
         const geoData = await geoRes.json();
 
         if (!geoData.results || geoData.results.length === 0) {
           appendMessage(
             'ai',
-            `🔎 Busqué "<strong>${target}</strong>" en la red mundial, pero no encontré coordenadas exactas.<br>
-            💡 <strong>Sugerencia:</strong> Indica también la ciudad o país (por ejemplo: <em>"¿Cómo está el colegio San Marcos en Lima, Perú?"</em>).<br><br>
-            ${tokenFooter}`
+            `🔎 No ubiqué "<strong>${target}</strong>". Prueba añadiendo el país (ej. <em>"¿Cómo está el clima en Madrid, España?"</em>).<br><br>${tokenFooter}`
           );
           return;
         }
 
         const place = geoData.results[0];
         const fullPlaceName = `${place.name}${place.admin1 ? ', ' + place.admin1 : ''}${place.country ? ', ' + place.country : ''}`;
-
-        const wRes = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}&current=temperature_2m,weather_code,wind_speed_10m&hourly=precipitation_probability&forecast_days=1&timezone=auto`
-        );
+        const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}&current=temperature_2m,weather_code,wind_speed_10m&hourly=precipitation_probability&forecast_days=1&timezone=auto`);
         const wData = await wRes.json();
         const temp = Math.round(wData.current.temperature_2m);
         const wind = Math.round(wData.current.wind_speed_10m);
         const rainProb = Math.max(...wData.hourly.precipitation_probability.slice(0, 6));
         const info = interpretWeatherCode(wData.current.weather_code);
 
-        const titlePrefix = isSchoolQuery
-          ? `🏫 Consulta Educativa en <strong>${fullPlaceName}</strong> (${target})`
-          : `🌍 Veredicto Mundial para <strong>${fullPlaceName}</strong>`;
-
         appendMessage(
           'ai',
-          `${titlePrefix}<br><br>
+          `🌍 <strong>Veredicto Mundial: ${fullPlaceName}</strong><br><br>
           • <strong>Condición Actual:</strong> ${info.label} con <strong>${temp}°C</strong> y viento de ${wind} km/h.<br>
-          • <strong>Veredicto Honesto:</strong> ${info.verdict} (Probabilidad de lluvia: <strong>${rainProb}%</strong>).<br>
-          • <strong>Nivel de Riesgo Vial / Escolar:</strong> ${info.risk}.<br>
+          • <strong>Veredicto Honesto:</strong> ${info.verdict} (Prob. de lluvia: <strong>${rainProb}%</strong>).<br>
           • <strong>Guía Práctica:</strong> ${info.advice}<br><br>
           ${tokenFooter}`
         );
       } catch (err) {
-        appendMessage(
-          'ai',
-          `📡 Sin conexión satelital en este instante, pero en <strong>Pasaje y El Oro</strong> se mantiene vigilancia normal (27°C, nubosidad parcial).<br><br>
-          ${tokenFooter}`
-        );
+        appendMessage('ai', `📡 Sin conexión satelital en este instante. En Pasaje se mantiene clima estable (27°C).<br><br>${tokenFooter}`);
       }
     }
 
+    // Inicializar
     applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
-    updateTokenUI();
+    updatePlanAndTokenUI();
+    renderGlobalGrid();
     renderSchools();
     loadCityWeather('Pasaje, Ecuador', -3.3256, -79.8069);
   </script>
