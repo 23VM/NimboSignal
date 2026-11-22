@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NimboSignal — Clima Ecuador & Global, Mapa, Alertas y Nimbo AI</title>
+  <title>NimboSignal — Monitoreo Climático Ecuador & Global, Mapa y Nimbo AI</title>
   <style>
     :root,
     [data-theme="dark"] {
@@ -14,7 +14,7 @@
       --bg-surface: #111827;
       --bg-card: #1e293b;
       --bg-card-hover: #263349;
-      --bg-sub: rgba(11, 17, 32, 0.82);
+      --bg-sub: rgba(11, 17, 32, 0.84);
       --bg-chat: rgba(9, 14, 26, 0.78);
       --border: rgba(148, 163, 184, 0.22);
       --cyan: #06b6d4;
@@ -75,6 +75,39 @@
       transition: background-color 0.25s ease, color 0.25s ease;
     }
 
+    /* ICONOS VECTORIALES Y PUNTOS DE ESTADO PROFESIONALES */
+    .ico {
+      width: 17px;
+      height: 17px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+      display: inline-block;
+      vertical-align: -3px;
+    }
+
+    .ico-lg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .dot-green { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.65); }
+    .dot-amber { background: #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.65); }
+    .dot-orange { background: #f97316; box-shadow: 0 0 8px rgba(249, 115, 22, 0.65); }
+    .dot-red { background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.65); }
+    .dot-cyan { background: #06b6d4; box-shadow: 0 0 8px rgba(6, 182, 212, 0.65); }
+
     /* MODAL BIENVENIDA: GLOBAL O ECUADOR */
     .welcome-overlay {
       position: fixed;
@@ -96,8 +129,8 @@
       background: var(--bg-surface);
       border: 1px solid rgba(6, 182, 212, 0.45);
       border-radius: 24px;
-      padding: 1.8rem;
-      max-width: 560px;
+      padding: 1.85rem;
+      max-width: 580px;
       width: 100%;
       text-align: center;
       box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
@@ -107,10 +140,10 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
-      margin-top: 1.3rem;
+      margin-top: 1.35rem;
     }
 
-    @media (max-width: 520px) {
+    @media (max-width: 540px) {
       .mode-grid { grid-template-columns: 1fr; }
     }
 
@@ -118,20 +151,31 @@
       background: var(--bg-card);
       border: 2px solid var(--border);
       border-radius: 18px;
-      padding: 1.3rem 1rem;
+      padding: 1.35rem 1rem;
       cursor: pointer;
       transition: 0.2s;
       color: var(--text-main);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.45rem;
+      gap: 0.55rem;
     }
 
     .mode-choice:hover {
       border-color: var(--cyan);
       background: var(--cyan-soft);
       transform: translateY(-2px);
+    }
+
+    .mode-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--cyan-soft);
+      color: var(--cyan);
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(6, 182, 212, 0.35);
     }
 
     /* BARRA SUPERIOR */
@@ -165,7 +209,6 @@
       width: 40px;
       height: 40px;
       border-radius: 11px;
-      font-size: 1.2rem;
       cursor: pointer;
       display: grid;
       place-items: center;
@@ -194,7 +237,7 @@
       display: grid;
       place-items: center;
       font-weight: 800;
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       color: #06131f;
     }
 
@@ -224,12 +267,15 @@
       border: none;
       background: transparent;
       color: var(--text-muted);
-      padding: 0.34rem 0.8rem;
+      padding: 0.34rem 0.85rem;
       border-radius: 999px;
       font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
       transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
     }
 
     .region-btn.active {
@@ -248,11 +294,14 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       color: var(--text-main);
-      padding: 0.38rem 0.72rem;
+      padding: 0.38rem 0.75rem;
       border-radius: 999px;
       font-size: 0.79rem;
       font-weight: 700;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
     }
 
     .token-hud {
@@ -261,7 +310,7 @@
       gap: 0.45rem;
       background: var(--cyan-soft);
       border: 1px solid rgba(6, 182, 212, 0.42);
-      padding: 0.38rem 0.75rem;
+      padding: 0.38rem 0.8rem;
       border-radius: 999px;
       font-size: 0.78rem;
       cursor: pointer;
@@ -271,7 +320,7 @@
       color: var(--cyan);
     }
 
-    /* LAYOUT CON VENTANA DESPLEGABLE A LA IZQUIERDA */
+    /* VENTANA DESPLEGABLE A LA IZQUIERDA */
     .app-shell {
       display: flex;
       flex: 1;
@@ -291,7 +340,7 @@
     }
 
     aside.left-drawer {
-      width: 272px;
+      width: 274px;
       background: var(--bg-sidebar);
       border-right: 1px solid var(--border);
       padding: 1rem 0.8rem 1.5rem;
@@ -308,7 +357,7 @@
     }
 
     aside.left-drawer.collapsed {
-      margin-left: -272px;
+      margin-left: -274px;
     }
 
     @media (max-width: 960px) {
@@ -362,6 +411,12 @@
       gap: 0.5rem;
     }
 
+    .nav-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
     .nav-btn:hover {
       background: var(--cyan-soft);
       color: var(--text-main);
@@ -386,7 +441,7 @@
     /* CONTENEDOR PRINCIPAL DE SECCIÓN ÚNICA */
     main.container {
       flex: 1;
-      max-width: 1220px;
+      max-width: 1240px;
       width: 100%;
       margin: 0 auto;
       padding: 1.4rem 1.4rem 2.2rem;
@@ -419,10 +474,10 @@
     }
 
     .section-head h2 {
-      font-size: 1.45rem;
+      font-size: 1.42rem;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.55rem;
     }
 
     .section-head p {
@@ -430,7 +485,7 @@
       font-size: 0.9rem;
     }
 
-    /* COMPONENTES */
+    /* COMPONENTES GENERALES */
     .hero {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -449,8 +504,8 @@
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      padding: 0.26rem 0.7rem;
+      gap: 0.38rem;
+      padding: 0.26rem 0.72rem;
       border-radius: 999px;
       font-size: 0.76rem;
       font-weight: 700;
@@ -497,7 +552,7 @@
       transition: 0.2s;
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.42rem;
       text-decoration: none;
     }
 
@@ -614,6 +669,64 @@
     }
 
     .search-bar:focus, .chat-input-area input:focus, .code-input:focus {
+      border-color: var(--cyan);
+    }
+
+    /* PANEL DE CONTEXTO TÉCNICO EN EL FENÓMENO DEL NIÑO */
+    .context-banner {
+      background: var(--bg-sub);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--cyan);
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      display: grid;
+      grid-template-columns: 1.55fr 1fr;
+      gap: 1.2rem;
+    }
+
+    @media (max-width: 860px) {
+      .context-banner { grid-template-columns: 1fr; }
+    }
+
+    .enso-specs {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.95rem;
+      font-size: 0.84rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    /* BARRA DE FILTRO DE NOTICIAS OFICIALES */
+    .news-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      align-items: flex-end;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1rem 1.15rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .pro-select {
+      background: var(--bg-sub);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 0.58rem 0.88rem;
+      border-radius: 10px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      min-width: 210px;
+    }
+
+    .pro-select:focus {
       border-color: var(--cyan);
     }
 
@@ -742,7 +855,7 @@
       background: var(--cyan-soft);
       border: 1px solid rgba(6, 182, 212, 0.35);
       color: var(--chip-text);
-      padding: 0.35rem 0.7rem;
+      padding: 0.35rem 0.75rem;
       border-radius: 999px;
       font-size: 0.78rem;
       font-weight: 600;
@@ -774,9 +887,15 @@
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 0.48rem;
+      gap: 0.5rem;
       font-size: 0.88rem;
       color: var(--text-body);
+    }
+
+    ul.plan-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.45rem;
     }
 
     footer {
@@ -786,7 +905,7 @@
       color: var(--text-muted);
       font-size: 0.84rem;
       background: var(--bg-surface);
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
     }
   </style>
 </head>
@@ -795,23 +914,30 @@
   <!-- PANTALLA INICIAL DE SELECCIÓN: ECUADOR O GLOBAL -->
   <div class="welcome-overlay" id="welcomeOverlay">
     <div class="welcome-box">
-      <span class="badge badge-cyan">📡 NimboSignal • Plataforma Climática</span>
-      <h2 style="font-size:1.6rem; margin-top:0.6rem;">¿Qué clima deseas explorar ahora?</h2>
+      <span class="badge badge-cyan">
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
+        NimboSignal • Plataforma Meteorológica
+      </span>
+      <h2 style="font-size:1.58rem; margin-top:0.65rem;">Selecciona tu entorno de monitoreo</h2>
       <p style="color:var(--text-muted); font-size:0.9rem; margin-top:0.35rem;">
-        Elige tu modo de inicio. Puedes cambiar entre <strong>Ecuador</strong> y <strong>Global</strong> o abrir el menú lateral izquierdo en cualquier momento.
+        Elige la cobertura inicial. Puedes alternar entre <strong>Ecuador</strong> y <strong>Global</strong> o abrir el panel lateral izquierdo en cualquier momento.
       </p>
 
       <div class="mode-grid">
         <button class="mode-choice" onclick="chooseStartMode('ecuador')">
-          <span style="font-size:2.3rem;">🇪🇨</span>
-          <strong style="font-size:1.08rem;">Ecuador (Pasaje & El Oro)</strong>
-          <span style="font-size:0.8rem; color:var(--text-muted);">Veredicto local, colegios, ríos, mapa y alertas.</span>
+          <div class="mode-icon-wrap">
+            <svg class="ico ico-lg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <strong style="font-size:1.06rem;">Ecuador (Pasaje & El Oro)</strong>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Veredicto hiperlocal, colegios, ríos, mapa y noticieros oficiales.</span>
         </button>
 
         <button class="mode-choice" onclick="chooseStartMode('global')">
-          <span style="font-size:2.3rem;">🌍</span>
-          <strong style="font-size:1.08rem;">Global (Todo el Mundo)</strong>
-          <span style="font-size:0.8rem; color:var(--text-muted);">Clima en vivo de todos los países y ciudades del planeta.</span>
+          <div class="mode-icon-wrap">
+            <svg class="ico ico-lg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <strong style="font-size:1.06rem;">Global (Todo el Mundo)</strong>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Pronóstico satelital en vivo de todos los países y capitales.</span>
         </button>
       </div>
     </div>
@@ -821,9 +947,11 @@
   <header>
     <div class="topbar">
       <div class="left-header-group">
-        <button class="drawer-toggle-btn" onclick="toggleLeftDrawer()" title="Abrir / cerrar menú lateral">☰</button>
+        <button class="drawer-toggle-btn" onclick="toggleLeftDrawer()" title="Abrir o cerrar panel lateral">
+          <svg class="ico" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
 
-        <div class="brand" onclick="openWelcomeChooser()" title="Cambiar modo de inicio">
+        <div class="brand" onclick="openWelcomeChooser()" title="Cambiar entorno inicial">
           <div class="brand-icon">NS</div>
           <div class="brand-text">
             <strong>NimboSignal</strong>
@@ -832,15 +960,21 @@
         </div>
 
         <div class="region-switch">
-          <button class="region-btn active" id="regEcuadorBtn" onclick="switchRegionMode('ecuador')">🇪🇨 Ecuador</button>
-          <button class="region-btn" id="regGlobalBtn" onclick="switchRegionMode('global')">🌍 Global</button>
+          <button class="region-btn active" id="regEcuadorBtn" onclick="switchRegionMode('ecuador')">
+            <svg class="ico" style="width:14px; height:14px;" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Ecuador
+          </button>
+          <button class="region-btn" id="regGlobalBtn" onclick="switchRegionMode('global')">
+            <svg class="ico" style="width:14px; height:14px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Global
+          </button>
         </div>
       </div>
 
       <div class="header-actions">
-        <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()">☀️ Claro</button>
+        <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()">Tema Claro</button>
         <div class="token-hud" onclick="showSection('sec-ai')" title="Ir a Nimbo AI">
-          <span>⚡</span>
+          <svg class="ico" style="width:14px; height:14px; color:var(--cyan);" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           <strong id="topTokensLeft">5/5</strong>
           <span style="color:var(--text-muted);" id="topPlanLabel">Normal</span>
         </div>
@@ -856,31 +990,97 @@
       <div>
         <div class="drawer-group-title">Clima y Monitoreo</div>
         <div class="drawer-list">
-          <button class="nav-btn active" data-target="sec-veredicto" onclick="showSection('sec-veredicto')"><span>🌤️ Veredicto Ecuador</span></button>
-          <button class="nav-btn" data-target="sec-global" onclick="showSection('sec-global')"><span>🌍 Clima Global</span></button>
-          <button class="nav-btn" data-target="sec-mapa" onclick="showSection('sec-mapa')"><span>🗺️ Mapa Interactivo</span></button>
-          <button class="nav-btn" data-target="sec-elnino" onclick="showSection('sec-elnino')"><span>🌊 El fenómeno del Niño</span></button>
+          <button class="nav-btn active" data-target="sec-veredicto" onclick="showSection('sec-veredicto')">
+            <span class="nav-label">
+              <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/></svg>
+              Veredicto Ecuador
+            </span>
+          </button>
+          <button class="nav-btn" data-target="sec-global" onclick="showSection('sec-global')">
+            <span class="nav-label">
+              <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              Clima Global
+            </span>
+          </button>
+          <button class="nav-btn" data-target="sec-mapa" onclick="showSection('sec-mapa')">
+            <span class="nav-label">
+              <svg class="ico" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+              Mapa Interactivo
+            </span>
+          </button>
+          <button class="nav-btn" data-target="sec-elnino" onclick="showSection('sec-elnino')">
+            <span class="nav-label">
+              <svg class="ico" viewBox="0 0 24 24"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
+              El fenómeno del Niño
+            </span>
+          </button>
         </div>
       </div>
 
       <div>
         <div class="drawer-group-title">Comunidad y Prevención</div>
         <div class="drawer-list">
-          <button class="nav-btn" data-target="sec-colegios" onclick="showSection('sec-colegios')"><span>🏫 Colegios</span></button>
-          <button class="nav-btn" data-target="sec-pasaje" onclick="showSection('sec-pasaje')"><span>🚌 Pasaje y Rutas</span></button>
-          <button class="nav-btn" data-target="sec-rios" onclick="showSection('sec-rios')"><span>🌴 Ríos y Balnearios</span></button>
-          <button class="nav-btn" data-target="sec-recomendaciones" onclick="showSection('sec-recomendaciones')"><span>⚠️ Recomendaciones</span></button>
-          <button class="nav-btn" data-target="sec-emergencias" onclick="showSection('sec-emergencias')"><span>🚨 Emergencias</span></button>
+          <button class="nav-btn" data-target="sec-colegios" onclick="showSection('sec-colegios')">
+            <span class="nav-label">
+              <svg class="ico" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              Colegios
+            </span>
+          </button>
+          <button class="nav-btn" data-target="sec-pasaje" onclick="showSection('sec-pasaje')">
+            <span class="nav-label">
+              <svg class="ico" viewBox="0 0 24 24"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>
+              Pasaje y Rutas
+            </span>
+          </button>
+          <button class="nav-btn" data-target="sec-rios" onclick="showSection('sec-rios')">
+            <span class="nav-label">
+              <svg class="ico" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+              Ríos y Balnearios
+            </span>
+          </button>
+          <button class="nav-btn" data-target="sec-recomendaciones" onclick="showSection('sec-recomendaciones')">
+            <span class="nav-label">
+              <svg class="ico" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Recomendaciones
+            </span>
+          </button>
+          <button class="nav-btn" data-target="sec-emergencias" onclick="showSection('sec-emergencias')">
+            <span class="nav-label">
+              <svg class="ico" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Emergencias
+            </span>
+          </button>
         </div>
       </div>
 
       <div>
         <div class="drawer-group-title">IA, Noticias y Cuenta</div>
         <div class="drawer-list">
-          <button class="nav-btn" data-target="sec-ai" onclick="showSection('sec-ai')"><span>🤖 Nimbo AI</span></button>
-          <button class="nav-btn" data-target="sec-noticias" onclick="showSection('sec-noticias')"><span>📰 Última Hora</span><span class="mini-tag">PRO</span></button>
-          <button class="nav-btn" data-target="sec-planes" onclick="showSection('sec-planes')"><span>💎 Planes ($1,99)</span></button>
-          <button class="nav-btn" data-target="sec-ajustes" onclick="showSection('sec-ajustes')"><span>⚙️ Ajustes y Cuenta</span></button>
+          <button class="nav-btn" data-target="sec-ai" onclick="showSection('sec-ai')">
+            <span class="nav-label">
+              <svg class="ico" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+              Nimbo AI
+            </span>
+          </button>
+          <button class="nav-btn" data-target="sec-noticias" onclick="showSection('sec-noticias')">
+            <span class="nav-label">
+              <svg class="ico" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+              Noticias Oficiales
+            </span>
+            <span class="mini-tag">PRO</span>
+          </button>
+          <button class="nav-btn" data-target="sec-planes" onclick="showSection('sec-planes')">
+            <span class="nav-label">
+              <svg class="ico" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              Planes ($1,99)
+            </span>
+          </button>
+          <button class="nav-btn" data-target="sec-ajustes" onclick="showSection('sec-ajustes')">
+            <span class="nav-label">
+              <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Ajustes y Cuenta
+            </span>
+          </button>
         </div>
       </div>
     </aside>
@@ -891,45 +1091,48 @@
       <section id="sec-veredicto" class="view-section active">
         <div class="section-head">
           <div>
-            <h2>🌤️ Veredicto Climático — Ecuador</h2>
-            <p>Diagnóstico honesto en tiempo real para Pasaje, El Oro y principales ciudades del país.</p>
+            <h2>
+              <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/></svg>
+              Veredicto Climático — Ecuador
+            </h2>
+            <p>Diagnóstico operativo en tiempo real para Pasaje, provincia de El Oro y principales ciudades del país.</p>
           </div>
           <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-            <button class="btn btn-outline" onclick="showSection('sec-mapa')">🗺️ Ver Mapa</button>
-            <button class="btn btn-outline" onclick="showSection('sec-global')">🌍 Ir a Global →</button>
+            <button class="btn btn-outline" onclick="showSection('sec-mapa')">Abrir Mapa</button>
+            <button class="btn btn-outline" onclick="showSection('sec-global')">Ir a Clima Global</button>
           </div>
         </div>
 
         <div class="hero">
           <div>
-            <span class="badge badge-cyan">📡 Radar Hiperlocal Ecuador</span>
+            <span class="badge badge-cyan"><span class="status-dot dot-cyan"></span> Radar Hiperlocal Ecuador</span>
             <h1 id="heroCityTitle" style="font-size:1.7rem; margin:0.65rem 0 0.4rem;">Veredicto Climático: Pasaje, El Oro</h1>
             <p style="color: var(--text-muted); font-size: 0.92rem;">
-              Diagnóstico directo en menos de 5 segundos para estudiantes, motociclistas, turistas y familias.
+              Diagnóstico directo en menos de 5 segundos para estudiantes, motociclistas, transportistas y familias.
             </p>
 
             <div class="verdict-box">
-              <strong id="verdictHeadline">Cargando veredicto honesto en tiempo real...</strong>
+              <strong id="verdictHeadline">Cargando veredicto en tiempo real...</strong>
               <span id="verdictDetail" style="font-size: 0.9rem; color: var(--text-body);">
                 Conectando con estación meteorológica satelital...
               </span>
             </div>
 
             <div class="city-controls">
-              <button class="btn btn-outline active" onclick="loadCityWeather('Pasaje, Ecuador', -3.3256, -79.8069, this)">📍 Pasaje</button>
-              <button class="btn btn-outline" onclick="loadCityWeather('Machala, Ecuador', -3.2581, -79.9554, this)">📍 Machala</button>
-              <button class="btn btn-outline" onclick="loadCityWeather('Santa Rosa, Ecuador', -3.4488, -79.9595, this)">📍 Santa Rosa</button>
-              <button class="btn btn-outline" onclick="loadCityWeather('El Guabo, Ecuador', -3.2435, -79.8304, this)">📍 El Guabo</button>
-              <button class="btn btn-outline" onclick="loadCityWeather('Quito, Ecuador', -0.1807, -78.4678, this)">📍 Quito</button>
-              <button class="btn btn-outline" onclick="loadCityWeather('Guayaquil, Ecuador', -2.1894, -79.8891, this)">📍 Guayaquil</button>
-              <button class="btn btn-outline" onclick="loadCityWeather('Cuenca, Ecuador', -2.9001, -79.0059, this)">📍 Cuenca</button>
+              <button class="btn btn-outline active" onclick="loadCityWeather('Pasaje, Ecuador', -3.3256, -79.8069, this)">Pasaje</button>
+              <button class="btn btn-outline" onclick="loadCityWeather('Machala, Ecuador', -3.2581, -79.9554, this)">Machala</button>
+              <button class="btn btn-outline" onclick="loadCityWeather('Santa Rosa, Ecuador', -3.4488, -79.9595, this)">Santa Rosa</button>
+              <button class="btn btn-outline" onclick="loadCityWeather('El Guabo, Ecuador', -3.2435, -79.8304, this)">El Guabo</button>
+              <button class="btn btn-outline" onclick="loadCityWeather('Quito, Ecuador', -0.1807, -78.4678, this)">Quito</button>
+              <button class="btn btn-outline" onclick="loadCityWeather('Guayaquil, Ecuador', -2.1894, -79.8891, this)">Guayaquil</button>
+              <button class="btn btn-outline" onclick="loadCityWeather('Cuenca, Ecuador', -2.9001, -79.0059, this)">Cuenca</button>
             </div>
           </div>
 
           <div class="metrics-panel">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <span style="font-weight:700; font-size:0.95rem;">Condiciones Actuales</span>
-              <span class="badge badge-teal">Certeza: Alta (92%)</span>
+              <span class="badge badge-teal"><span class="status-dot dot-green"></span> Certeza: Alta (92%)</span>
             </div>
             <div class="metrics-grid">
               <div class="metric-item">
@@ -950,8 +1153,8 @@
               </div>
             </div>
             <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-              <button class="btn btn-primary" onclick="showSection('sec-ai')">🤖 Consultar Nimbo AI</button>
-              <button class="btn btn-outline" onclick="showSection('sec-recomendaciones')">⚠️ Protocolos Riesgo</button>
+              <button class="btn btn-primary" onclick="showSection('sec-ai')">Consultar Nimbo AI</button>
+              <button class="btn btn-outline" onclick="showSection('sec-recomendaciones')">Protocolos de Riesgo</button>
             </div>
           </div>
         </div>
@@ -961,10 +1164,13 @@
       <section id="sec-global" class="view-section">
         <div class="section-head">
           <div>
-            <h2>🌍 Clima Global — Todos los Países y Ciudades del Mundo</h2>
-            <p>Busca cualquier país, capital o ciudad del planeta en tiempo real o selecciona un continente.</p>
+            <h2>
+              <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              Clima Global — Todos los Países y Ciudades del Mundo
+            </h2>
+            <p>Consulta cualquier país, capital o ciudad del planeta en tiempo real o filtra por continente.</p>
           </div>
-          <button class="btn btn-outline" onclick="showSection('sec-veredicto')">🇪🇨 Volver a Ecuador</button>
+          <button class="btn btn-outline" onclick="showSection('sec-veredicto')">Volver a Ecuador</button>
         </div>
 
         <div class="card" style="margin-bottom:1.25rem; border-color: rgba(6, 182, 212, 0.45);">
@@ -973,14 +1179,14 @@
               type="text"
               id="globalSearchInput"
               class="search-bar"
-              placeholder="🔎 Escribe cualquier país o ciudad del mundo (ej. Japón, París, Nueva York, Bogotá, Madrid, Sídney)..."
+              placeholder="Escribe cualquier país o ciudad del mundo (ej. Japón, París, Nueva York, Bogotá, Madrid, Sídney)..."
               required
             />
-            <button type="submit" class="btn btn-primary">🌍 Buscar Clima Mundial</button>
+            <button type="submit" class="btn btn-primary">Buscar Clima Mundial</button>
           </form>
 
           <div id="globalLiveResult" class="verdict-box" style="margin-bottom:0;">
-            <strong id="globalResultTitle">🌐 Selecciona o busca cualquier ciudad o país del mundo</strong>
+            <strong id="globalResultTitle">Selecciona o busca cualquier ciudad o país del mundo</strong>
             <span id="globalResultBody" style="font-size:0.9rem; color:var(--text-body);">
               Obtén temperatura actual, viento, probabilidad de lluvia y recomendación práctica al instante.
             </span>
@@ -988,11 +1194,11 @@
         </div>
 
         <div class="filter-row">
-          <button class="btn btn-outline active" onclick="filterGlobalContinent('todos', this)">🌐 Todos los Continentes</button>
-          <button class="btn btn-outline" onclick="filterGlobalContinent('América', this)">🌎 América</button>
-          <button class="btn btn-outline" onclick="filterGlobalContinent('Europa', this)">🇪🇺 Europa</button>
-          <button class="btn btn-outline" onclick="filterGlobalContinent('Asia', this)">🌏 Asia</button>
-          <button class="btn btn-outline" onclick="filterGlobalContinent('Oceanía y África', this)">🌍 Oceanía y África</button>
+          <button class="btn btn-outline active" onclick="filterGlobalContinent('todos', this)">Todos los Continentes</button>
+          <button class="btn btn-outline" onclick="filterGlobalContinent('América', this)">América</button>
+          <button class="btn btn-outline" onclick="filterGlobalContinent('Europa', this)">Europa</button>
+          <button class="btn btn-outline" onclick="filterGlobalContinent('Asia', this)">Asia</button>
+          <button class="btn btn-outline" onclick="filterGlobalContinent('Oceanía y África', this)">Oceanía y África</button>
         </div>
 
         <div class="grid-3" id="globalCitiesGrid"></div>
@@ -1002,29 +1208,32 @@
       <section id="sec-mapa" class="view-section">
         <div class="section-head">
           <div>
-            <h2>🗺️ Mapa Interactivo — Pasaje, Ríos, Ecuador y Mundo</h2>
-            <p>Explora zonas de vigilancia pluvial, ríos (La Cocha, Jubones) o busca cualquier lugar del mapa.</p>
+            <h2>
+              <svg class="ico" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+              Mapa Interactivo — Pasaje, Ríos, Ecuador y Mundo
+            </h2>
+            <p>Explora zonas de vigilancia pluvial, ríos (La Cocha, Jubones) o ubica cualquier punto del mapa.</p>
           </div>
         </div>
 
         <div class="card" style="margin-bottom:1rem;">
           <form style="display:flex; flex-wrap:wrap; gap:0.55rem;" onsubmit="searchOnMap(event)">
-            <input type="text" id="mapSearchInput" class="search-bar" placeholder="📍 Buscar en el mapa (ej. Casacay Pasaje, Machala, Quito, Madrid)..." required />
-            <button type="submit" class="btn btn-primary">🔎 Ubicar en Mapa</button>
+            <input type="text" id="mapSearchInput" class="search-bar" placeholder="Buscar en el mapa (ej. Casacay Pasaje, Machala, Quito, Madrid)..." required />
+            <button type="submit" class="btn btn-primary">Ubicar en Mapa</button>
           </form>
 
           <div class="city-controls" style="margin-bottom:0;">
-            <button class="btn btn-outline active" onclick="focusMapPoint('Pasaje Centro, El Oro', -3.3256, -79.8069, 14, this)">📍 Pasaje Centro</button>
-            <button class="btn btn-outline" onclick="focusMapPoint('Balneario La Cocha, Pasaje', -3.3415, -79.7820, 15, this)">🏞️ Balneario La Cocha</button>
-            <button class="btn btn-outline" onclick="focusMapPoint('Río Jubones y Casacay', -3.3189, -79.7365, 14, this)">🌊 Río Jubones / Casacay</button>
-            <button class="btn btn-outline" onclick="focusMapPoint('Machala y Puerto Bolívar', -3.2581, -79.9554, 13, this)">⚓ Machala / Pto. Bolívar</button>
-            <button class="btn btn-outline" onclick="focusMapPoint('Ecuador Completo', -1.8312, -78.1834, 7, this)">🇪🇨 Todo Ecuador</button>
+            <button class="btn btn-outline active" onclick="focusMapPoint('Pasaje Centro, El Oro', -3.3256, -79.8069, 14, this)">Pasaje Centro</button>
+            <button class="btn btn-outline" onclick="focusMapPoint('Balneario La Cocha, Pasaje', -3.3415, -79.7820, 15, this)">Balneario La Cocha</button>
+            <button class="btn btn-outline" onclick="focusMapPoint('Río Jubones y Casacay', -3.3189, -79.7365, 14, this)">Río Jubones / Casacay</button>
+            <button class="btn btn-outline" onclick="focusMapPoint('Machala y Puerto Bolívar', -3.2581, -79.9554, 13, this)">Machala / Pto. Bolívar</button>
+            <button class="btn btn-outline" onclick="focusMapPoint('Ecuador Completo', -1.8312, -78.1834, 7, this)">Todo Ecuador</button>
           </div>
         </div>
 
         <div class="card">
           <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:0.5rem;">
-            <strong id="mapLocationLabel" style="color:var(--cyan);">📍 Mostrando: Pasaje Centro, El Oro (-3.3256, -79.8069)</strong>
+            <strong id="mapLocationLabel" style="color:var(--cyan);">Ubicación: Pasaje Centro, El Oro (-3.3256, -79.8069)</strong>
             <span class="badge badge-teal" id="mapWeatherTag">Clima en punto: Cargando...</span>
           </div>
           <div class="map-frame-box">
@@ -1038,35 +1247,78 @@
         </div>
       </section>
 
-      <!-- SECCIÓN 4: EL FENÓMENO DEL NIÑO -->
+      <!-- SECCIÓN 4: EL FENÓMENO DEL NIÑO (CON CONTEXTO TÉCNICO AMPLIADO) -->
       <section id="sec-elnino" class="view-section">
         <div class="section-head">
           <div>
-            <h2>🌊 Semáforo Preventivo — El fenómeno del Niño (ENSO)</h2>
-            <p>Monitoreo de anomalías térmicas marinas en la costa ecuatoriana y protocolos preventivos.</p>
+            <h2>
+              <svg class="ico" viewBox="0 0 24 24"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
+              Semáforo Preventivo — El fenómeno del Niño (ENOS)
+            </h2>
+            <p>Monitoreo oceanográfico y atmosférico del Pacífico ecuatorial con enfoque en la costa sur de Ecuador (El Oro y Pasaje).</p>
+          </div>
+          <span class="badge badge-cyan">Fuente Técnica: INAMHI / ERFEN / NOAA</span>
+        </div>
+
+        <div class="context-banner">
+          <div>
+            <h3 style="font-size:1.05rem; margin-bottom:0.45rem; color:var(--cyan);">¿Qué es El fenómeno del Niño y cómo afecta a Pasaje y El Oro?</h3>
+            <p style="font-size:0.88rem; color:var(--text-body); margin-bottom:0.55rem;">
+              <strong>El fenómeno del Niño</strong> (fase cálida del ciclo ENOS) ocurre cuando las aguas superficiales del océano Pacífico central y oriental se calientan por encima de su promedio histórico. En la costa sur del Ecuador, este calentamiento debilita los vientos alisios, incrementa la evaporación y genera <strong>nubes convectivas de gran desarrollo vertical</strong>.
+            </p>
+            <p style="font-size:0.86rem; color:var(--text-muted);">
+              En cantones como <strong>Pasaje</strong>, situados entre la llanura costera y las estribaciones occidentales de los Andes, el impacto principal se refleja en lluvias intensas durante la tarde y noche, saturación de suelos en zonas bajas (Loma de Franco, La Peaña) y crecidas súbitas en la cuenca del <strong>río Jubones</strong> y balnearios como <strong>La Cocha</strong>.
+            </p>
+          </div>
+
+          <div class="enso-specs">
+            <strong style="color:var(--text-main); font-size:0.9rem;">Indicadores que vigila NimboSignal:</strong>
+            <div><strong>• Región Niño 1+2:</strong> Temperatura superficial del mar frente a las costas de Ecuador y norte de Perú.</div>
+            <div><strong>• Índice ONI:</strong> Variación térmica trimestral del Pacífico ecuatorial (umbral activo desde +0.5 °C).</div>
+            <div><strong>• Caudales Andinos:</strong> Precipitación acumulada en cuenca alta (Uzhcurrumi / Azuay) que alimenta al río Jubones.</div>
+            <div><strong>• Boletines Oficiales:</strong> Seguimiento continuo de alertas del INAMHI y Secretaría Nacional de Gestión de Riesgos.</div>
           </div>
         </div>
 
         <div class="grid-2">
           <div class="card">
-            <span class="badge badge-teal">🟢 Verde: Normalidad</span>
-            <h3>Condición Estable</h3>
-            <p>Precipitaciones dentro del rango normal frente a la costa ecuatoriana. Mantener limpieza de desagües y canaletas.</p>
+            <div class="card-top">
+              <span class="badge badge-teal"><span class="status-dot dot-green"></span> Verde: Normalidad</span>
+              <span style="font-size:0.76rem; color:var(--text-muted);">Anomalía &lt; +0.5 °C</span>
+            </div>
+            <h3>Condición Oceanográfica Estable</h3>
+            <p style="font-size:0.88rem;">Temperatura del mar dentro de los rangos climatológicos habituales frente al perfil costero ecuatoriano. Precipitaciones acordes a la estación.</p>
+            <div class="card-meta"><strong>Acción recomendada:</strong> Mantenimiento preventivo de canaletas, sumideros y limpieza de techos antes de la temporada invernal.</div>
           </div>
+
           <div class="card" style="border: 2px solid var(--amber);">
-            <span class="badge badge-amber">🟡 Amarillo: Vigilancia (Actual)</span>
-            <h3>Monitoreo Costero Activo</h3>
-            <p>Lluvias vespertinas aisladas en Pasaje y El Oro por variaciones asociadas a El fenómeno del Niño. Tener impermeable listo.</p>
+            <div class="card-top">
+              <span class="badge badge-amber"><span class="status-dot dot-amber"></span> Amarillo: Vigilancia (Actual)</span>
+              <span style="font-size:0.76rem; color:var(--amber); font-weight:700;">+0.5 °C a +0.9 °C</span>
+            </div>
+            <h3>Monitoreo Costero y Estribaciones Activo</h3>
+            <p style="font-size:0.88rem;">Calentamiento marino ligero a moderado. Se registran lluvias vespertinas aisladas en Pasaje, Machala y cuenca media del río Jubones.</p>
+            <div class="card-meta"><strong>Acción recomendada:</strong> Portar protección impermeable en traslados vespertinos y revisar el estado de ríos antes de acudir a balnearios.</div>
           </div>
+
           <div class="card">
-            <span class="badge badge-amber" style="background:rgba(249,115,22,0.18); color:#fb923c;">🟠 Naranja: Preparación</span>
-            <h3>Lluvias Recurrentes</h3>
-            <p>Resguardar mercadería en planta baja, proteger motocicletas bajo techo y evitar calles con drenaje lento.</p>
+            <div class="card-top">
+              <span class="badge badge-amber" style="background:rgba(249,115,22,0.18); color:#fb923c;"><span class="status-dot dot-orange"></span> Naranja: Preparación</span>
+              <span style="font-size:0.76rem; color:var(--text-muted);">+1.0 °C a +1.4 °C</span>
+            </div>
+            <h3>Lluvias Recurrentes y Saturación de Suelos</h3>
+            <p style="font-size:0.88rem;">Evento moderado a fuerte consolidado. Incremento sostenido del nivel freático, anegamientos en calles con drenaje lento y turbidez frecuente en ríos.</p>
+            <div class="card-meta"><strong>Acción recomendada:</strong> Resguardar mercadería en planta baja, proteger documentos en bolsas herméticas y evitar rutas secundarias inundables.</div>
           </div>
+
           <div class="card">
-            <span class="badge badge-red">🔴 Rojo: Alerta Activa</span>
-            <h3>Emergencia Pluvial</h3>
-            <p>Seguir rutas de evacuación oficiales, desconectar equipos eléctricos en zonas bajas y atender boletines INAMHI.</p>
+            <div class="card-top">
+              <span class="badge badge-red"><span class="status-dot dot-red"></span> Rojo: Alerta Activa</span>
+              <span style="font-size:0.76rem; color:var(--red); font-weight:700;">≥ +1.5 °C</span>
+            </div>
+            <h3>Emergencia Pluvial e Hidrológica</h3>
+            <p style="font-size:0.88rem;">Evento intenso de El fenómeno del Niño con precipitaciones torrenciales continuas, alto riesgo de desbordamiento de ríos y deslizamientos en vías intercantonales.</p>
+            <div class="card-meta"><strong>Acción recomendada:</strong> Evacuar zonas ribereñas o bajas hacia puntos seguros, desconectar el suministro eléctrico si ingresa agua y seguir disposiciones del COE y ECU 911.</div>
           </div>
         </div>
       </section>
@@ -1075,7 +1327,10 @@
       <section id="sec-colegios" class="view-section">
         <div class="section-head">
           <div>
-            <h2>🏫 Colegios e Instituciones Educativas</h2>
+            <h2>
+              <svg class="ico" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              Colegios e Instituciones Educativas
+            </h2>
             <p>Estado de jornada escolar y condiciones de vías de acceso en Pasaje y El Oro.</p>
           </div>
         </div>
@@ -1085,7 +1340,7 @@
             type="text"
             id="schoolSearch"
             class="search-bar"
-            placeholder="🔍 Buscar colegio (ej. Carmen Mora, Juan Pablo II, Ochoa León, Buenavista, Casacay)..."
+            placeholder="Buscar colegio (ej. Carmen Mora, Juan Pablo II, Ochoa León, Buenavista, Casacay)..."
             oninput="renderSchools()"
           />
           <button class="btn btn-outline active" onclick="setSchoolFilter('todos', this)">Todos</button>
@@ -1100,7 +1355,10 @@
       <section id="sec-pasaje" class="view-section">
         <div class="section-head">
           <div>
-            <h2>🚌 Pasaje: Sectores Críticos y Pasajes / Rutas</h2>
+            <h2>
+              <svg class="ico" viewBox="0 0 24 24"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>
+              Pasaje: Sectores Críticos y Rutas Intercantonales
+            </h2>
             <p>Monitoreo hiperlocal por barrios de Pasaje y estado de terminales y carreteras.</p>
           </div>
         </div>
@@ -1108,8 +1366,8 @@
         <div class="grid-2">
           <div class="card">
             <div class="card-top">
-              <h3>📍 Sectores y Parroquias de Pasaje</h3>
-              <span class="badge badge-teal">Vigilancia Hiperlocal</span>
+              <h3>Sectores y Parroquias de Pasaje</h3>
+              <span class="badge badge-teal"><span class="status-dot dot-green"></span> Vigilancia Hiperlocal</span>
             </div>
             <div class="card-meta" style="display:flex; flex-direction:column; gap:0.55rem;">
               <div><strong>• Centro Urbano y Av. Rocafuerte:</strong> Drenaje estable; precaución en horarios de entrada y salida escolar.</div>
@@ -1117,13 +1375,13 @@
               <div><strong>• Buenavista y Cañaquemada:</strong> Humedad elevada en la mañana y lluvias dispersas vespertinas.</div>
               <div><strong>• Casacay y Uzhcurrumi (Cuenca Río Jubones):</strong> Vigilancia preventiva de lluvias en la parte alta; caudal estable.</div>
             </div>
-            <button class="btn btn-outline" onclick="quickAsk('¿Cómo están los sectores de Pasaje y el río Jubones hoy?')">🤖 Analizar sectores en Nimbo AI</button>
+            <button class="btn btn-outline" onclick="quickAsk('¿Cómo están los sectores de Pasaje y el río Jubones hoy?')">Analizar sectores en Nimbo AI</button>
           </div>
 
           <div class="card">
             <div class="card-top">
-              <h3>🎫 Pasajes, Terminales y Rutas Intercantonales</h3>
-              <span class="badge badge-amber">Movilidad y Transporte</span>
+              <h3>Pasajes, Terminales y Rutas Intercantonales</h3>
+              <span class="badge badge-amber"><span class="status-dot dot-amber"></span> Movilidad y Transporte</span>
             </div>
             <div class="card-meta" style="display:flex; flex-direction:column; gap:0.55rem;">
               <div><strong>• Pasaje – Machala (Vía principal):</strong> Operativa 100% (frecuencia cada 5–10 min). Calzada húmeda en tardes lluviosas.</div>
@@ -1131,7 +1389,7 @@
               <div><strong>• Pasaje – Cuenca (Vía Girón – Pasaje):</strong> Habilitada; posible neblina densa entre Uzhcurrumi y Lentag.</div>
               <div><strong>• Motocicletas en Pasaje:</strong> Llevar poncho impermeable ligero y funda protectora para mochila.</div>
             </div>
-            <button class="btn btn-outline" onclick="quickAsk('¿Cómo están los pasajes y carreteras desde Pasaje hoy?')">🤖 Consultar pasajes en Nimbo AI</button>
+            <button class="btn btn-outline" onclick="quickAsk('¿Cómo están los pasajes y carreteras desde Pasaje hoy?')">Consultar rutas en Nimbo AI</button>
           </div>
         </div>
       </section>
@@ -1140,64 +1398,67 @@
       <section id="sec-rios" class="view-section">
         <div class="section-head">
           <div>
-            <h2>🌴 Ríos, Balnearios y Turismo (Pasaje y El Oro)</h2>
-            <p>Recomendaciones honestas de caudal, agua y clima para visitas a ríos y balnearios.</p>
+            <h2>
+              <svg class="ico" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+              Ríos, Balnearios y Turismo (Pasaje y El Oro)
+            </h2>
+            <p>Recomendaciones de caudal, transparencia del agua y clima para visitas a ríos y balnearios.</p>
           </div>
         </div>
 
         <div class="grid-3">
           <div class="card">
             <div class="card-top">
-              <h3>🏞️ Balneario La Cocha (Pasaje)</h3>
-              <span class="badge badge-teal">Apto en la mañana</span>
+              <h3>Balneario La Cocha (Pasaje)</h3>
+              <span class="badge badge-teal"><span class="status-dot dot-green"></span> Apto en la mañana</span>
             </div>
             <p>Horario ideal: <strong>08:00 a 13:30</strong>. Aguas claras por la mañana; si se observa nubosidad oscura hacia la montaña, retirarse de la orilla por precaución.</p>
-            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el Balneario La Cocha, Pasaje?')">🤖 Consultar La Cocha en Nimbo AI</button>
+            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el Balneario La Cocha, Pasaje?')">Consultar La Cocha en Nimbo AI</button>
           </div>
 
           <div class="card">
             <div class="card-top">
-              <h3>🌊 Río Jubones y Casacay</h3>
-              <span class="badge badge-amber">Vigilancia Tarde</span>
+              <h3>Río Jubones y Casacay</h3>
+              <span class="badge badge-amber"><span class="status-dot dot-amber"></span> Vigilancia Tarde</span>
             </div>
             <p>Ideal para gastronomía y recreación matutina. Vigilar el color del agua ante lluvias en la cuenca alta (Uzhcurrumi / Girón).</p>
-            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el Río Jubones y Casacay?')">🤖 Consultar Río Jubones en Nimbo AI</button>
+            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el Río Jubones y Casacay?')">Consultar Río Jubones en Nimbo AI</button>
           </div>
 
           <div class="card">
             <div class="card-top">
-              <h3>🌿 Dos Bocas y Río Buenavista</h3>
-              <span class="badge badge-teal">Favorable</span>
+              <h3>Dos Bocas y Río Buenavista</h3>
+              <span class="badge badge-teal"><span class="status-dot dot-green"></span> Favorable</span>
             </div>
             <p>Clima cálido húmedo ideal para recreación familiar. Llevar hidratación, protector solar y poncho ligero para el regreso.</p>
-            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está Dos Bocas y Río Buenavista?')">🤖 Consultar Dos Bocas en Nimbo AI</button>
+            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está Dos Bocas y Río Buenavista?')">Consultar Dos Bocas en Nimbo AI</button>
           </div>
 
           <div class="card">
             <div class="card-top">
-              <h3>💧 Río Palenque y El Bosque</h3>
-              <span class="badge badge-teal">Aguas Claras</span>
+              <h3>Río Palenque y El Bosque</h3>
+              <span class="badge badge-teal"><span class="status-dot dot-green"></span> Aguas Claras</span>
             </div>
             <p>Corriente moderada y entorno natural fresco. Recomendado acudir antes de las 14:00 para evitar lluvias dispersas de la tarde.</p>
-            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el Río Palenque en Pasaje?')">🤖 Consultar Río Palenque en Nimbo AI</button>
+            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el Río Palenque en Pasaje?')">Consultar Río Palenque en Nimbo AI</button>
           </div>
 
           <div class="card">
             <div class="card-top">
-              <h3>⛰️ Zaruma y Parte Alta de El Oro</h3>
-              <span class="badge badge-amber">Neblina vespertina</span>
+              <h3>Zaruma y Parte Alta de El Oro</h3>
+              <span class="badge badge-amber"><span class="status-dot dot-amber"></span> Neblina vespertina</span>
             </div>
             <p>Temperatura fresca (17°C–22°C) con llovizna y neblina en carretera después de las 15:00. Conducir con luces bajas.</p>
-            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el clima en Zaruma, El Oro?')">🤖 Consultar Zaruma en Nimbo AI</button>
+            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el clima en Zaruma, El Oro?')">Consultar Zaruma en Nimbo AI</button>
           </div>
 
           <div class="card">
             <div class="card-top">
-              <h3>🏖️ Isla Jambelí, Bajoalto y Puerto Bolívar</h3>
-              <span class="badge badge-cyan">Brisa Marina</span>
+              <h3>Isla Jambelí, Bajoalto y Pto. Bolívar</h3>
+              <span class="badge badge-cyan"><span class="status-dot dot-cyan"></span> Brisa Marina</span>
             </div>
             <p>Buen oleaje en horas de la mañana. Revisar horarios de marea antes de cruzar en lancha desde Puerto Bolívar o Bajoalto.</p>
-            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está Isla Jambelí, Bajoalto y Puerto Bolívar?')">🤖 Consultar Costa El Oro en Nimbo AI</button>
+            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está Isla Jambelí, Bajoalto y Puerto Bolívar?')">Consultar Costa El Oro en Nimbo AI</button>
           </div>
         </div>
       </section>
@@ -1206,17 +1467,19 @@
       <section id="sec-recomendaciones" class="view-section">
         <div class="section-head">
           <div>
-            <h2>⚠️ Recomendaciones ante Emergencias Climáticas</h2>
-            <p>Guía rápida de supervivencia y prevención ante tormentas eléctricas, inundaciones y ríos desbordados.</p>
+            <h2>
+              <svg class="ico" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Recomendaciones ante Emergencias Climáticas
+            </h2>
+            <p>Protocolos de prevención y seguridad ante tormentas eléctricas, inundaciones y ríos desbordados.</p>
           </div>
-          <button class="btn btn-danger" onclick="showSection('sec-emergencias')">🚨 Ver Números de Emergencia</button>
+          <button class="btn btn-danger" onclick="showSection('sec-emergencias')">Ver Números de Emergencia</button>
         </div>
 
         <div class="grid-3">
-          <!-- TORMENTAS ELÉCTRICAS -->
           <div class="card" style="border-top: 4px solid var(--amber);">
             <div>
-              <span class="badge badge-amber">⚡ Protocolo 1</span>
+              <span class="badge badge-amber"><span class="status-dot dot-amber"></span> Protocolo 1</span>
               <h3 style="margin-top:0.5rem;">Tormentas Eléctricas</h3>
             </div>
             <div class="card-meta" style="display:flex; flex-direction:column; gap:0.5rem;">
@@ -1225,28 +1488,26 @@
               <div><strong>3. Sal del agua:</strong> Abandona ríos, piscinas o playas al primer trueno lejano.</div>
               <div><strong>4. En casa:</strong> Desconecta electrodomésticos sensibles y evita usar aparatos conectados a la red eléctrica.</div>
             </div>
-            <button class="btn btn-outline" onclick="quickAsk('¿Qué debo hacer ante una tormenta eléctrica?')">🤖 Preguntar a Nimbo AI</button>
+            <button class="btn btn-outline" onclick="quickAsk('¿Qué debo hacer ante una tormenta eléctrica?')">Consultar en Nimbo AI</button>
           </div>
 
-          <!-- INUNDACIONES -->
           <div class="card" style="border-top: 4px solid var(--cyan);">
             <div>
-              <span class="badge badge-cyan">🌊 Protocolo 2</span>
+              <span class="badge badge-cyan"><span class="status-dot dot-cyan"></span> Protocolo 2</span>
               <h3 style="margin-top:0.5rem;">Inundaciones Urbanas</h3>
             </div>
             <div class="card-meta" style="display:flex; flex-direction:column; gap:0.5rem;">
               <div><strong>1. No cruces corrientes:</strong> Apenas 15 cm de agua en movimiento pueden derribar a una persona y 30 cm arrastrar una moto.</div>
               <div><strong>2. Corta la electricidad:</strong> Si el agua entra a la vivienda, baja el breaker principal de luz.</div>
               <div><strong>3. Sube documentos y equipos:</strong> Coloca cédulas, cargadores y medicamentos en bolsas herméticas en zonas altas.</div>
-              <div><strong>4. Cuidado con alcantarillas:</strong> En calles inundadas (ej. zonas bajas) puede haber tapas levantadas ocultas.</div>
+              <div><strong>4. Cuidado con alcantarillas:</strong> En calles inundadas puede haber tapas levantadas ocultas bajo el agua.</div>
             </div>
-            <button class="btn btn-outline" onclick="quickAsk('¿Qué hago si hay inundación en mi sector?')">🤖 Preguntar a Nimbo AI</button>
+            <button class="btn btn-outline" onclick="quickAsk('¿Qué hago si hay inundación en mi sector?')">Consultar en Nimbo AI</button>
           </div>
 
-          <!-- RÍOS DESBORDADOS -->
           <div class="card" style="border-top: 4px solid var(--red);">
             <div>
-              <span class="badge badge-red">🏞️ Protocolo 3</span>
+              <span class="badge badge-red"><span class="status-dot dot-red"></span> Protocolo 3</span>
               <h3 style="margin-top:0.5rem;">Ríos Desbordados / Crecidas</h3>
             </div>
             <div class="card-meta" style="display:flex; flex-direction:column; gap:0.5rem;">
@@ -1255,7 +1516,7 @@
               <div><strong>3. Mochila de emergencia:</strong> Agua embotellada, linterna, silbato, botiquín y batería externa cargada.</div>
               <div><strong>4. Evacúa hacia zonas altas:</strong> No regreses a recoger objetos hasta que autoridades confirmen descenso del nivel.</div>
             </div>
-            <button class="btn btn-outline" onclick="quickAsk('¿Cómo actuar si se desborda un río como el Jubones o La Cocha?')">🤖 Preguntar a Nimbo AI</button>
+            <button class="btn btn-outline" onclick="quickAsk('¿Cómo actuar si se desborda un río como el Jubones o La Cocha?')">Consultar en Nimbo AI</button>
           </div>
         </div>
       </section>
@@ -1264,64 +1525,67 @@
       <section id="sec-emergencias" class="view-section">
         <div class="section-head">
           <div>
-            <h2>🚨 Números de Emergencia — Ecuador / Pasaje / El Oro</h2>
-            <p>Líneas gratuitas de respuesta inmediata 24/7. En teléfono puedes tocar el botón para marcar directo.</p>
+            <h2>
+              <svg class="ico" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Números de Emergencia — Ecuador / Pasaje / El Oro
+            </h2>
+            <p>Líneas gratuitas de respuesta inmediata 24/7.</p>
           </div>
         </div>
 
         <div class="grid-3">
           <div class="card" style="border: 2px solid var(--red);">
             <div>
-              <span class="badge badge-red">Prioridad Máxima • 24/7</span>
+              <span class="badge badge-red"><span class="status-dot dot-red"></span> Prioridad Máxima • 24/7</span>
               <h3 style="font-size:1.3rem; margin-top:0.45rem;">ECU 911 — Emergencias</h3>
               <p style="margin-top:0.3rem;">Coordina Policía Nacional, Ambulancias (MSP), Cuerpo de Bomberos y Gestión de Riesgos en todo Ecuador.</p>
             </div>
-            <a href="tel:911" class="btn btn-danger" style="justify-content:center;">📞 Llamar al 911</a>
+            <a href="tel:911" class="btn btn-danger" style="justify-content:center;">Llamar al 911</a>
           </div>
 
           <div class="card">
             <div>
-              <span class="badge badge-amber">Rescate e Inundaciones</span>
+              <span class="badge badge-amber"><span class="status-dot dot-amber"></span> Rescate e Inundaciones</span>
               <h3 style="font-size:1.25rem; margin-top:0.45rem;">Cuerpo de Bomberos (102)</h3>
               <p style="margin-top:0.3rem;">Rescate en ríos desbordados, inundaciones domiciliarias, árboles caídos y emergencias médicas.</p>
             </div>
-            <a href="tel:102" class="btn btn-primary" style="justify-content:center;">🚒 Llamar al 102</a>
+            <a href="tel:102" class="btn btn-primary" style="justify-content:center;">Llamar al 102</a>
           </div>
 
           <div class="card">
             <div>
-              <span class="badge badge-cyan">Seguridad y Vías</span>
+              <span class="badge badge-cyan"><span class="status-dot dot-cyan"></span> Seguridad y Vías</span>
               <h3 style="font-size:1.25rem; margin-top:0.45rem;">Policía Nacional (101)</h3>
               <p style="margin-top:0.3rem;">Cierre preventivo de carreteras, auxilio vial y seguridad ciudadana en Pasaje y El Oro.</p>
             </div>
-            <a href="tel:101" class="btn btn-outline" style="justify-content:center;">🚓 Llamar al 101</a>
+            <a href="tel:101" class="btn btn-outline" style="justify-content:center;">Llamar al 101</a>
           </div>
 
           <div class="card">
             <div>
-              <span class="badge badge-red">Atención Prehospitalaria</span>
+              <span class="badge badge-red"><span class="status-dot dot-red"></span> Atención Prehospitalaria</span>
               <h3 style="font-size:1.25rem; margin-top:0.45rem;">Cruz Roja Ecuatoriana (131)</h3>
               <p style="margin-top:0.3rem;">Ambulancias, primeros auxilios y apoyo humanitario ante desastres naturales.</p>
             </div>
-            <a href="tel:131" class="btn btn-outline" style="justify-content:center;">🚑 Llamar al 131</a>
+            <a href="tel:131" class="btn btn-outline" style="justify-content:center;">Llamar al 131</a>
           </div>
 
           <div class="card">
             <div>
-              <span class="badge badge-amber">Riesgo Eléctrico por Tormenta</span>
+              <span class="badge badge-amber"><span class="status-dot dot-amber"></span> Riesgo Eléctrico</span>
               <h3 style="font-size:1.25rem; margin-top:0.45rem;">CNEL EP El Oro</h3>
               <p style="margin-top:0.3rem;">Reporte inmediato de cables caídos, postes inclinados o transformadores afectados por rayos.</p>
             </div>
-            <a href="tel:1800263537" class="btn btn-outline" style="justify-content:center;">⚡ Llamar 1800-263537</a>
+            <a href="tel:1800263537" class="btn btn-outline" style="justify-content:center;">Llamar 1800-263537</a>
           </div>
 
           <div class="card">
             <div>
-              <span class="badge badge-teal">Tránsito y Carreteras</span>
+              <span class="badge badge-teal"><span class="status-dot dot-green"></span> Tránsito y Carreteras</span>
               <h3 style="font-size:1.25rem; margin-top:0.45rem;">Comisión de Tránsito (CTE)</h3>
               <p style="margin-top:0.3rem;">Reporte de deslaves, neblina densa o accidentes en las vías Pasaje–Machala y Pasaje–Cuenca.</p>
             </div>
-            <a href="tel:911" class="btn btn-outline" style="justify-content:center;">🛣️ Reportar vía 911</a>
+            <a href="tel:911" class="btn btn-outline" style="justify-content:center;">Reportar vía 911</a>
           </div>
         </div>
       </section>
@@ -1330,12 +1594,15 @@
       <section id="sec-ai" class="view-section">
         <div class="section-head">
           <div>
-            <h2>🤖 Nimbo AI — Asistente Inteligente</h2>
-            <p id="aiPlanSubtitle">Plan Normal: 5 tokens gratuitos diarios • Actualiza a Pro Premium ($1,99/mes) para tokens infinitos + Noticias de Última Hora.</p>
+            <h2>
+              <svg class="ico" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+              Nimbo AI — Asistente Inteligente
+            </h2>
+            <p id="aiPlanSubtitle">Plan Normal: 5 tokens gratuitos diarios • Prueba Pro Premium gratis 1 mes (luego $1,99/mes) para tokens infinitos + Noticias Oficiales.</p>
           </div>
           <div style="display:flex; align-items:center; gap:0.55rem;">
             <span class="badge badge-cyan" id="chatTokenBadge">5/5 tokens disponibles hoy</span>
-            <button class="btn btn-outline" style="font-size:0.78rem; padding:0.38rem 0.7rem;" onclick="showSection('sec-planes')">💎 Tokens Infinitos</button>
+            <button class="btn btn-outline" style="font-size:0.78rem; padding:0.38rem 0.7rem;" onclick="showSection('sec-planes')">Tokens Infinitos</button>
           </div>
         </div>
 
@@ -1343,7 +1610,7 @@
           <div class="nimbo-ai-header">
             <div>
               <strong style="display:block; font-size:1rem;">Nimbo AI • Clima, Colegios, Ríos, Protocolos de Riesgo y Mundo</strong>
-              <span style="font-size:0.8rem; color: var(--teal);" id="aiStatusLine">● Activo • Plan Normal (5 tokens/día)</span>
+              <span style="font-size:0.8rem; color: var(--teal);" id="aiStatusLine">Activo • Plan Normal (5 tokens/día)</span>
             </div>
             <div style="font-size:0.82rem; color: var(--text-muted);">
               Usados hoy: <strong id="chatUsedCount" style="color: var(--amber);">0</strong> / <span id="chatMaxCount">5</span>
@@ -1352,24 +1619,24 @@
 
           <div class="chat-box" id="chatBox">
             <div class="msg msg-ai">
-              👋 ¡Hola! Soy <strong>Nimbo AI</strong>.<br><br>
-              Pregúntame sobre el clima de cualquier <strong>río o balneario</strong> (La Cocha, Río Jubones, Casacay, Dos Bocas), <strong>colegios</strong> (Carmen Mora, Juan Pablo II), <strong>países del mundo</strong> o <strong>qué hacer ante tormentas eléctricas, inundaciones o ríos desbordados</strong>.
+              Bienvenido a <strong>Nimbo AI</strong>.<br><br>
+              Consulta el clima de cualquier <strong>río o balneario</strong> (La Cocha, Río Jubones, Casacay, Dos Bocas), <strong>colegios</strong> (Carmen Mora, Juan Pablo II), <strong>países del mundo</strong> o <strong>qué hacer ante tormentas eléctricas, inundaciones o ríos desbordados</strong>.
             </div>
           </div>
 
           <div class="quick-prompts">
-            <button class="chip-btn" onclick="quickAsk('¿Cómo está el Balneario La Cocha, Pasaje?')">🏞️ La Cocha</button>
-            <button class="chip-btn" onclick="quickAsk('¿Cómo está el Río Jubones y Casacay?')">🌊 Río Jubones</button>
-            <button class="chip-btn" onclick="quickAsk('¿Cómo está el colegio Juan Pablo II?')">🏫 Juan Pablo II</button>
-            <button class="chip-btn" onclick="quickAsk('¿Qué hacer ante tormentas eléctricas o ríos desbordados?')">⚡ Protocolo Tormenta</button>
-            <button class="chip-btn" onclick="quickAsk('¿Cómo está el clima en Tokio, Japón?')">🌍 Tokio</button>
+            <button class="chip-btn" onclick="quickAsk('¿Cómo está el Balneario La Cocha, Pasaje?')">Balneario La Cocha</button>
+            <button class="chip-btn" onclick="quickAsk('¿Cómo está el Río Jubones y Casacay?')">Río Jubones</button>
+            <button class="chip-btn" onclick="quickAsk('¿Cómo está el colegio Juan Pablo II?')">Colegio Juan Pablo II</button>
+            <button class="chip-btn" onclick="quickAsk('¿Qué hacer ante tormentas eléctricas o ríos desbordados?')">Protocolo Tormenta</button>
+            <button class="chip-btn" onclick="quickAsk('¿Cómo está el clima en Tokio, Japón?')">Clima en Tokio</button>
           </div>
 
           <form class="chat-input-area" onsubmit="handleChatSubmit(event)">
             <input
               type="text"
               id="aiInput"
-              placeholder="Escribe tu consulta aquí..."
+              placeholder="Escribe tu consulta climática o preventiva aquí..."
               autocomplete="off"
               required
             />
@@ -1378,68 +1645,87 @@
         </div>
       </section>
 
-      <!-- SECCIÓN 11: NOTICIAS DE ÚLTIMA HORA (EXCLUSIVO PRO PREMIUM) -->
+      <!-- SECCIÓN 11: NOTICIAS OFICIALES DE ÚLTIMA HORA (CENTRADO EN ECUADOR CON SELECTOR DE REGIÓN) -->
       <section id="sec-noticias" class="view-section">
         <div class="section-head">
           <div>
-            <h2>📰 Noticias de Última Hora — Boletín Climático Pro</h2>
-            <p>Alertas meteorológicas urgentes, boletines de ríos, El fenómeno del Niño y reportes globales.</p>
+            <h2>
+              <svg class="ico" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+              Noticias Oficiales de Última Hora
+            </h2>
+            <p>Boletines meteorológicos y cobertura de noticieros oficiales según el país y la región seleccionada.</p>
           </div>
-          <span class="badge badge-amber">💎 Exclusivo Pro Premium</span>
+          <span class="badge badge-amber"><span class="status-dot dot-amber"></span> Pro Premium / Prueba Gratuita 1 Mes</span>
         </div>
 
-        <!-- PANTALLA DE BLOQUEO SI ES PLAN NORMAL -->
+        <!-- PANTALLA DE BLOQUEO SI NO TIENE PRO NI PRUEBA ACTIVA -->
         <div id="newsLockedBox" class="card" style="text-align:center; padding:2.2rem 1.5rem; border:2px dashed var(--amber);">
-          <span style="font-size:2.5rem;">🔒</span>
-          <h3 style="font-size:1.35rem; margin-top:0.5rem;">Sección Exclusiva para Usuarios Pro Premium</h3>
-          <p style="max-width:560px; margin:0.45rem auto 1rem; color:var(--text-muted);">
-            Con el <strong>Plan Normal ($0,00)</strong> tienes acceso a todo el sitio y 5 tokens diarios en Nimbo AI. Actualiza a <strong>Pro Premium ($1,99/mes)</strong> para desbloquear las <strong>Noticias de Última Hora en vivo</strong>, <strong>tokens infinitos</strong> y la <strong>App Móvil</strong>.
+          <div style="margin:0 auto; width:46px; height:46px; border-radius:12px; background:var(--amber-soft); color:var(--amber); display:grid; place-items:center;">
+            <svg class="ico ico-lg" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3 style="font-size:1.3rem; margin-top:0.5rem;">Sección Exclusiva para Usuarios Pro Premium</h3>
+          <p style="max-width:580px; margin:0.45rem auto 1rem; color:var(--text-muted);">
+            Activa tu <strong>prueba gratuita de 1 mes (30 días)</strong> sin costo hoy mismo (luego $1,99/mes) para acceder a los noticieros oficiales de Ecuador y el mundo en tiempo real y tokens infinitos.
           </p>
           <div style="display:flex; justify-content:center; gap:0.65rem; flex-wrap:wrap;">
-            <button class="btn btn-primary" onclick="showSection('sec-planes')">💎 Desbloquear por $1,99 / mes</button>
-            <button class="btn btn-outline" onclick="showSection('sec-ajustes')">🔑 Ingresar Código / Código Maestro</button>
+            <button class="btn btn-primary" onclick="startFreeTrialMonth()">Activar 1 Mes Gratis (30 días)</button>
+            <button class="btn btn-outline" onclick="showSection('sec-planes')">Ver Planes y Códigos</button>
           </div>
         </div>
 
-        <!-- CONTENIDO DESBLOQUEADO DE NOTICIAS DE ÚLTIMA HORA -->
+        <!-- CONTENIDO DESBLOQUEADO DE NOTICIAS OFICIALES -->
         <div id="newsUnlockedBox" style="display:none;">
-          <div class="card" style="margin-bottom:1.15rem; border-left:4px solid var(--red);">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
-              <span class="badge badge-red">🔴 EN VIVO • ÚLTIMA HORA</span>
-              <span style="font-size:0.8rem; color:var(--text-muted);" id="newsTimestamp">Actualizado hace unos instantes</span>
+          <div class="news-toolbar">
+            <div>
+              <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.25rem;">País</label>
+              <select id="newsCountrySelect" class="pro-select" onchange="onNewsCountryChange()">
+                <option value="EC" selected>Ecuador (Principal)</option>
+                <option value="PE">Perú</option>
+                <option value="CO">Colombia</option>
+                <option value="MX">México</option>
+                <option value="ES">España</option>
+                <option value="US">Estados Unidos</option>
+              </select>
             </div>
-            <h3 style="margin-top:0.4rem;" id="liveBreakingHeadline">Monitoreo Satelital Activo: Cuenca del Río Jubones y Pasaje</h3>
-            <p id="liveBreakingBody" style="color:var(--text-body); margin-top:0.3rem;">
-              Sincronizando reporte meteorológico de última hora...
-            </p>
+
+            <div id="ecuadorRegionWrapper">
+              <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.25rem;">Región de Ecuador</label>
+              <select id="newsRegionSelect" class="pro-select" onchange="renderOfficialNews()">
+                <option value="EL_ORO" selected>El Oro y Pasaje (Local)</option>
+                <option value="COSTA">Región Costa (Guayas, Manabí, Santa Elena, Esmeraldas)</option>
+                <option value="SIERRA">Región Sierra (Pichincha, Azuay, Loja)</option>
+                <option value="AMAZONIA">Región Amazónica (Sucumbíos, Pastaza, Zamora)</option>
+                <option value="GALAPAGOS">Región Insular (Galápagos)</option>
+              </select>
+            </div>
+
+            <div style="margin-left:auto; display:flex; gap:0.5rem; flex-wrap:wrap;">
+              <button class="btn btn-outline" onclick="renderOfficialNews()">Actualizar Boletín</button>
+            </div>
           </div>
 
-          <div class="grid-3">
-            <div class="card">
-              <span class="badge badge-amber">🌊 El fenómeno del Niño</span>
-              <h3>Boletín Oceanográfico Pacífico Oriental</h3>
-              <p>Se mantiene vigilancia amarilla en la costa sur de Ecuador (El Oro y Guayas). Posibles chubascos aislados en horas de la tarde y noche.</p>
+          <div class="card" style="margin-bottom:1.15rem; border-left:4px solid var(--cyan);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+              <span class="badge badge-cyan" id="newsOfficialAgencyTag"><span class="status-dot dot-cyan"></span> Boletín Oficial • INAMHI / ECU 911</span>
+              <span style="font-size:0.8rem; color:var(--text-muted);" id="newsTimestamp">Actualizado hoy</span>
             </div>
-            <div class="card">
-              <span class="badge badge-cyan">🏞️ Hidrología Pasaje</span>
-              <h3>Estado de Balnearios La Cocha y Casacay</h3>
-              <p>Caudales dentro de niveles operativos en horario matutino. Se recomienda precaución si se registran lluvias en la parte alta de Azuay.</p>
-            </div>
-            <div class="card">
-              <span class="badge badge-teal">🌍 Alerta Global</span>
-              <h3>Resumen Meteorológico Mundial</h3>
-              <p>Sistemas frontales activos en el Atlántico Norte y lluvias estacionales en Sudamérica. Consulta cualquier país en la sección Clima Global.</p>
-            </div>
+            <h3 style="margin-top:0.35rem;" id="liveBreakingHeadline">Monitoreo Regional Activo</h3>
+            <p id="liveBreakingBody" style="color:var(--text-body); margin-top:0.25rem;">Cargando reporte...</p>
           </div>
+
+          <div class="grid-3" id="officialNewsGrid"></div>
         </div>
       </section>
 
-      <!-- SECCIÓN 12: PLANES ($0,00 vs $1,99) -->
+      <!-- SECCIÓN 12: PLANES ($0,00 vs 1 MES GRATIS + $1,99/MES) -->
       <section id="sec-planes" class="view-section">
         <div class="section-head">
           <div>
-            <h2>💎 Planes NimboSignal — Normal vs. Pro Premium ($1,99)</h2>
-            <p>En la página tienes todo gratis con 5 tokens diarios, o activa Pro Premium por $1,99/mes.</p>
+            <h2>
+              <svg class="ico" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              Planes NimboSignal — Normal vs. Pro Premium ($1,99)
+            </h2>
+            <p>Usa el Plan Normal gratis con 5 tokens diarios, o prueba Pro Premium gratis durante 1 mes (30 días) y luego $1,99/mes.</p>
           </div>
         </div>
 
@@ -1447,48 +1733,52 @@
           <!-- PLAN 1: NORMAL -->
           <div class="card">
             <div>
-              <span class="badge badge-teal">Plan 1 • Gratuito</span>
+              <span class="badge badge-teal"><span class="status-dot dot-green"></span> Plan 1 • Gratuito</span>
               <h3 style="font-size:1.35rem; margin-top:0.5rem;">Plan Normal</h3>
               <div class="price">$0,00 <span>/ siempre gratis</span></div>
               <p style="margin-bottom:0.85rem;">Acceso completo a la plataforma web sin costo:</p>
               <ul class="plan-list">
-                <li>✔ Acceso completo a <strong>Ecuador, Global, Mapa, Colegios, Ríos y Emergencias</strong></li>
-                <li>✔ Incluye <strong>Nimbo AI con 5 tokens diarios gratuitos</strong></li>
-                <li>✖ Sin acceso a <strong>Noticias de Última Hora</strong></li>
-                <li>✖ No incluye código para la <strong>App Móvil Android</strong></li>
+                <li><strong>•</strong> Acceso completo a Ecuador, Global, Mapa, Colegios, Ríos y Emergencias</li>
+                <li><strong>•</strong> Incluye Nimbo AI con <strong>5 tokens diarios gratuitos</strong></li>
+                <li><strong>•</strong> No incluye Noticias Oficiales de Última Hora</li>
+                <li><strong>•</strong> No incluye licencia para la App Móvil Android</li>
               </ul>
             </div>
-            <button class="btn btn-outline" id="btnNormalStatus" style="justify-content:center;">✔ Plan Normal Activo</button>
+            <button class="btn btn-outline" id="btnNormalStatus" style="justify-content:center;">Plan Normal Activo</button>
           </div>
 
-          <!-- PLAN 2: PRO PREMIUM ($1,99) -->
+          <!-- PLAN 2: PRO PREMIUM (1 MES GRATIS + $1,99/MES) -->
           <div class="card" style="border: 2px solid var(--cyan);">
             <div>
-              <span class="badge badge-cyan">Plan 2 • Todo Incluido</span>
+              <span class="badge badge-cyan"><span class="status-dot dot-cyan"></span> Plan 2 • 1 Mes Gratis</span>
               <h3 style="font-size:1.35rem; margin-top:0.5rem;">Plan Pro Premium</h3>
-              <div class="price">$1,99 <span>/ mes</span></div>
+              <div class="price">$1,99 <span>/ mes (tras 1 mes de prueba gratis)</span></div>
               <p style="margin-bottom:0.85rem;">Desbloquea la experiencia ilimitada en Web y Teléfono:</p>
               <ul class="plan-list">
-                <li>✔ <strong>Tokens Infinitos en Nimbo AI</strong> (consultas ilimitadas 24/7)</li>
-                <li>✔ Acceso completo a <strong>📰 Noticias de Última Hora</strong></li>
-                <li>✔ <strong>Entrega Código Oficial para activar la App Móvil Android</strong></li>
-                <li>✔ Registro automático en tu historial de suscripciones pedidas</li>
+                <li><strong>•</strong> <strong>1 Mes de Prueba Gratuita (30 días sin costo)</strong> al iniciar</li>
+                <li><strong>•</strong> <strong>Tokens Infinitos en Nimbo AI</strong> (consultas ilimitadas 24/7)</li>
+                <li><strong>•</strong> Acceso completo a <strong>Noticias Oficiales por País y Región</strong></li>
+                <li><strong>•</strong> Genera Código Oficial válido para activar la App Móvil Android</li>
               </ul>
             </div>
 
             <div style="display:flex; flex-direction:column; gap:0.6rem;">
+              <button class="btn btn-outline" id="btnStartTrial" style="justify-content:center; border-color:var(--teal); color:var(--teal);" onclick="startFreeTrialMonth()">
+                Iniciar 1 Mes de Prueba Gratuita (30 días sin costo)
+              </button>
+
               <button class="btn btn-primary" style="justify-content:center;" onclick="purchaseProPremiumWeb()">
-                🚀 Adquirir Pro Premium ($1,99) y Generar Código
+                Suscribirse a Pro Premium ($1,99/mes) y Generar Código
               </button>
 
               <div id="webGeneratedBox" style="display:none; background:var(--teal-soft); border:1px dashed var(--teal); padding:0.8rem; border-radius:12px; text-align:center;">
-                <span style="font-size:0.8rem; display:block;">🎉 ¡Pro Premium ($1,99) Activado! Tu código para Web y App Móvil es:</span>
+                <span style="font-size:0.8rem; display:block;">Licencia Pro Premium Activada. Tu código para Web y App Móvil es:</span>
                 <strong id="webGeneratedCode" style="font-size:1.2rem; letter-spacing:1px; color:var(--cyan);"></strong>
               </div>
 
               <div style="border-top:1px solid var(--border); padding-top:0.75rem; margin-top:0.25rem;">
                 <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:0.4rem;">
-                  🔑 ¿Ya tienes tu código Pro o Código Maestro? Actívalo aquí:
+                  ¿Ya tienes tu código Pro o Código Maestro? Actívalo aquí:
                 </span>
                 <div style="display:flex; gap:0.5rem;">
                   <input type="text" id="webCodeInput" class="code-input" placeholder="Ej. NS-PRO-XXXX-YY" style="text-transform:uppercase;" />
@@ -1505,7 +1795,10 @@
       <section id="sec-ajustes" class="view-section">
         <div class="section-head">
           <div>
-            <h2>⚙️ Ajustes, Notificaciones, Cuenta y Suscripciones</h2>
+            <h2>
+              <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Ajustes, Notificaciones, Cuenta y Suscripciones
+            </h2>
             <p>Configura tus alertas climáticas, administra tu perfil y revisa tus planes y suscripciones pedidas.</p>
           </div>
         </div>
@@ -1514,14 +1807,14 @@
           <!-- COLUMNA 1: NOTIFICACIONES -->
           <div class="card">
             <div class="card-top">
-              <h3>🔔 Notificaciones y Alertas</h3>
+              <h3>Notificaciones y Alertas</h3>
               <span class="badge badge-cyan" id="notifStatusBadge">Configuradas</span>
             </div>
 
             <div style="display:flex; flex-direction:column; gap:0.6rem;">
               <div class="setting-row">
                 <div>
-                  <strong style="display:block; font-size:0.9rem;">⚡ Alertas de Tormentas Eléctricas</strong>
+                  <strong style="display:block; font-size:0.9rem;">Alertas de Tormentas Eléctricas</strong>
                   <span style="font-size:0.78rem; color:var(--text-muted);">Aviso preventivo por rayos y descargas cercanas.</span>
                 </div>
                 <label class="switch">
@@ -1532,7 +1825,7 @@
 
               <div class="setting-row">
                 <div>
-                  <strong style="display:block; font-size:0.9rem;">🏞️ Crecidas y Ríos Desbordados</strong>
+                  <strong style="display:block; font-size:0.9rem;">Crecidas y Ríos Desbordados</strong>
                   <span style="font-size:0.78rem; color:var(--text-muted);">Monitoreo de Río Jubones, La Cocha y Casacay.</span>
                 </div>
                 <label class="switch">
@@ -1543,7 +1836,7 @@
 
               <div class="setting-row">
                 <div>
-                  <strong style="display:block; font-size:0.9rem;">🌊 Boletines El fenómeno del Niño</strong>
+                  <strong style="display:block; font-size:0.9rem;">Boletines El fenómeno del Niño</strong>
                   <span style="font-size:0.78rem; color:var(--text-muted);">Cambios en el semáforo preventivo costero.</span>
                 </div>
                 <label class="switch">
@@ -1554,7 +1847,7 @@
 
               <div class="setting-row">
                 <div>
-                  <strong style="display:block; font-size:0.9rem;">📰 Noticias de Última Hora (Pro)</strong>
+                  <strong style="display:block; font-size:0.9rem;">Noticias Oficiales de Última Hora (Pro)</strong>
                   <span style="font-size:0.78rem; color:var(--text-muted);">Alertas urgentes en tiempo real.</span>
                 </div>
                 <label class="switch">
@@ -1564,13 +1857,13 @@
               </div>
             </div>
 
-            <button class="btn btn-outline" onclick="requestBrowserNotifications()">📲 Activar Notificaciones Push en este Navegador</button>
+            <button class="btn btn-outline" onclick="requestBrowserNotifications()">Activar Notificaciones Push en este Navegador</button>
           </div>
 
           <!-- COLUMNA 2: SU CUENTA Y SUSCRIPCIONES PEDIDAS -->
           <div class="card">
             <div class="card-top">
-              <h3>👤 Su Cuenta y Suscripciones Pedidas</h3>
+              <h3>Su Cuenta y Suscripciones Pedidas</h3>
               <span class="badge badge-teal" id="accTierBadge">Plan Normal</span>
             </div>
 
@@ -1581,12 +1874,12 @@
               <label style="font-size:0.8rem; color:var(--text-muted);">Correo Electrónico</label>
               <input type="email" id="accEmailInput" class="search-bar" placeholder="correo@ejemplo.com" />
 
-              <button class="btn btn-primary" onclick="saveAccountProfile()">💾 Guardar Datos de Cuenta</button>
+              <button class="btn btn-primary" onclick="saveAccountProfile()">Guardar Datos de Cuenta</button>
               <span id="accSavedMsg" style="font-size:0.78rem; color:var(--teal);"></span>
             </div>
 
             <div style="border-top:1px solid var(--border); padding-top:0.8rem; margin-top:0.3rem;">
-              <strong style="font-size:0.92rem; display:block; margin-bottom:0.5rem;">📋 Suscripciones y Planes Pedidos</strong>
+              <strong style="font-size:0.92rem; display:block; margin-bottom:0.5rem;">Suscripciones y Planes Pedidos</strong>
               <div id="ordersHistoryList" style="display:flex; flex-direction:column; gap:0.5rem;"></div>
             </div>
           </div>
@@ -1609,7 +1902,7 @@
     function applyTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       const btn = document.getElementById('themeToggleBtn');
-      if (btn) btn.textContent = theme === 'light' ? '🌙 Oscuro' : '☀️ Claro';
+      if (btn) btn.textContent = theme === 'light' ? 'Tema Oscuro' : 'Tema Claro';
     }
 
     function toggleTheme() {
@@ -1669,11 +1962,13 @@
     }
 
     // ==========================================
-    // 2. SISTEMA DE 2 PLANES ($0,00 vs $1,99) + NOTICIAS PRO + HISTORIAL
+    // 2. SISTEMA DE PLANES + 1 MES PRUEBA GRATIS (30 DÍAS) + HISTORIAL
     // ==========================================
     const NORMAL_DAILY_LIMIT = 5;
     const TOKEN_STORAGE_KEY = 'nimbosignal_tokens_v3';
     const WEB_PRO_KEY = 'nimbosignal_license_v1';
+    const TRIAL_KEY = 'nimbosignal_trial_v1';
+    const TRIAL_DAYS = 30;
     const ORDERS_KEY = 'nimbosignal_orders_v1';
     const ACCOUNT_KEY = 'nimbosignal_account_v1';
     const NOTIF_KEY = 'nimbosignal_notif_v1';
@@ -1697,9 +1992,23 @@
       try { return JSON.parse(localStorage.getItem(WEB_PRO_KEY)); } catch (e) { return null; }
     }
 
+    function getTrialStatus() {
+      try {
+        const t = JSON.parse(localStorage.getItem(TRIAL_KEY));
+        if (!t || !t.startedAt) return { active: false, expired: false, daysLeft: 0 };
+        const elapsedMs = Date.now() - new Date(t.startedAt).getTime();
+        const elapsedDays = Math.floor(elapsedMs / (1000 * 60 * 60 * 24));
+        const left = Math.max(0, TRIAL_DAYS - elapsedDays);
+        return { active: left > 0, expired: left === 0, daysLeft: left };
+      } catch (e) {
+        return { active: false, expired: false, daysLeft: 0 };
+      }
+    }
+
     function isProActive() {
       const lic = getWebLicense();
-      return lic && lic.active && (lic.tier === 'PRO' || lic.tier === 'MASTER');
+      if (lic && lic.active && (lic.tier === 'PRO' || lic.tier === 'MASTER')) return true;
+      return getTrialStatus().active;
     }
 
     function getTokenState() {
@@ -1754,42 +2063,88 @@
     function updatePlanAndTokenUI() {
       const pro = isProActive();
       const lic = getWebLicense();
+      const trial = getTrialStatus();
       const state = getTokenState();
 
       const newsLocked = document.getElementById('newsLockedBox');
       const newsUnlocked = document.getElementById('newsUnlockedBox');
+      const btnTrial = document.getElementById('btnStartTrial');
+
+      if (btnTrial) {
+        if (lic && lic.active) {
+          btnTrial.textContent = 'Licencia Pro Premium Permanente Activa';
+        } else if (trial.active) {
+          btnTrial.textContent = `Prueba Gratuita Activa: quedan ${trial.daysLeft} días (luego $1,99/mes)`;
+        } else if (trial.expired) {
+          btnTrial.textContent = 'Mes gratuito finalizado — Suscribirse por $1,99/mes';
+          btnTrial.style.color = 'var(--amber)';
+          btnTrial.style.borderColor = 'var(--amber)';
+        }
+      }
 
       if (pro) {
         const isMaster = lic && lic.tier === 'MASTER';
+        const isPaidPro = lic && lic.tier === 'PRO';
         document.getElementById('topTokensLeft').textContent = '∞/∞';
-        document.getElementById('topPlanLabel').textContent = isMaster ? '👑 Maestro' : 'Pro $1,99';
-        document.getElementById('chatTokenBadge').textContent = isMaster ? '👑 Modo Maestro • Tokens Infinitos' : '💎 Pro Premium • Tokens Infinitos';
-        document.getElementById('aiPlanSubtitle').textContent = 'Tienes tokens infinitos en Nimbo AI, Noticias de Última Hora y acceso a la App Móvil.';
-        document.getElementById('aiStatusLine').textContent = '● Activo • Tokens Infinitos';
+        document.getElementById('topPlanLabel').textContent = isMaster ? 'Maestro' : isPaidPro ? 'Pro $1,99' : `Prueba (${trial.daysLeft}d)`;
+        document.getElementById('chatTokenBadge').textContent = isMaster
+          ? 'Modo Maestro • Tokens Infinitos'
+          : isPaidPro
+            ? 'Pro Premium • Tokens Infinitos'
+            : `Prueba Gratuita (${trial.daysLeft} días restantes) • Tokens Infinitos`;
+        document.getElementById('aiPlanSubtitle').textContent = 'Tienes tokens infinitos en Nimbo AI, Noticias Oficiales por Región y acceso completo.';
+        document.getElementById('aiStatusLine').textContent = 'Activo • Tokens Infinitos';
         document.getElementById('chatUsedCount').textContent = state.used;
         document.getElementById('chatMaxCount').textContent = '∞';
         document.getElementById('btnNormalStatus').textContent = 'Plan Normal ($0,00)';
-        document.getElementById('accTierBadge').textContent = isMaster ? '👑 Maestro Pro' : '💎 Pro Premium ($1,99)';
+        document.getElementById('accTierBadge').textContent = isMaster
+          ? 'Maestro Pro'
+          : isPaidPro
+            ? 'Pro Premium ($1,99/mes)'
+            : `Prueba Gratuita (${trial.daysLeft} días)`;
 
         newsLocked.style.display = 'none';
         newsUnlocked.style.display = 'block';
-        loadBreakingNewsLive();
+        renderOfficialNews();
       } else {
         const left = Math.max(0, NORMAL_DAILY_LIMIT - state.used);
         document.getElementById('topTokensLeft').textContent = `${left}/${NORMAL_DAILY_LIMIT}`;
         document.getElementById('topPlanLabel').textContent = 'Normal';
         document.getElementById('chatTokenBadge').textContent = `${left}/${NORMAL_DAILY_LIMIT} tokens disponibles hoy`;
-        document.getElementById('aiPlanSubtitle').textContent = 'Plan Normal: 5 tokens gratuitos diarios • Actualiza a Pro Premium ($1,99/mes) para tokens infinitos + Noticias de Última Hora.';
-        document.getElementById('aiStatusLine').textContent = '● Activo • Plan Normal (5 tokens/día)';
+        document.getElementById('aiPlanSubtitle').textContent = 'Plan Normal: 5 tokens gratuitos diarios • Prueba Pro Premium gratis 1 mes (luego $1,99/mes) para tokens infinitos + Noticias Oficiales.';
+        document.getElementById('aiStatusLine').textContent = 'Activo • Plan Normal (5 tokens/día)';
         document.getElementById('chatUsedCount').textContent = state.used;
         document.getElementById('chatMaxCount').textContent = NORMAL_DAILY_LIMIT;
-        document.getElementById('btnNormalStatus').textContent = '✔ Plan Normal Activo';
+        document.getElementById('btnNormalStatus').textContent = 'Plan Normal Activo';
         document.getElementById('accTierBadge').textContent = 'Plan Normal ($0,00)';
 
         newsLocked.style.display = 'block';
         newsUnlocked.style.display = 'none';
       }
       renderOrdersHistory();
+    }
+
+    function startFreeTrialMonth() {
+      const lic = getWebLicense();
+      if (lic && lic.active) {
+        alert('Ya tienes una licencia Pro Premium activa.');
+        return;
+      }
+      const st = getTrialStatus();
+      if (st.active) {
+        alert(`Tu prueba gratuita de 1 mes ya está activa. Te quedan ${st.daysLeft} días.`);
+        return;
+      }
+      if (st.expired) {
+        alert('Tu mes de prueba gratuita de 30 días ha finalizado. Suscríbete al Plan Pro Premium ($1,99/mes) para continuar.');
+        showSection('sec-planes');
+        return;
+      }
+
+      localStorage.setItem(TRIAL_KEY, JSON.stringify({ startedAt: new Date().toISOString() }));
+      recordPlanOrder('Prueba Gratuita Pro (1 Mes)', '$0,00 por 30 días (luego $1,99/mes)', 'TRIAL-30D');
+      updatePlanAndTokenUI();
+      alert('Prueba gratuita de 1 mes (30 días) activada. Disfruta tokens infinitos y Noticias Oficiales.');
     }
 
     function purchaseProPremiumWeb() {
@@ -1817,7 +2172,7 @@
 
       if (!tier) {
         msgEl.style.color = 'var(--red)';
-        msgEl.textContent = '❌ Código inválido. Adquiere Pro Premium ($1,99) arriba para generar un código válido.';
+        msgEl.textContent = 'Código inválido. Inicia tu mes gratis o adquiere Pro Premium ($1,99) arriba para generar un código válido.';
         return;
       }
 
@@ -1832,13 +2187,153 @@
       recordPlanOrder(tier === 'MASTER' ? 'Licencia Maestra Pro' : 'Plan Pro Premium', '$1,99 / mes', displayCode);
       msgEl.style.color = 'var(--teal)';
       msgEl.textContent = tier === 'MASTER'
-        ? '👑 ¡Código Maestro aceptado! Tokens infinitos + Noticias de Última Hora activados.'
-        : '✅ ¡Plan Pro Premium ($1,99) activado! Tokens infinitos + Noticias desbloqueadas.';
+        ? 'Código Maestro aceptado. Tokens infinitos y Noticias Oficiales activados.'
+        : 'Plan Pro Premium ($1,99) activado. Tokens infinitos y Noticias Oficiales desbloqueados.';
       updatePlanAndTokenUI();
     }
 
     // ==========================================
-    // 3. AJUSTES: NOTIFICACIONES Y PERFIL DE CUENTA
+    // 3. NOTICIAS OFICIALES POR PAÍS Y REGIÓN (CENTRADO EN ECUADOR)
+    // ==========================================
+    const OFFICIAL_NEWS_DB = {
+      EC: {
+        agency: 'Boletín Oficial Ecuador • INAMHI / Secretaría de Gestión de Riesgos',
+        regions: {
+          EL_ORO: {
+            lat: -3.3256, lon: -79.8069, label: 'El Oro y Pasaje',
+            outlets: [
+              { source: 'INAMHI Ecuador (Oficial)', tag: 'Meteorología Nacional', title: 'Alertas y Pronóstico Hidrometeorológico para El Oro', desc: 'Monitoreo oficial de lluvias, tormentas eléctricas y radiación UV emitido por el Instituto Nacional de Meteorología e Hidrología.', url: 'https://www.inamhi.gob.ec/' },
+              { source: 'Diario Correo (El Oro)', tag: 'Prensa Oficial Provincial', title: 'Actualidad Vial y Emergencias en Pasaje, Machala y Cuenca del Jubones', desc: 'Cobertura periodística oficial sobre estado de carreteras, ríos y resoluciones del COE Cantonal en la provincia de El Oro.', url: 'https://diariocorreo.com.ec/' },
+              { source: 'Ecuavisa / Gestión de Riesgos', tag: 'Noticiero Nacional', title: 'Vigilancia de Caudales y El fenómeno del Niño en la Costa Sur', desc: 'Reportes verificados sobre prevención de inundaciones y boletines de la Secretaría Nacional de Gestión de Riesgos.', url: 'https://www.ecuavisa.com/' }
+            ]
+          },
+          COSTA: {
+            lat: -2.1894, lon: -79.8891, label: 'Región Costa (Guayas, Manabí, Esmeraldas)',
+            outlets: [
+              { source: 'El Universo (Guayaquil)', tag: 'Noticiero Oficial', title: 'Clima, Mareas y Movilidad en el Litoral Ecuatoriano', desc: 'Reporte actualizado de precipitaciones, estado de vías costeras y alertas del INOCAR e INAMHI.', url: 'https://www.eluniverso.com/' },
+              { source: 'Teleamazonas', tag: 'Noticiero Nacional', title: 'Cobertura en Vivo: Lluvias y Alertas Preventivas en la Costa', desc: 'Información oficial sobre emergencias invernales y respuesta de organismos de socorro.', url: 'https://www.teleamazonas.com/' },
+              { source: 'INOCAR Ecuador', tag: 'Oceanografía Oficial', title: 'Boletín Oceanográfico y Estado del Mar en Ecuador', desc: 'Datos oficiales de oleaje, mareas y anomalías térmicas vinculadas a El fenómeno del Niño.', url: 'https://www.inocar.mil.ec/' }
+            ]
+          },
+          SIERRA: {
+            lat: -0.1807, lon: -78.4678, label: 'Región Sierra (Quito, Cuenca, Loja)',
+            outlets: [
+              { source: 'Primicias Ecuador', tag: 'Medio Digital Oficial', title: 'Pronóstico Climático, Neblina y Estado de Vías Interandinas', desc: 'Actualización oficial sobre lluvias en Quito, Cuenca y corredores viales hacia la Costa.', url: 'https://www.primicias.ec/' },
+              { source: 'El Comercio Ecuador', tag: 'Prensa Nacional', title: 'Reportes de Infraestructura Vial y Alertas INAMHI en la Sierra', desc: 'Seguimiento oficial de deslizamientos, lluvias y recomendaciones de tránsito.', url: 'https://www.elcomercio.com/' },
+              { source: 'ECU 911 Oficial', tag: 'Seguridad y Vías', title: 'Estado de Vías en Tiempo Real — Ecuador', desc: 'Consulta oficial del estado de carreteras habilitadas o cerradas por clima a nivel nacional.', url: 'https://www.ecu911.gob.ec/consulta-de-vias/' }
+            ]
+          },
+          AMAZONIA: {
+            lat: -1.4887, lon: -78.0031, label: 'Región Amazónica',
+            outlets: [
+              { source: 'INAMHI Amazonía', tag: 'Oficial', title: 'Monitoreo de Crecidas de Ríos y Precipitaciones Amazónicas', desc: 'Seguimiento hidrometeorológico oficial para Napo, Pastaza, Morona Santiago y Zamora Chinchipe.', url: 'https://www.inamhi.gob.ec/' },
+              { source: 'Gestión de Riesgos Ecuador', tag: 'Entidad Oficial', title: 'Boletines de Prevención ante Desbordamientos en la Amazonía', desc: 'Alertas tempranas y protocolos oficiales para comunidades ribereñas.', url: 'https://www.gestionderiesgos.gob.ec/' },
+              { source: 'TC Televisión Noticias', tag: 'Noticiero Nacional', title: 'Actualidad Climática y Conectividad Vial en el Oriente', desc: 'Cobertura nacional de emergencias climáticas y asistencia humanitaria.', url: 'https://www.tctelevision.com/' }
+            ]
+          },
+          GALAPAGOS: {
+            lat: -0.9538, lon: -90.9656, label: 'Islas Galápagos',
+            outlets: [
+              { source: 'INOCAR / Parque Nacional Galápagos', tag: 'Oficial', title: 'Condiciones Marinas y Vigilancia ENOS en Galápagos', desc: 'Monitoreo oficial de temperatura del mar y condiciones de navegación en el archipiélago.', url: 'https://www.inocar.mil.ec/' },
+              { source: 'Ecuavisa Galápagos', tag: 'Noticiero Oficial', title: 'Reporte Climático y Conectividad Aérea/Marítima Insular', desc: 'Noticias oficiales del archipiélago y estado del tiempo.', url: 'https://www.ecuavisa.com/' },
+              { source: 'INAMHI Insular', tag: 'Meteorología', title: 'Pronóstico Oficial para Santa Cruz, San Cristóbal e Isabela', desc: 'Temperatura, radiación UV y lluvias previstas en Galápagos.', url: 'https://www.inamhi.gob.ec/' }
+            ]
+          }
+        }
+      },
+      PE: {
+        agency: 'Boletín Oficial Perú • SENAMHI / COEN',
+        lat: -12.0464, lon: -77.0428, label: 'Perú',
+        outlets: [
+          { source: 'SENAMHI Perú (Oficial)', tag: 'Meteorología Oficial', title: 'Avisos Meteorológicos e Hidrológicos Nacionales — Perú', desc: 'Alertas oficiales sobre lluvias, descensos de temperatura y El fenómeno del Niño en Perú.', url: 'https://www.senamhi.gob.pe/' },
+          { source: 'El Comercio Perú', tag: 'Noticiero Oficial', title: 'Actualidad Climática y Alertas del COEN en Perú', desc: 'Cobertura periodística oficial sobre emergencias climáticas y carreteras.', url: 'https://elcomercio.pe/' },
+          { source: 'RPP Noticias', tag: 'Radio y Noticias Oficial', title: 'Última Hora: Clima y Prevención en Costa y Sierra Peruana', desc: 'Información verificada en tiempo real desde todo el Perú.', url: 'https://rpp.pe/' }
+        ]
+      },
+      CO: {
+        agency: 'Boletín Oficial Colombia • IDEAM / UNGRD',
+        lat: 4.7110, lon: -74.0721, label: 'Colombia',
+        outlets: [
+          { source: 'IDEAM Colombia (Oficial)', tag: 'Entidad Oficial', title: 'Pronóstico del Estado del Tiempo y Alertas Hidrológicas', desc: 'Boletines oficiales sobre lluvias, tormentas y niveles de ríos en Colombia.', url: 'http://www.ideam.gov.co/' },
+          { source: 'El Tiempo Colombia', tag: 'Prensa Oficial', title: 'Noticias del Clima, Movilidad y Emergencias en Colombia', desc: 'Cobertura oficial de alertas climáticas por departamentos.', url: 'https://www.eltiempo.com/' },
+          { source: 'Noticias Caracol', tag: 'Noticiero Nacional', title: 'Reporte Meteorológico y Prevención de Riesgos en Vivo', desc: 'Actualización nacional de lluvias y estado de vías.', url: 'https://www.noticiascaracol.com/' }
+        ]
+      },
+      MX: {
+        agency: 'Boletín Oficial México • CONAGUA / SMN',
+        lat: 19.4326, lon: -99.1332, label: 'México',
+        outlets: [
+          { source: 'Servicio Meteorológico Nacional (CONAGUA)', tag: 'Oficial', title: 'Pronóstico Meteorológico General y Sistemas Frontales', desc: 'Información oficial del Gobierno de México sobre lluvias, frentes fríos y ciclones.', url: 'https://smn.conagua.gob.mx/' },
+          { source: 'El Universal México', tag: 'Prensa Nacional', title: 'Última Hora: Clima y Protección Civil en México', desc: 'Cobertura periodística oficial de alertas climáticas por estado.', url: 'https://www.eluniversal.com.mx/' },
+          { source: 'N+ (Noticieros Televisa)', tag: 'Noticiero Oficial', title: 'Reporte del Tiempo y Alertas Preventivas en Vivo', desc: 'Actualización continua sobre condiciones meteorológicas.', url: 'https://www.nmas.com.mx/' }
+        ]
+      },
+      ES: {
+        agency: 'Boletín Oficial España • AEMET',
+        lat: 40.4168, lon: -3.7038, label: 'España',
+        outlets: [
+          { source: 'AEMET España (Oficial)', tag: 'Agencia Estatal', title: 'Avisos Meteorológicos Oficiales por Comunidades Autónomas', desc: 'Predicción oficial de lluvias, tormentas, viento y temperaturas en España.', url: 'https://www.aemet.es/' },
+          { source: 'RTVE Noticias', tag: 'Radiotelevisión Pública', title: 'Última Hora Meteorológica y Protección Civil en España', desc: 'Cobertura oficial de alertas climáticas y estado de carreteras (DGT).', url: 'https://www.rtve.es/noticias/' },
+          { source: 'El País España', tag: 'Prensa Oficial', title: 'Actualidad Climática y Boletines Ambientales', desc: 'Información verificada sobre fenómenos meteorológicos extremos.', url: 'https://elpais.com/' }
+        ]
+      },
+      US: {
+        agency: 'Official Bulletin USA • NOAA / National Weather Service',
+        lat: 40.7128, lon: -74.0060, label: 'Estados Unidos',
+        outlets: [
+          { source: 'NOAA / National Weather Service', tag: 'Official Agency', title: 'Active Weather Alerts, Radar & ENSO Updates', desc: 'Official U.S. government forecasts, storm warnings, and El Niño oceanographic bulletins.', url: 'https://www.weather.gov/' },
+          { source: 'Associated Press (AP News)', tag: 'Official Wire', title: 'Breaking Weather & Climate Coverage Across the U.S.', desc: 'Verified breaking news reports on severe storms and emergency advisories.', url: 'https://apnews.com/' },
+          { source: 'NBC News Weather', tag: 'National Broadcast', title: 'Real-time national weather coverage and safety guidance', desc: 'Live weather advisories and forecast updates.', url: 'https://www.nbcnews.com/' }
+        ]
+      }
+    };
+
+    function onNewsCountryChange() {
+      const country = document.getElementById('newsCountrySelect').value;
+      document.getElementById('ecuadorRegionWrapper').style.display = country === 'EC' ? 'block' : 'none';
+      renderOfficialNews();
+    }
+
+    async function renderOfficialNews() {
+      const country = document.getElementById('newsCountrySelect')?.value || 'EC';
+      const region = document.getElementById('newsRegionSelect')?.value || 'EL_ORO';
+      const cfg = OFFICIAL_NEWS_DB[country];
+      const targetData = country === 'EC' ? cfg.regions[region] : cfg;
+
+      document.getElementById('newsOfficialAgencyTag').innerHTML = `<span class="status-dot dot-cyan"></span> ${cfg.agency}`;
+      document.getElementById('newsTimestamp').textContent = `Actualizado: ${new Date().toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit' })}`;
+
+      try {
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${targetData.lat}&longitude=${targetData.lon}&current=temperature_2m,weather_code&hourly=precipitation_probability&forecast_days=1&timezone=auto`);
+        const data = await res.json();
+        const temp = Math.round(data.current.temperature_2m);
+        const rain = Math.max(...data.hourly.precipitation_probability.slice(0, 6));
+        const info = interpretWeatherCode(data.current.weather_code);
+        document.getElementById('liveBreakingHeadline').textContent = `${targetData.label}: ${info.verdict} (${temp} °C)`;
+        document.getElementById('liveBreakingBody').textContent = `Condición satelital actual: ${info.label}. Probabilidad máxima de lluvia en próximas horas: ${rain}%. ${info.advice}`;
+      } catch (e) {}
+
+      const grid = document.getElementById('officialNewsGrid');
+      grid.innerHTML = targetData.outlets.map(item => `
+        <div class="card">
+          <div>
+            <div class="card-top">
+              <span class="badge badge-teal"><span class="status-dot dot-green"></span> ${item.source}</span>
+              <span style="font-size:0.74rem; color:var(--text-muted);">${item.tag}</span>
+            </div>
+            <h3 style="margin-top:0.5rem; font-size:1.02rem;">${item.title}</h3>
+            <p style="margin-top:0.35rem; font-size:0.87rem;">${item.desc}</p>
+          </div>
+          <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="justify-content:center;">
+            Abrir Portal Oficial
+            <svg class="ico" style="width:14px; height:14px;" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+      `).join('');
+    }
+
+    // ==========================================
+    // 4. AJUSTES: NOTIFICACIONES Y PERFIL DE CUENTA
     // ==========================================
     function loadSettingsData() {
       try {
@@ -1865,7 +2360,7 @@
         news: document.getElementById('chkNews').checked
       };
       localStorage.setItem(NOTIF_KEY, JSON.stringify(data));
-      document.getElementById('notifStatusBadge').textContent = '✔ Guardado';
+      document.getElementById('notifStatusBadge').textContent = 'Guardado';
     }
 
     function requestBrowserNotifications() {
@@ -1886,23 +2381,7 @@
       const name = document.getElementById('accNameInput').value.trim();
       const email = document.getElementById('accEmailInput').value.trim();
       localStorage.setItem(ACCOUNT_KEY, JSON.stringify({ name, email }));
-      document.getElementById('accSavedMsg').textContent = '✔ Datos de cuenta guardados correctamente.';
-    }
-
-    // ==========================================
-    // 4. NOTICIAS DE ÚLTIMA HORA EN VIVO
-    // ==========================================
-    async function loadBreakingNewsLive() {
-      try {
-        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-3.3256&longitude=-79.8069&current=temperature_2m,weather_code,wind_speed_10m&hourly=precipitation_probability&forecast_days=1&timezone=auto');
-        const data = await res.json();
-        const temp = Math.round(data.current.temperature_2m);
-        const rain = Math.max(...data.hourly.precipitation_probability.slice(0, 6));
-        const info = interpretWeatherCode(data.current.weather_code);
-        document.getElementById('newsTimestamp').textContent = `Actualizado hoy • ${new Date().toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit' })}`;
-        document.getElementById('liveBreakingHeadline').textContent = `Última Hora Pasaje & El Oro: ${info.verdict} (${temp}°C)`;
-        document.getElementById('liveBreakingBody').textContent = `Condición actual: ${info.label}. Probabilidad máxima de precipitación en las próximas 6 horas: ${rain}%. ${info.advice}`;
-      } catch (e) {}
+      document.getElementById('accSavedMsg').textContent = 'Datos de cuenta guardados correctamente.';
     }
 
     // ==========================================
@@ -1916,7 +2395,7 @@
       const delta = zoom >= 14 ? 0.025 : zoom >= 12 ? 0.08 : 2.5;
       const bbox = `${(lon - delta).toFixed(4)}%2C${(lat - delta).toFixed(4)}%2C${(lon + delta).toFixed(4)}%2C${(lat + delta).toFixed(4)}`;
       document.getElementById('osmMapFrame').src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lon}`;
-      document.getElementById('mapLocationLabel').textContent = `📍 Mostrando: ${label} (${lat.toFixed(4)}, ${lon.toFixed(4)})`;
+      document.getElementById('mapLocationLabel').textContent = `Ubicación: ${label} (${lat.toFixed(4)}, ${lon.toFixed(4)})`;
 
       try {
         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&forecast_days=1&timezone=auto`);
@@ -1984,15 +2463,15 @@
             <p style="margin-top:0.35rem;">Consulta clima satelital en vivo y pronóstico horario.</p>
           </div>
           <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-            <button class="btn btn-primary" onclick="fetchGlobalByCoords('${c.city}, ${c.country}', ${c.lat}, ${c.lon})">🌡️ Ver Clima</button>
-            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el clima en ${c.city}, ${c.country}?')">🤖 Nimbo AI</button>
+            <button class="btn btn-primary" onclick="fetchGlobalByCoords('${c.city}, ${c.country}', ${c.lat}, ${c.lon})">Ver Clima</button>
+            <button class="btn btn-outline" onclick="quickAsk('¿Cómo está el clima en ${c.city}, ${c.country}?')">Consultar AI</button>
           </div>
         </div>
       `).join('');
     }
 
     async function fetchGlobalByCoords(label, lat, lon) {
-      document.getElementById('globalResultTitle').textContent = `⏳ Consultando satélite en ${label}...`;
+      document.getElementById('globalResultTitle').textContent = `Consultando satélite en ${label}...`;
       try {
         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m&hourly=precipitation_probability&forecast_days=1&timezone=auto`);
         const data = await res.json();
@@ -2001,10 +2480,10 @@
         const rain = Math.max(...data.hourly.precipitation_probability.slice(0, 6));
         const info = interpretWeatherCode(data.current.weather_code);
 
-        document.getElementById('globalResultTitle').textContent = `🌍 ${label}: ${info.verdict} (${temp}°C)`;
+        document.getElementById('globalResultTitle').textContent = `${label}: ${info.verdict} (${temp}°C)`;
         document.getElementById('globalResultBody').textContent = `${info.label} • Viento: ${wind} km/h • Prob. de lluvia: ${rain}%. ${info.advice}`;
       } catch (e) {
-        document.getElementById('globalResultTitle').textContent = `🌍 ${label}: Error temporal de conexión`;
+        document.getElementById('globalResultTitle').textContent = `${label}: Error temporal de conexión`;
       }
     }
 
@@ -2012,12 +2491,12 @@
       e.preventDefault();
       const q = document.getElementById('globalSearchInput').value.trim();
       if (!q) return;
-      document.getElementById('globalResultTitle').textContent = `🔎 Buscando "${q}" en el mapa mundial...`;
+      document.getElementById('globalResultTitle').textContent = `Buscando "${q}" en el mapa mundial...`;
       try {
         const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1&language=es&format=json`);
         const geo = await geoRes.json();
         if (!geo.results || !geo.results.length) {
-          document.getElementById('globalResultTitle').textContent = `❌ No se encontró "${q}"`;
+          document.getElementById('globalResultTitle').textContent = `No se encontró "${q}"`;
           document.getElementById('globalResultBody').textContent = 'Prueba con el nombre de una ciudad o país (ej. "Tokio", "Canadá", "Bogotá", "Barcelona").';
           return;
         }
@@ -2025,7 +2504,7 @@
         const label = `${p.name}${p.admin1 ? ', ' + p.admin1 : ''}${p.country ? ', ' + p.country : ''}`;
         await fetchGlobalByCoords(label, p.latitude, p.longitude);
       } catch (err) {
-        document.getElementById('globalResultTitle').textContent = '📡 Sin conexión satelital en este momento.';
+        document.getElementById('globalResultTitle').textContent = 'Sin conexión satelital en este momento.';
       }
     }
 
@@ -2082,9 +2561,9 @@
         grid.innerHTML = `
           <div class="card" style="grid-column: 1 / -1; text-align:center;">
             <h3>No aparece ese colegio en el listado rápido</h3>
-            <p>¡Pregúntale directo a <strong>Nimbo AI</strong> por cualquier colegio o ciudad del mundo!</p>
+            <p>Consulta directamente con <strong>Nimbo AI</strong> por cualquier institución educativa o ciudad.</p>
             <div>
-              <button class="btn btn-primary" onclick="quickAsk('¿Cómo está el colegio ${query.replace(/'/g, '') || 'en mi ciudad'}?')">🤖 Preguntar a Nimbo AI</button>
+              <button class="btn btn-primary" onclick="quickAsk('¿Cómo está el colegio ${query.replace(/'/g, '') || 'en mi ciudad'}?')">Consultar en Nimbo AI</button>
             </div>
           </div>`;
         return;
@@ -2097,11 +2576,11 @@
               <h3>${s.name}</h3>
               <span class="badge ${s.badgeClass}">${s.status}</span>
             </div>
-            <p style="margin-top:0.35rem;">📍 ${s.sector}</p>
+            <p style="margin-top:0.35rem; color:var(--text-muted); font-size:0.86rem;">Ubicación: ${s.sector}</p>
           </div>
           <div class="card-meta">${s.access}</div>
           <button class="btn btn-outline" onclick="askSchoolByIndex(${s.originalIdx})">
-            🤖 Consultar clima en Nimbo AI
+            Consultar clima en Nimbo AI
           </button>
         </div>
       `).join('');
@@ -2123,7 +2602,7 @@
     function interpretWeatherCode(code) {
       if (code === 0) return { label: 'Cielo despejado', verdict: 'Tiempo estable y seco', risk: 'Bajo', advice: 'Excelente visibilidad para clases, ríos, caminatas y traslados en moto.' };
       if (code <= 3) return { label: 'Parcialmente nublado', verdict: 'Clima tranquilo sin lluvias fuertes', risk: 'Bajo', advice: 'Condiciones normales para jornada escolar, turismo y carreteras.' };
-      if (code <= 48) return { label: 'Neblina o bruma', verdict: 'Precaución por visibilidad reducida', risk: 'Moderado', advice: 'Encender luces bajas en moto/auto y conducir con prudencia.' };
+      if (code <= 48) return { label: 'Neblina o bruma', verdict: 'Precaución por visibilidad reducida', risk: 'Moderado', advice: 'Encender luces bajas en moto o auto y conducir con prudencia.' };
       if (code <= 67) return { label: 'Lluvia ligera a moderada', verdict: 'Lleva paraguas o impermeable', risk: 'Moderado', advice: 'Calzada húmeda; precaución en orillas de ríos y vías.' };
       if (code <= 82) return { label: 'Chubascos / Lluvia fuerte', verdict: 'Lluvia intensa probable — Toma precauciones', risk: 'Alto', advice: 'Evita calles bajas con acumulación de agua y retírate de ríos.' };
       return { label: 'Tormenta eléctrica', verdict: 'Alerta por tormenta — Resguárdate', risk: 'Alto', advice: 'Evita zonas abiertas, ríos o árboles altos hasta que pase.' };
@@ -2205,7 +2684,7 @@
         appendMessage('user', question);
         appendMessage(
           'ai',
-          '⚠️ <strong>Has usado tus 5 tokens diarios gratuitos del Plan Normal.</strong><br>Activa el <strong>Plan Pro Premium ($1,99/mes)</strong> en la sección 💎 Planes para tener <strong>Tokens Infinitos</strong> + <strong>Noticias de Última Hora</strong>.'
+          '<strong>Has alcanzado el límite de 5 tokens diarios gratuitos del Plan Normal.</strong><br>Activa tu <strong>prueba gratuita de 1 mes (30 días)</strong> o el Plan Pro Premium ($1,99/mes) en la sección Planes para obtener <strong>Tokens Infinitos</strong> y <strong>Noticias Oficiales</strong>.'
         );
         return;
       }
@@ -2216,20 +2695,19 @@
 
       const remaining = Math.max(0, NORMAL_DAILY_LIMIT - state.used);
       const tokenFooter = pro
-        ? `<span style="font-size:0.78rem; color:var(--cyan);">💎 Pro Premium • Tokens Infinitos (Consultas hoy: ${state.used})</span>`
-        : `<span style="font-size:0.78rem; color:var(--cyan);">⚡ Plan Normal: quedan ${remaining}/${NORMAL_DAILY_LIMIT} tokens hoy.</span>`;
+        ? `<span style="font-size:0.78rem; color:var(--cyan);">Pro Premium / Prueba Activa • Tokens Infinitos (Consultas hoy: ${state.used})</span>`
+        : `<span style="font-size:0.78rem; color:var(--cyan);">Plan Normal: quedan ${remaining}/${NORMAL_DAILY_LIMIT} tokens hoy.</span>`;
 
       appendMessage('user', question);
       const qLower = question.toLowerCase();
 
-      // Protocolos ante tormentas eléctricas, inundaciones o ríos desbordados
       if (/(tormenta|rayo|inundaci|desbord|emergencia|protocolo)/i.test(qLower)) {
         appendMessage(
           'ai',
-          `⚠️ <strong>Protocolo de Seguridad NimboSignal:</strong><br><br>
-          • <strong>⚡ Tormentas Eléctricas:</strong> Refúgiate en un lugar cerrado (nunca bajo árboles ni postes), sal de ríos/piscinas y desconecta equipos.<br>
-          • <strong>🌊 Inundaciones:</strong> No cruces corrientes de agua a pie ni en moto, corta el breaker eléctrico si entra agua a casa y sube documentos importantes.<br>
-          • <strong>🏞️ Ríos Desbordados:</strong> Si el agua del río se vuelve marrón turbia o sube rápido, aléjate de la orilla hacia terreno alto y llama al <strong>911</strong> o <strong>102 (Bomberos)</strong>.<br><br>
+          `<strong>Protocolo de Seguridad NimboSignal:</strong><br><br>
+          • <strong>Tormentas Eléctricas:</strong> Refúgiate en un lugar cerrado (nunca bajo árboles ni postes), sal de ríos o piscinas y desconecta equipos.<br>
+          • <strong>Inundaciones:</strong> No cruces corrientes de agua a pie ni en moto, corta el breaker eléctrico si entra agua a casa y sube documentos importantes.<br>
+          • <strong>Ríos Desbordados:</strong> Si el agua del río se vuelve marrón turbia o sube rápido, aléjate de la orilla hacia terreno alto y llama al <strong>911</strong> o <strong>102 (Bomberos)</strong>.<br><br>
           ${tokenFooter}`
         );
         return;
@@ -2249,8 +2727,8 @@
 
           appendMessage(
             'ai',
-            `🏫 <strong>Reporte Escolar: ${matchedSchool.name}</strong><br>
-            📍 <em>${matchedSchool.sector}</em><br><br>
+            `<strong>Reporte Escolar: ${matchedSchool.name}</strong><br>
+            <em>Ubicación: ${matchedSchool.sector}</em><br><br>
             • <strong>Veredicto Climático:</strong> ${info.verdict} (${info.label}, <strong>${temp}°C</strong>, viento ${wind} km/h).<br>
             • <strong>Probabilidad de lluvia:</strong> ${rainProb}%.<br>
             • <strong>Estado de Jornada:</strong> ${matchedSchool.status} — ${matchedSchool.access}<br><br>
@@ -2272,8 +2750,8 @@
 
           appendMessage(
             'ai',
-            `🏞️ <strong>Reporte de Río y Turismo: ${matchedRiver.name}</strong><br>
-            📍 <em>${matchedRiver.location}</em><br><br>
+            `<strong>Reporte Hidrológico y Turismo: ${matchedRiver.name}</strong><br>
+            <em>Ubicación: ${matchedRiver.location}</em><br><br>
             • <strong>Clima en Vivo:</strong> ${info.label} con <strong>${temp}°C</strong>, viento ${wind} km/h y <strong>${rainProb}%</strong> prob. de lluvia.<br>
             • <strong>Estado del Río / Agua:</strong> ${matchedRiver.riverStatus}<br>
             • <strong>Horario Seguro:</strong> ${matchedRiver.safeHours}<br>
@@ -2293,7 +2771,7 @@
 
           appendMessage(
             'ai',
-            `🚌 <strong>Reporte Vial y Pasajes desde Pasaje</strong><br><br>
+            `<strong>Reporte Vial y Rutas desde Pasaje</strong><br><br>
             • <strong>Clima en Pasaje:</strong> ${info.label} (<strong>${temp}°C</strong>, lluvia ${rainProb}%).<br>
             • <strong>Pasaje – Machala:</strong> Operativa 100% (frecuencia cada 5–10 min).<br>
             • <strong>Pasaje – Santa Rosa / Huaquillas:</strong> Tránsito fluido.<br>
@@ -2314,7 +2792,7 @@
         if (!geoData.results || geoData.results.length === 0) {
           appendMessage(
             'ai',
-            `🔎 No ubiqué "<strong>${target}</strong>". Prueba añadiendo el país (ej. <em>"¿Cómo está el clima en Madrid, España?"</em>).<br><br>${tokenFooter}`
+            `No se ubicó "<strong>${target}</strong>". Prueba añadiendo el país (ej. <em>"¿Cómo está el clima en Madrid, España?"</em>).<br><br>${tokenFooter}`
           );
           return;
         }
@@ -2330,14 +2808,14 @@
 
         appendMessage(
           'ai',
-          `🌍 <strong>Veredicto Mundial: ${fullPlaceName}</strong><br><br>
+          `<strong>Veredicto Mundial: ${fullPlaceName}</strong><br><br>
           • <strong>Condición Actual:</strong> ${info.label} con <strong>${temp}°C</strong> y viento de ${wind} km/h.<br>
-          • <strong>Veredicto Honesto:</strong> ${info.verdict} (Prob. de lluvia: <strong>${rainProb}%</strong>).<br>
+          • <strong>Veredicto:</strong> ${info.verdict} (Prob. de lluvia: <strong>${rainProb}%</strong>).<br>
           • <strong>Guía Práctica:</strong> ${info.advice}<br><br>
           ${tokenFooter}`
         );
       } catch (err) {
-        appendMessage('ai', `📡 Sin conexión satelital en este instante. En Pasaje se mantiene clima estable (27°C).<br><br>${tokenFooter}`);
+        appendMessage('ai', `Sin conexión satelital en este instante. En Pasaje se mantiene clima estable (27°C).<br><br>${tokenFooter}`);
       }
     }
 
