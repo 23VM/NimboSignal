@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0b1120" />
+  <meta name="google-site-verification" content="p_8JXFofestcsja158woKhhkGul-S6mcwnTl-M27L0E" />
   <title>NimboSignal — Inteligencia Climática y Monitoreo en Vivo</title>
   <style>
     :root,
@@ -796,6 +797,104 @@
 .ns-code-box .ns-code-sub{font-size:.74rem;color:var(--text-muted)}
 
 </style>
+<style id="ns-responsive">
+/* =====================================================================
+   NimboSignal — Diseño adaptable (compu + teléfono)
+   Solo estilos. Este bloque va después de todos los demás y NO modifica
+   ninguna regla, script ni elemento anterior.
+   ===================================================================== */
+
+/* ---------- Base ---------- */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:72px}
+body{overflow-wrap:break-word}
+main.main-content{min-width:0}
+::selection{background:var(--cyan-soft);color:var(--text-main)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.card{box-shadow:0 8px 26px rgba(2,6,15,.16)}
+[data-theme="light"] .card{box-shadow:0 6px 22px rgba(15,23,42,.08)}
+.nav-btn{transition:background .2s,border-color .2s,color .2s}
+.chat-box{height:clamp(320px,50vh,480px)}
+
+/* ---------- Rejillas que nunca desbordan en pantallas pequeñas ---------- */
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}
+.ns-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr))}
+
+/* ---------- Correcciones visuales ---------- */
+/* El mapa Leaflet (470 px) quedaba recortado por la caja fija de 400 px */
+.map-frame-box{height:auto;overflow:visible;border:0;background:transparent}
+.map-frame-box iframe{height:400px;border-radius:14px}
+#nsMap{height:clamp(320px,62vh,600px);border:1px solid var(--border)}
+/* Tema claro: el color de acento y los modales se quedaban con la paleta oscura */
+[data-theme="light"]{--cyan:#0284c7!important}
+[data-theme="light"] .ns-box{background:#ffffff!important}
+[data-theme="light"] .ns-card{background:#ffffff;box-shadow:0 6px 22px rgba(15,23,42,.08)}
+/* Ventana de bienvenida y modales: se pueden desplazar en pantallas bajas */
+.welcome-overlay{overflow-y:auto}
+.welcome-box{margin:auto}
+.ns-box{max-height:88vh;max-height:88dvh}
+.ns-apk{box-shadow:0 8px 28px rgba(0,0,0,.18)}
+
+/* ---------- Compu: barra lateral fija con scroll propio ---------- */
+@media (min-width:861px){
+  aside.sidebar{position:sticky;top:62px;align-self:start;height:calc(100vh - 62px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+}
+@media (max-width:1100px){
+  .brand-text span{display:none}
+}
+@media (min-width:1500px){
+  .app-shell{grid-template-columns:290px 1fr}
+  main.main-content{max-width:1320px;padding:1.75rem 2.25rem 3rem}
+}
+
+/* ---------- Tablet y teléfono ---------- */
+@media (max-width:860px){
+  header{flex-wrap:nowrap;gap:.5rem;padding:.5rem .85rem}
+  .header-left{flex:1 1 auto;min-width:0}
+  .brand{min-width:0}
+  .brand-text{min-width:0}
+  .brand-text strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .header-actions{flex-wrap:nowrap;flex:0 0 auto;gap:.45rem}
+  .header-actions>.btn{display:none}
+  .ns-prof-mail{display:none}
+  .ns-prof-on.has-mail{padding:2px}
+  aside.sidebar{top:55px;bottom:0;width:min(290px,86vw);box-shadow:10px 0 32px rgba(0,0,0,.4);padding-bottom:2rem;overscroll-behavior:contain}
+  .app-shell{min-height:calc(100vh - 55px)}
+  .nav-btn{padding:.72rem .8rem}
+  main.main-content{padding:1.1rem 1rem 2rem}
+  .section-head h2{font-size:1.25rem}
+  .section-head{align-items:flex-start}
+}
+@media (max-width:760px){
+  #headerPlanBadge{display:none}
+}
+@media (max-width:640px){
+  .web-input,.web-select,.ns-in{font-size:16px}
+  .btn{min-height:42px}
+}
+@media (max-width:520px){
+  .region-pill{display:none}
+  main.main-content{padding:.9rem .8rem 1.75rem}
+  .card{padding:1.05rem}
+  .card-top{align-items:flex-start}
+  .btn-row .btn{flex:1 1 auto}
+  form>.btn{flex:1 1 100%}
+  .metric-item{padding:.7rem}
+  .metric-item strong{font-size:1.08rem}
+  .msg{max-width:92%}
+  .welcome-box{padding:1.25rem}
+  .mode-grid{grid-template-columns:1fr}
+  .ns-apk{flex-direction:column;align-items:stretch;text-align:center}
+  .ns-apk a{text-align:center;padding:.7rem 1.1rem}
+  .ns-modal{padding:.6rem;align-items:flex-end}
+  .ns-box{max-height:92vh;max-height:92dvh;border-radius:18px}
+}
+
+/* ---------- Pantallas táctiles: sin "hover" pegajoso ---------- */
+@media (hover:none){
+  .ns-card:hover,.mode-choice:hover,.btn:hover{transform:none}
+}
+</style>
 </head>
 <body>
 
@@ -962,7 +1061,7 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <main class="main-content">
-<div class="ns-apk"><div><b>Descarga la app de NimboSignal para Android</b><br><small>Alertas de inundación y monitoreo en tu teléfono.</small></div><a id="nsApkBtn" href="https://drive.google.com/uc?export=download&amp;id=13-c0zMr_dWBy5FgKV-Ixq10CFq9nYTbg" target="_blank" rel="noopener noreferrer">Descargar APK</a></div>
+<div class="ns-apk"><div><b>Descarga la app de NimboSignal para Android</b><br><small>Alertas de inundación y monitoreo en tu teléfono.</small></div><a id="nsApkBtn" href="https://drive.google.com/uc?export=download&amp;id=13XBGhaAL_FyFXTlOOcKpt0455J2hflO4" target="_blank" rel="noopener noreferrer">Descargar APK</a></div>
 
 
       <!-- 1. VEREDICTO ECUADOR -->
@@ -1539,7 +1638,7 @@
               <div><strong>• Upgrade Opcional:</strong> Activa el Plan Pro Premium cuando tú decidas dentro de la app.</div>
               <div><strong>• Ligera y Rápida:</strong> Compatible con teléfonos Android.</div>
             </div>
-            <a id="downloadAppBtn" href="https://drive.google.com/uc?export=download&amp;id=13-c0zMr_dWBy5FgKV-Ixq10CFq9nYTbg" target="_blank" rel="noopener noreferrer" class="btn btn-download" style="margin-top:auto; padding:0.82rem 1.1rem; font-size:0.95rem;">
+            <a id="downloadAppBtn" href="https://drive.google.com/uc?export=download&amp;id=13XBGhaAL_FyFXTlOOcKpt0455J2hflO4" target="_blank" rel="noopener noreferrer" class="btn btn-download" style="margin-top:auto; padding:0.82rem 1.1rem; font-size:0.95rem;">
               <svg class="ico" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               Descargar App
             </a>
@@ -1660,7 +1759,7 @@
     //      (target="_blank" rel="noopener noreferrer") y NO se hace ninguna petición fetch/HEAD (evita bloqueos CORS).
     //      Para Google Drive el archivo debe estar compartido como «Cualquier persona con el enlace».
     // ==========================================
-    const APP_DOWNLOAD_URL = 'https://drive.google.com/uc?export=download&id=13-c0zMr_dWBy5FgKV-Ixq10CFq9nYTbg';
+    const APP_DOWNLOAD_URL = 'https://drive.google.com/uc?export=download&id=13XBGhaAL_FyFXTlOOcKpt0455J2hflO4';
     const APP_DOWNLOAD_FILENAME = 'NimboSignal.apk';
     const APP_DOWNLOAD_EXTERNAL = /^https?:\/\//i.test(APP_DOWNLOAD_URL);
     let appDownloadBusy = false;
