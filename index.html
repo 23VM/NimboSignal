@@ -441,6 +441,9 @@
       margin-bottom: 0.25rem;
     }
 
+    .verdict-line { display: block; font-size: 0.84rem; color: var(--text-muted); margin-top: 0.45rem; font-weight: 600; }
+    .verdict-live { display: block; font-size: 0.76rem; color: var(--text-muted); margin-top: 0.4rem; }
+
     /* MONITOR DE INUNDACIONES Y SECTORES */
     .flood-status-box {
       background: var(--bg-sub);
@@ -536,7 +539,7 @@
 
     .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 0.75rem;
     }
 
@@ -1353,19 +1356,21 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
             </div>
           </div>
 
-          <div class="verdict-box">
-            <strong id="verdictHeadline">Cargando veredicto climático...</strong>
-            <span id="verdictDetail" style="font-size:0.9rem; color:var(--text-body);">Conectando con estación meteorológica...</span>
+          <div class="verdict-box" id="verdictBox">
+            <strong id="verdictHeadline">Cargando datos en vivo...</strong>
+            <span id="verdictDetail" style="display:block; font-size:0.9rem; color:var(--text-body);">Cargando datos en vivo...</span>
+            <span id="verdictLine" class="verdict-line"></span>
+            <span id="verdictLive" class="verdict-live">Actualizado en vivo: --:--</span>
           </div>
 
           <!-- MONITOR DE INUNDACIONES Y SECTORES POR CIUDAD -->
           <div class="flood-status-box" id="floodStatusBox">
             <div class="card-top">
-              <strong style="font-size:0.98rem;" id="floodCityHeader">Estado de Inundación: Pasaje</strong>
-              <span class="badge badge-teal" id="floodBadge"><span class="status-dot dot-green"></span> Sin Inundación Activa</span>
+              <strong style="font-size:0.98rem;" id="floodCityHeader">Estado de inundaciones: Pasaje</strong>
+              <span class="badge badge-teal" id="floodBadge"><span class="status-dot dot-green"></span> Calculando…</span>
             </div>
             <p style="font-size:0.86rem; color:var(--text-body);" id="floodSummaryText">
-              Evaluando acumulación pluvial y drenaje urbano...
+              Cargando datos en vivo...
             </p>
             <div>
               <span style="font-size:0.78rem; color:var(--text-muted); font-weight:700; display:block;">Sectores vigilados / vulnerables en esta ciudad:</span>
@@ -1376,19 +1381,23 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
           <div class="metrics-grid">
             <div class="metric-item">
               <span>Temperatura</span>
-              <strong id="metricTemp">-- °C</strong>
+              <strong id="metricTemp">--</strong>
             </div>
             <div class="metric-item">
-              <span>Prob. Lluvia</span>
-              <strong id="metricRain">-- %</strong>
+              <span>Humedad</span>
+              <strong id="metricHum">--</strong>
+            </div>
+            <div class="metric-item">
+              <span>Prob. lluvia 8 h</span>
+              <strong id="metricRain">--</strong>
             </div>
             <div class="metric-item">
               <span>Viento</span>
-              <strong id="metricWind">-- km/h</strong>
+              <strong id="metricWind">--</strong>
             </div>
             <div class="metric-item">
               <span>Riesgo Vial</span>
-              <strong id="metricRisk" style="color:var(--teal);">Bajo</strong>
+              <strong id="metricRisk" style="color:var(--text-muted);">--</strong>
             </div>
           </div>
 
@@ -1396,7 +1405,7 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
             <select id="nsEcSel" class="web-input" style="min-width:210px;padding:.55rem .8rem;border-radius:12px" onchange="nsPickEc(this.value)"><option value="">Todas las ciudades de Ecuador…</option></select>
             <input id="nsEcIn" list="nsEcDl" class="web-input" style="flex:1;min-width:170px;padding:.55rem .8rem;border-radius:12px" placeholder="Buscar ciudad de Ecuador…" onchange="nsPickEc(this.value)"><datalist id="nsEcDl"></datalist>
             <button class="btn btn-outline" onclick="nsRefreshCity()">Actualizar ahora</button>
-            <span id="nsUpd" style="font-size:.8rem;opacity:.85">Actualizado: --:--</span>
+            <span id="nsUpd" style="font-size:.8rem;opacity:.85">Actualizado en vivo: --:--</span>
           </div>
           <div id="nsWxErr" style="display:none;margin:.5rem 0;padding:.7rem .9rem;border-radius:12px;border:1px solid var(--red);color:var(--red);font-size:.86rem"></div>
           <div id="nsWeekPrev" style="display:flex;gap:.5rem;overflow-x:auto;padding:.3rem 0"></div>
@@ -2322,73 +2331,125 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
     });
 
     const NS_CUR = 'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,wind_speed_10m,is_day';
+    const NS_HOURLY = 'precipitation_probability,precipitation,rain,weather_code';
     let nsLastCity = { name: 'Pasaje, Ecuador', lat: -3.3256, lon: -79.8069 };
+    let nsVSeq = 0;
     const nsHHMM = () => new Date().toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit', hour12: false });
-    // Probabilidad máxima de lluvia de las próximas n horas reales (desde la hora actual de data.current.time)
+    const nsHHMMSS = () => new Date().toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    const nsNum = v => (v == null || isNaN(v)) ? 0 : Number(v);
+    const nsMm = v => nsNum(v).toFixed(1);
+    const nsWet = c => (c >= 51 && c <= 67) || (c >= 80 && c <= 82) || c >= 95;
+    const nsShort = n => (CITY_FLOOD_SECTORS[n] && CITY_FLOOD_SECTORS[n].shortName) || String(n || '').split(',')[0].trim();
+    const NS_CODES = { 0: 'Cielo despejado', 1: 'Mayormente despejado', 2: 'Parcialmente nublado', 3: 'Cielo cubierto', 45: 'Niebla', 48: 'Niebla con escarcha', 51: 'Llovizna ligera', 53: 'Llovizna moderada', 55: 'Llovizna densa', 56: 'Llovizna helada', 57: 'Llovizna helada densa', 61: 'Lluvia ligera', 63: 'Lluvia moderada', 65: 'Lluvia fuerte', 66: 'Lluvia helada', 67: 'Lluvia helada fuerte', 71: 'Nevada ligera', 73: 'Nevada moderada', 75: 'Nevada fuerte', 77: 'Granos de nieve', 80: 'Chubascos ligeros', 81: 'Chubascos moderados', 82: 'Chubascos violentos', 85: 'Chubascos de nieve', 86: 'Chubascos de nieve fuertes', 95: 'Tormenta eléctrica', 96: 'Tormenta con granizo', 99: 'Tormenta con granizo fuerte' };
+
+    // Índice exacto de la hora actual (data.current.time) dentro de data.hourly.time
+    function nsHourIdx(d) {
+      const t = d.hourly.time, cur = String(d.current.time);
+      let i = t.indexOf(cur.slice(0, 13) + ':00');
+      if (i < 0) { const k = t.findIndex(x => x > cur); i = k < 0 ? t.length - 1 : Math.max(0, k - 1); }
+      return i;
+    }
+    // Probabilidad máxima de lluvia de las próximas n horas reales, desde la hora actual
     function nsNextMax(d, n) {
-      const t = d.hourly.time, p = d.hourly.precipitation_probability, now = String(d.current.time).slice(0, 13) + ':00';
-      let i = t.indexOf(now);
-      if (i < 0) i = Math.max(0, t.findIndex(x => x > d.current.time) - 1);
+      const i = nsHourIdx(d), p = d.hourly.precipitation_probability || [];
       const v = p.slice(i, i + (n || 6)).filter(x => x != null);
       return v.length ? Math.max(...v) : 0;
     }
     async function nsOM(la, lo) {
-      const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&current=${NS_CUR}&hourly=precipitation_probability,precipitation&forecast_days=2&timezone=auto`, { cache: 'no-store' });
+      const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&current=${NS_CUR}&hourly=${NS_HOURLY}&forecast_days=2&timezone=auto`, { cache: 'no-store' });
       if (!r.ok) throw new Error('HTTP ' + r.status);
       const d = await r.json();
-      if (!d.current || !d.hourly) throw new Error('Datos incompletos');
+      if (!d.current || !d.hourly || !d.hourly.time) throw new Error('Datos incompletos');
+      const i = nsHourIdx(d), pr = d.hourly.precipitation || [], wc = d.hourly.weather_code || [];
       d.rain6 = nsNextMax(d, 6);
       d.rain8 = nsNextMax(d, 8);
+      d.recent3 = pr.slice(Math.max(0, i - 2), i + 1).reduce((s, x) => s + nsNum(x), 0);
+      d.next6mm = pr.slice(i + 1, i + 7).reduce((s, x) => s + nsNum(x), 0);
+      d.soonWet = wc.slice(i + 1, i + 4).some(nsWet);
       return d;
     }
 
     function interpretWeatherCode(code) {
       if (code === 0) return { label: 'Cielo despejado', verdict: 'Tiempo estable y seco', risk: 'Bajo', advice: 'Excelente visibilidad para clases, ríos y traslados.' };
-      if (code <= 3) return { label: 'Parcialmente nublado', verdict: 'Clima tranquilo sin lluvias fuertes', risk: 'Bajo', advice: 'Condiciones normales para jornada escolar y carreteras.' };
+      if (code <= 3) return { label: 'Parcialmente nublado', verdict: 'Sin lluvia reportada en este momento', risk: 'Bajo', advice: 'Condiciones normales para jornada escolar y carreteras.' };
       if (code <= 48) return { label: 'Neblina o bruma', verdict: 'Precaución por visibilidad reducida', risk: 'Moderado', advice: 'Encender luces bajas en carretera.' };
       if (code <= 67) return { label: 'Lluvia ligera a moderada', verdict: 'Lleva paraguas o impermeable', risk: 'Moderado', advice: 'Calzada húmeda; precaución en orillas de ríos.' };
       if (code <= 82) return { label: 'Chubascos / Lluvia fuerte', verdict: 'Lluvia intensa probable', risk: 'Alto', advice: 'Evita calles bajas inundables y retírate de ríos.' };
       return { label: 'Tormenta eléctrica', verdict: 'Alerta por tormenta — Resguárdate', risk: 'Alto', advice: 'Evita zonas abiertas, ríos o árboles altos.' };
     }
 
-    function renderCityFloodReport(cityName, currentPrecip, rainProb, weatherCode) {
-      const cfg = CITY_FLOOD_SECTORS[cityName] || {
-        shortName: cityName,
-        sectors: ['Zonas bajas', 'Riveras locales', 'Centro urbano']
-      };
+    // Veredicto dinámico: weather_code + precipitación en vivo + probabilidad real de las próximas horas
+    function nsBuildVerdict(d) {
+      const c = d.current, code = Number(c.weather_code), pNow = Math.max(nsNum(c.precipitation), nsNum(c.rain));
+      const p6 = d.rain6, p8 = d.rain8, raining = pNow > 0 || nsWet(code);
+      const sky = NS_CODES[code] || 'Condición variable';
+      let o;
+      if (code >= 95) o = { level: 3, risk: 'Alto', head: 'Tormenta eléctrica en este momento', sum: 'Resguárdate y evita zonas abiertas, ríos y árboles altos.' };
+      else if ((code >= 71 && code <= 77) || code === 85 || code === 86) o = { level: 2, risk: 'Moderado', head: 'Nevada en este momento', sum: 'Calzada resbalosa; conduce con precaución y abrígate.' };
+      else if (raining && (pNow >= 7.5 || code === 65 || code === 67 || code === 82)) o = { level: 3, risk: 'Alto', head: 'Lluvia fuerte en este momento', sum: 'Evita calles bajas inundables y mantente lejos de ríos y quebradas.' };
+      else if (raining && (pNow >= 2.5 || code === 63 || code === 81)) o = { level: 2, risk: 'Moderado', head: 'Lluvia moderada en este momento', sum: 'Calzada mojada y drenaje exigido; lleva impermeable y conduce con cuidado.' };
+      else if (raining && code >= 51 && code <= 57) o = { level: 1, risk: 'Moderado', head: 'Llovizna en este momento', sum: 'Calzada húmeda; lleva paraguas o impermeable.' };
+      else if (raining) o = { level: 1, risk: 'Moderado', head: 'Lluvia ligera en este momento', sum: 'Lleva paraguas o impermeable y evita charcos y cauces cercanos.' };
+      else if (code === 45 || code === 48) o = { level: 1, risk: 'Moderado', head: 'Sin lluvia, con visibilidad reducida', sum: 'Enciende luces bajas en carretera.' };
+      else if (p6 >= 70 || d.soonWet) o = { level: 1, risk: 'Moderado', head: 'Sin lluvia ahora, pero se acerca', sum: 'Hay alta probabilidad de lluvia en las próximas horas; lleva impermeable.' };
+      else if (p8 >= 40) o = { level: 0, risk: 'Bajo', head: 'Sin lluvia ahora; posibles chubascos aislados', sum: 'Mantente atento a cambios durante las próximas horas.' };
+      else o = { level: 0, risk: 'Bajo', head: 'Sin lluvia en este momento', sum: 'Condiciones secas y estables en las próximas horas.' };
+      o.sky = sky;
+      return o;
+    }
 
-      const box = document.getElementById('floodStatusBox');
-      const header = document.getElementById('floodCityHeader');
+    function nsSetText(id, t) { const el = document.getElementById(id); if (el) el.textContent = t; }
+
+    function nsVLoading(cityName) {
+      nsSetText('verdictHeadline', 'Cargando datos en vivo...');
+      nsSetText('verdictDetail', 'Cargando datos en vivo...');
+      nsSetText('verdictLine', '');
+      nsSetText('floodCityHeader', `Estado de inundaciones: ${nsShort(cityName)}`);
+      nsSetText('floodSummaryText', 'Cargando datos en vivo...');
+      ['metricTemp', 'metricHum', 'metricRain', 'metricWind', 'metricRisk'].forEach(id => nsSetText(id, '--'));
+      const risk = document.getElementById('metricRisk'); if (risk) risk.style.color = 'var(--text-muted)';
+      const hl = document.getElementById('verdictHeadline'); if (hl) hl.style.color = 'var(--text-muted)';
+      const vb = document.getElementById('verdictBox'); if (vb) vb.style.borderLeftColor = 'var(--border)';
       const badge = document.getElementById('floodBadge');
-      const summary = document.getElementById('floodSummaryText');
+      if (badge) { badge.className = 'badge badge-teal'; badge.innerHTML = '<span class="status-dot dot-green"></span> Calculando…'; }
+      const cfg = CITY_FLOOD_SECTORS[cityName];
       const list = document.getElementById('floodSectorsList');
+      if (list) list.innerHTML = (cfg ? cfg.sectors : ['Zonas bajas', 'Riveras locales', 'Centro urbano']).map(s => `<span class="sector-pill">${s}</span>`).join('');
+    }
 
-      header.textContent = `Estado de Inundación: ${cfg.shortName}`;
-
-      const isHeavyNow = currentPrecip >= 3.5 || weatherCode >= 80;
-      const isModerateNow = currentPrecip >= 0.6 || rainProb >= 60 || (weatherCode >= 61 && weatherCode <= 67);
-
-      if (isHeavyNow) {
+    // Estado de inundaciones calculado con lluvia en vivo, lluvia reciente (3 h) y probabilidad real de las próximas horas
+    function renderCityFloodReport(cityName, d) {
+      const c = d.current, cfg = CITY_FLOOD_SECTORS[cityName] || { shortName: nsShort(cityName), sectors: ['Zonas bajas', 'Riveras locales', 'Centro urbano'] };
+      const box = document.getElementById('floodStatusBox'), badge = document.getElementById('floodBadge');
+      const pNow = Math.max(nsNum(c.precipitation), nsNum(c.rain)), rec = d.recent3, p8 = d.rain8, nx = d.next6mm, code = Number(c.weather_code);
+      const high = pNow >= 7 || rec >= 15 || (nx >= 15 && p8 >= 70) || (code >= 95 && (pNow >= 2.5 || p8 >= 60));
+      const mid = pNow >= 1 || rec >= 4 || nx >= 5 || p8 >= 60 || nsWet(code);
+      const stats = `${nsMm(pNow)} mm última hora, ${nsMm(rec)} mm en 3 h, ${p8}% prob. en 8 h`;
+      nsSetText('floodCityHeader', `Estado de inundaciones: ${cfg.shortName}`);
+      if (high) {
         box.style.borderLeftColor = 'var(--red)';
         badge.className = 'badge badge-red';
         badge.innerHTML = '<span class="status-dot dot-red"></span> Alerta de Inundación / Anegamiento';
-        summary.textContent = `Se registran lluvias intensas (${currentPrecip} mm/h, prob. ${rainProb}%) con acumulación de agua en calles bajas de ${cfg.shortName}. Evita transitar por los siguientes sectores críticos:`;
-      } else if (isModerateNow) {
+        nsSetText('floodSummaryText', `Lluvia intensa o acumulada en ${cfg.shortName} (${stats}). Riesgo alto de anegamiento; evita transitar por estos sectores:`);
+      } else if (mid) {
         box.style.borderLeftColor = 'var(--amber)';
         badge.className = 'badge badge-amber';
         badge.innerHTML = '<span class="status-dot dot-amber"></span> Vigilancia por Anegamientos Leves';
-        summary.textContent = `No hay inundación generalizada en ${cfg.shortName}, pero las lluvias (${rainProb}% prob.) pueden generar charcos y drenaje lento en sectores bajos como:`;
+        nsSetText('floodSummaryText', `Sin inundación generalizada en ${cfg.shortName}, pero hay lluvia reciente o próxima (${stats}). Puede haber charcos y drenaje lento en sectores bajos como:`);
       } else {
         box.style.borderLeftColor = 'var(--teal)';
         badge.className = 'badge badge-teal';
         badge.innerHTML = '<span class="status-dot dot-green"></span> Sin Inundación Activa';
-        summary.textContent = `${cfg.shortName} no presenta inundaciones en este momento (${currentPrecip} mm/h). Drenaje operando normal en sus sectores vigilados:`;
+        nsSetText('floodSummaryText', `${cfg.shortName} no presenta riesgo de inundación ahora (${stats}). Drenaje normal en sus sectores vigilados:`);
       }
-
-      list.innerHTML = cfg.sectors.map(sec => `<span class="sector-pill">${sec}</span>`).join('');
+      document.getElementById('floodSectorsList').innerHTML = cfg.sectors.map(sec => `<span class="sector-pill">${sec}</span>`).join('');
     }
 
-    async function loadCityWeather(cityName, lat, lon, btnEl) {
+    // Carga en vivo de toda la sección Veredicto Climático (sin caché)
+    async function nsVeredicto(cityName, lat, lon, fromNS, btnEl, silent) {
+      lat = Number(lat); lon = Number(lon);
+      if (!isFinite(lat) || !isFinite(lon)) return;
+      const seq = ++nsVSeq;
       if (btnEl) {
         document.querySelectorAll('#ecuadorCityRow .btn').forEach(b => b.classList.remove('active'));
         btnEl.classList.add('active');
@@ -2396,42 +2457,56 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
         document.querySelectorAll('#ecuadorCityRow .btn').forEach(b => b.classList.toggle('active', cityName.indexOf(b.textContent.trim() + ',') === 0));
       }
       nsLastCity = { name: cityName, lat, lon };
-      document.getElementById('heroCityTitle').textContent = cityName;
-      const upd = document.getElementById('nsUpd'), err = document.getElementById('nsWxErr');
-      if (upd) upd.textContent = 'Actualizando…';
+      nsSetText('heroCityTitle', cityName);
+      if (!fromNS && window.NS && NS.setCity) NS.setCity(cityName, lat, lon, true);
+      const err = document.getElementById('nsWxErr');
+      if (!silent) {
+        nsVLoading(cityName);
+        nsSetText('nsUpd', 'Actualizando…');
+        nsSetText('verdictLive', 'Actualizando…');
+      }
       try {
         const data = await nsOM(lat, lon);
-        if (nsLastCity.name !== cityName) return;
-        const c = data.current;
-        const temp = Math.round(c.temperature_2m);
-        const wind = Math.round(c.wind_speed_10m);
-        const currentPrecip = Number(c.precipitation || 0);
-        const rainProb = data.rain8;
-        const info = interpretWeatherCode(c.weather_code);
-
-        document.getElementById('metricTemp').textContent = `${temp} °C`;
-        document.getElementById('metricRain').textContent = `${rainProb} %`;
-        document.getElementById('metricWind').textContent = `${wind} km/h`;
-        document.getElementById('metricRisk').textContent = info.risk;
-        document.getElementById('metricRisk').style.color = info.risk === 'Bajo' ? 'var(--teal)' : info.risk === 'Moderado' ? 'var(--amber)' : 'var(--red)';
-        document.getElementById('verdictHeadline').textContent = `${info.verdict} (${info.label}, ${temp}°C)`;
-        document.getElementById('verdictDetail').textContent = `${info.advice} Sensación ${Math.round(c.apparent_temperature)}°C · Humedad ${Math.round(c.relative_humidity_2m)}% · Lluvia ahora ${currentPrecip} mm · Prob. lluvia próximas 8 h: ${rainProb}%.`;
+        if (seq !== nsVSeq) return;
+        const c = data.current, v = nsBuildVerdict(data);
+        const temp = Math.round(c.temperature_2m), hum = Math.round(c.relative_humidity_2m);
+        const wind = Math.round(c.wind_speed_10m), app = Math.round(c.apparent_temperature);
+        const pNow = Math.max(nsNum(c.precipitation), nsNum(c.rain)), p8 = data.rain8;
+        const color = v.level >= 3 ? 'var(--red)' : v.level >= 1 ? 'var(--amber)' : 'var(--teal)';
+        const hl = document.getElementById('verdictHeadline'); hl.style.color = color;
+        document.getElementById('verdictBox').style.borderLeftColor = color;
+        hl.textContent = `${v.head} (${temp}°C)`;
+        nsSetText('verdictDetail', `${v.sky}. ${v.sum}`);
+        nsSetText('verdictLine', `Sensación ${app}°C · Humedad ${hum}% · Lluvia última hora ${nsMm(pNow)} mm · Prob. lluvia próximas 8 h: ${p8}%`);
+        nsSetText('metricTemp', `${temp} °C`);
+        nsSetText('metricHum', `${hum} %`);
+        nsSetText('metricRain', `${p8} %`);
+        nsSetText('metricWind', `${wind} km/h`);
+        nsSetText('metricRisk', v.risk);
+        document.getElementById('metricRisk').style.color = v.risk === 'Bajo' ? 'var(--teal)' : v.risk === 'Moderado' ? 'var(--amber)' : 'var(--red)';
+        renderCityFloodReport(cityName, data);
+        const tm = String(c.time).slice(11, 16);
+        nsSetText('verdictLive', `Actualizado en vivo: ${tm} · consultado ${nsHHMMSS()}`);
+        nsSetText('nsUpd', `Actualizado en vivo: ${tm}`);
         if (err) err.style.display = 'none';
-        if (upd) upd.textContent = `Actualizado: ${nsHHMM()}`;
-        renderCityFloodReport(cityName, currentPrecip, rainProb, c.weather_code);
-        if (window.NS && NS.setCity) NS.setCity(cityName, lat, lon);
-        if (window.nsWeekPreview) nsWeekPreview(cityName, lat, lon);
+        if (window.nsWeekPreview && !silent) nsWeekPreview(cityName, lat, lon);
       } catch (e) {
-        ['metricTemp', 'metricRain', 'metricWind', 'metricRisk'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '—'; });
-        document.getElementById('verdictHeadline').textContent = 'Sin datos en vivo';
-        document.getElementById('verdictDetail').textContent = 'No se pudo obtener el clima actual de esta ciudad.';
-        if (upd) upd.textContent = 'Sin actualizar';
+        if (seq !== nsVSeq) return;
+        ['metricTemp', 'metricHum', 'metricRain', 'metricWind', 'metricRisk'].forEach(id => nsSetText(id, '—'));
+        nsSetText('verdictHeadline', 'Sin datos en vivo');
+        nsSetText('verdictDetail', 'No se pudo obtener el clima actual de esta ciudad.');
+        nsSetText('verdictLine', '');
+        nsSetText('floodSummaryText', 'Sin datos en vivo para calcular el estado de inundaciones.');
+        nsSetText('verdictLive', 'Actualizado en vivo: sin conexión');
+        nsSetText('nsUpd', 'Sin actualizar');
         if (err) {
           err.innerHTML = 'No se pudo conectar con Open-Meteo. Revisa tu conexión a internet e inténtalo de nuevo. <button class="btn btn-outline" onclick="nsRefreshCity()">Reintentar</button>';
           err.style.display = 'block';
         }
       }
     }
+
+    function loadCityWeather(cityName, lat, lon, btnEl) { return nsVeredicto(cityName, lat, lon, false, btnEl); }
 
     // ==========================================
     // 4. RADAR ENOS EN VIVO (ECUADOR - ACTUALIZACIÓN CADA 60s)
@@ -3025,6 +3100,7 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
     renderSchools();
     renderOfficialNews();
     loadCityWeather('Pasaje, Ecuador', -3.3256, -79.8069);
+    setInterval(() => { if (!document.hidden) nsVeredicto(nsLastCity.name, nsLastCity.lat, nsLastCity.lon, true, null, true); }, 300000);
     updateEnsoLiveEcuador();
     window.addEventListener('DOMContentLoaded', () => window.focusMapPoint && focusMapPoint('Pasaje Centro, El Oro', -3.3256, -79.8069, 14, null));
   </script>
@@ -3126,9 +3202,9 @@ const imp=()=>{chips('#nsCity',CIT.map(c=>[c[0],c[0]]),NS.pick,NS.city[0]);const
 const news=()=>{chips('#nsNf',[['Mi región','mine'],['Todas (nacional y global)','all']],v=>{NS.nm=v;news()},NS.nm);const ec=CIT.some(c=>c[0]===NS.city[0]),k=ec?NS.city[0]:'Global';$('#nsNews').innerHTML=NEW.map((n,i)=>[n,i]).filter(([n])=>NS.nm==='all'||n[0]===k||(ec&&n[0]==='Ecuador')).map(([n,i])=>`<div class="ns-card"><span class="ns-b b${2-n[1]}">${SEV[n[1]]}</span><span class="ns-b b1">${n[0]}</span><h4>${n[4]}</h4><small>${n[2]} · ${n[3]}</small><p><button class="ns-chip" onclick="NS.art(${i})">Leer artículo completo</button></p></div>`).join('')||'<p>No hay noticias para esta región; use “Todas”.</p>'};
 NS.art=i=>{const n=NEW[i];$('#nsArtB').innerHTML=`<span class="ns-b b${2-n[1]}">${SEV[n[1]]}</span><span class="ns-b b1">${n[0]}</span><h3>${n[4]}</h3><small>${n[2]} · ${n[3]}</small><p style="font-size:.92rem">${n[5]}</p><p style="font-size:.75rem;opacity:.7">Resumen informativo elaborado por NimboSignal con base en guías y boletines públicos. La fuente indicada es una referencia para verificar; no es un comunicado oficial. Confirme siempre en los canales oficiales.</p>`;NS.op('nsArt')};
 NS.op=id=>$('#'+id).classList.add('on');NS.cl=id=>$('#'+id).classList.remove('on');
-NS.pick=n=>{const c=CIT.find(x=>x[0]===n)||CIT.find(x=>nsNorm(x[0])===nsNorm(n));if(!c)return;NS.city=c;NS.wx();NS.all()};
+NS.pick=n=>{const c=CIT.find(x=>x[0]===n)||CIT.find(x=>nsNorm(x[0])===nsNorm(n));if(!c)return;NS.city=c;NS.wx();NS.all();window.nsVeredicto&&nsVeredicto(c[0]+', Ecuador',c[1],c[2],true)};
 NS.sm=v=>{NS.sim=v===''?null:+v;NS.all()};
-NS.setCity=(name,la,lo)=>{const nm=String(name||'').split(',')[0].trim(),c=CIT.find(x=>nsNorm(x[0])===nsNorm(nm));if(!c&&!(isFinite(la)&&isFinite(lo)))return;NS.city=c||[nm,+la,+lo];NS.wx();NS.all()};
+NS.setCity=(name,la,lo,skipV)=>{const nm=String(name||'').split(',')[0].trim(),c=CIT.find(x=>nsNorm(x[0])===nsNorm(nm));if(!c&&!(isFinite(la)&&isFinite(lo)))return;NS.city=c||[nm,+la,+lo];NS.wx();NS.all();if(!skipV&&window.nsVeredicto){const k=NS.city;nsVeredicto(String(name||'').indexOf(',')>0?String(name).trim():(c?c[0]+', Ecuador':nm),isFinite(la)?+la:k[1],isFinite(lo)?+lo:k[2],true)}};
 const P={sol:['#0b2447','#19376d','#f5b942','rgba(245,185,66,.38)','rgba(245,185,66,.3)'],rain:['#06101c','#0c2236','#22d3ee','rgba(34,211,238,.35)','rgba(34,211,238,.28)'],cloud:['#131b25','#26313e','#b8c4d2','rgba(184,196,210,.3)','rgba(184,196,210,.25)'],night:['#04050d','#12123a','#818cf8','rgba(129,140,248,.35)','rgba(129,140,248,.28)']};
 const pal=k=>{const r=document.documentElement,s=r.style,v=P[k];['--bg-primary','--bg-secondary','--accent-primary','--accent-glow','--glass-border'].forEach((n,i)=>s.setProperty(n,v[i]));if(r.getAttribute('data-theme')!=='light')s.setProperty('--cyan',v[2]);r.dataset.wx=k};
 NS.wx=async()=>{try{const c=NS.city,j=await(await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c[1]}&longitude=${c[2]}&current=temperature_2m,weather_code,precipitation,is_day&daily=precipitation_sum&forecast_days=2&timezone=auto`, { cache: 'no-store' })).json(),k=j.current,w=k.weather_code,s=j.daily.precipitation_sum[0]||0;NS.rain=k.precipitation>=2.5||s>=30?2:k.precipitation>=.3||s>=8?1:0;NS.tag=`${window.interpretWeatherCode?interpretWeatherCode(w).label:'Clima'} · ${Math.round(k.temperature_2m)}°C`;pal(!k.is_day?'night':(w>=51&&!(w>=71&&w<=77))?'rain':w>=2?'cloud':'sol');NS.all()}catch(e){NS.tag='Sin conexión con el clima (reintenta)';NS.all()}};
@@ -3295,7 +3371,7 @@ NS.renderProf=bad=>{
 };
 NS.renderUser=()=>{NS.renderProf();NS.renderPay()};
 NS.acc=()=>{window.closeMobileDrawer&&closeMobileDrawer();const sb=$('#webSidebar');sb&&sb.classList.remove('open');NS.op('nsAcc');NS.renderAcc();if(window.paypal&&!NS.pp){NS.pp=1;paypal.Buttons(NS.ppOpts()).render('#nsPP')}else if(!window.paypal)$('#nsPP').textContent='PayPal no está disponible en este momento.'};
-const init=()=>{if(MOVIL)document.body.classList.add('ns-m');const go=document.createElement('div'),T=MOVIL?'drawer-group-title':'nav-group-title',I='<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>',B=(t,l,a)=>`<button class="nav-btn" ${t?`data-target="${t}"`:''} onclick="${a}"><span class="nav-label">${I}${l}</span></button>`;go.innerHTML=`<div class="${T}">Inteligencia NimboSignal</div>`+[['sec-calles','Calles y Colegios'],['sec-turismo','Turismo y Gastronomía'],['sec-impacto','Impacto El Niño'],['sec-noticias-reg','Noticias por Región']].map(x=>B(x[0],x[1],`showSection('${x[0]}')`)).join('')+B('','Mi Cuenta y Plan','NS.acc()');const h=$('#webSidebar')||$('#mobileDrawer'),f=h&&h.querySelector('.nav-btn');if(f)f.parentElement.before(go);const m=$('.map-frame-box');if(m)m.innerHTML='<div class="ns-row" id="nsMc"></div><div id="nsMap"></div>';const b=$('#headerPlanBadge')||$('#headerSubBadge');if(b){b.style.cursor='pointer';b.onclick=NS.acc}const _s=window.showSection;window.showSection=id=>{_s(id);if(id==='sec-mapa')NS.map();if(id==='sec-planes')setTimeout(NS.mountPay,80);document.querySelectorAll('.nav-btn').forEach(x=>x.classList.toggle('active',x.dataset.target===id))};['loadCityWeather','fetchGlobalByCoords'].forEach(k=>{const o=window[k];if(o)window[k]=function(n,a,b,c){try{NS.setCity(n,a,b)}catch(e){}return o.apply(this,arguments)}});NS.rc();NS.all();NS.wx();NS.sync();NS.renderUser();NS.mountPay();setInterval(NS.wx,6e5)};
+const init=()=>{if(MOVIL)document.body.classList.add('ns-m');const go=document.createElement('div'),T=MOVIL?'drawer-group-title':'nav-group-title',I='<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>',B=(t,l,a)=>`<button class="nav-btn" ${t?`data-target="${t}"`:''} onclick="${a}"><span class="nav-label">${I}${l}</span></button>`;go.innerHTML=`<div class="${T}">Inteligencia NimboSignal</div>`+[['sec-calles','Calles y Colegios'],['sec-turismo','Turismo y Gastronomía'],['sec-impacto','Impacto El Niño'],['sec-noticias-reg','Noticias por Región']].map(x=>B(x[0],x[1],`showSection('${x[0]}')`)).join('')+B('','Mi Cuenta y Plan','NS.acc()');const h=$('#webSidebar')||$('#mobileDrawer'),f=h&&h.querySelector('.nav-btn');if(f)f.parentElement.before(go);const m=$('.map-frame-box');if(m)m.innerHTML='<div class="ns-row" id="nsMc"></div><div id="nsMap"></div>';const b=$('#headerPlanBadge')||$('#headerSubBadge');if(b){b.style.cursor='pointer';b.onclick=NS.acc}const _s=window.showSection;window.showSection=id=>{_s(id);if(id==='sec-mapa')NS.map();if(id==='sec-planes')setTimeout(NS.mountPay,80);document.querySelectorAll('.nav-btn').forEach(x=>x.classList.toggle('active',x.dataset.target===id))};['fetchGlobalByCoords'].forEach(k=>{const o=window[k];if(o)window[k]=function(n,a,b,c){try{NS.setCity(n,a,b)}catch(e){}return o.apply(this,arguments)}});NS.rc();NS.all();NS.wx();NS.sync();NS.renderUser();NS.mountPay();setInterval(NS.wx,6e5)};
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 })();
 </script>
